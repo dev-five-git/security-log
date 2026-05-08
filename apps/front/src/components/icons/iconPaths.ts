@@ -14,11 +14,10 @@ export const ICON_PATHS = {
   userGroup: '/icons/icon_user_group.svg',
   megaphone: '/icons/icon_megaphone.svg',
   networkShare: '/icons/icon_network_share.svg',
-  slot: '/icons/Slot.svg',
-  iconState: '/icons/IconState.svg',
   step: '/icons/Step.svg',
   userOne: '/icons/icon_user_one.svg',
   company: '/icons/icon_company.svg',
+  link: '/icons/icon_link.svg',
 } as const
 
 export type IconName = keyof typeof ICON_PATHS
