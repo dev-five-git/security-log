@@ -1,4 +1,4 @@
-import { Flex, Text, VStack } from '@devup-ui/react'
+import { css, Flex, Text, VStack } from '@devup-ui/react'
 import Link from 'next/link'
 
 import { Icon } from '@/components/icons/Icon'
@@ -60,7 +60,17 @@ export function Footer() {
           <Text color="#FFF" typography="footerBold" wordBreak="keep-all">
             문의 및 의견 제출
             <br />
-            contact@devfive.kr
+            <Link
+              className={css({
+                _hover: {
+                  textDecoration: 'underline',
+                  textDecorationColor: '#FFF',
+                },
+              })}
+              href="mailto:contact@devfive.kr"
+            >
+              contact@devfive.kr
+            </Link>
           </Text>
           <Text color="#CACACA" typography="footerCopy">
             Copyright © DEVFIVE. All Rights Reserved.{' '}
