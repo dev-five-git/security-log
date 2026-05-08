@@ -22,7 +22,7 @@ export function Dropdown() {
       h="100%"
       pl="$spacingSpacing20"
       pr="10px"
-      py="$spacingSpacing1"
+      py="$spacingSpacing12"
       w="110px"
     >
       <Flex
@@ -39,7 +39,7 @@ export function Dropdown() {
           aria-label="caretDown"
           className={css({
             bg: '$caption',
-            boxSize: '16px',
+            boxSize: '20px',
           })}
           icon="caretDown"
         />
