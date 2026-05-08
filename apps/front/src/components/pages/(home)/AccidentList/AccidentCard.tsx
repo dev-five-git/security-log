@@ -8,8 +8,11 @@ export function AccidentCard({ accident }: { accident: Accident }) {
   return (
     <Link href={`/accidents/${accident.id}`}>
       <VStack
+        _active={{
+          scale: 1,
+        }}
         _hover={{
-          border: 'solid 2px $borderDark',
+          scale: 1.05,
         }}
         bg="$containerBackground"
         borderRadius="$borderRadiusRadius20"
@@ -19,6 +22,7 @@ export function AccidentCard({ accident }: { accident: Accident }) {
         h="100%"
         px="$spacingSpacing24"
         py="$spacingSpacing20"
+        transition="scale .2s ease"
       >
         <Flex alignItems="center" justifyContent="space-between" w="100%">
           <Flex alignItems="center" gap="$spacingSpacing06">

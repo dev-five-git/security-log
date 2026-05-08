@@ -13,6 +13,7 @@ export function SearchInput() {
 
   const submit = () => {
     const trimmed = value.trim()
+    if (!trimmed) return
     router.push(`/search?q=${encodeURIComponent(trimmed)}`)
   }
 
