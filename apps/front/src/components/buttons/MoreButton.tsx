@@ -7,16 +7,24 @@ import { ICON_PATHS } from '../icons/iconPaths'
 interface MoreButtonProps {
   buttonLabel: string
   href?: string
+  target?: string
   className?: string
+  colors: {
+    textColor?: string
+    iconColor?: string
+  }
 }
 
 export function MoreButton({
   buttonLabel,
   href = '/',
+  target,
   className,
+  colors,
 }: MoreButtonProps) {
+  const textColor = colors?.textColor || ''
   return (
-    <Link href={href}>
+    <Link href={href} target={target}>
       <Center
         _active={{
           bg: '$violetBgPressed',
@@ -34,10 +42,15 @@ export function MoreButton({
         pl="$spacingSpacing20"
         pr="$spacingSpacing12"
         py="$spacingSpacing08"
+        styleOrder={1}
         transition="background-color .2s ease"
       >
         <Flex alignItems="center" h="20px" pr="$spacingSpacing06">
-          <Text color="$text" typography="buttonSm" wordBreak="keep-all">
+          <Text
+            color={textColor !== '' ? textColor : '$text'}
+            typography="buttonSm"
+            wordBreak="keep-all"
+          >
             {buttonLabel}
           </Text>
         </Flex>
@@ -46,7 +59,7 @@ export function MoreButton({
           className={css({
             rotate: '180deg',
           })}
-          color="var(--text)"
+          color={colors?.iconColor || 'var(--text)'}
           iconPath={ICON_PATHS.caretLeft}
         />
       </Center>
