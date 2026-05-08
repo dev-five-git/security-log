@@ -33,3 +33,5 @@ cobertura.xml
 test.db
 .sisyphus
 tsconfig.tsbuildinfo
+
+.omc
