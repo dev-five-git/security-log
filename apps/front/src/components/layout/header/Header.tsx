@@ -57,10 +57,15 @@ export function Header() {
             <Flex alignItems="center">
               <IconButton
                 aria-label="언어 변경"
+                className={css({ bg: '$text' })}
                 hoverScale={1.1}
                 icon="globe"
               />
-              <IconButton aria-label="테마 변경" icon="theme" />
+              <IconButton
+                aria-label="테마 변경"
+                className={css({ bg: '$text' })}
+                icon="theme"
+              />
             </Flex>
           </Flex>
         </DesktopOnly>
@@ -70,7 +75,11 @@ export function Header() {
             className={css({ bg: '$text' })}
             icon="search"
           />
-          <IconButton aria-label="메뉴 열기" icon="hamburger" />
+          <IconButton
+            aria-label="메뉴 열기"
+            className={css({ bg: '$text' })}
+            icon="hamburger"
+          />
         </MobileOnly>
       </Flex>
     </Center>
