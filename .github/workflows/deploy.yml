@@ -1,7 +1,10 @@
-name: Deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
   workflow_dispatch:
@@ -12,46 +15,59 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-
-      - name: Setup Bun
+      - name: Install bun
         uses: oven-sh/setup-bun@v2
 
+      - name: Cache bun dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Cache Next.js build
+        uses: actions/cache@v5
+        with:
+          path: |
+            apps/landing/.next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('**/bun.lock') }}-${{ hashFiles('apps/landing/**/*.{js,jsx,ts,tsx,md,mdx}') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('**/bun.lock') }}-
+
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install
 
-      - name: Build
-        run: bun run build
+      - name: Build landing
+        run: bun run --filter landing build
 
-      - name: Add .nojekyll
-        run: touch apps/front/out/.nojekyll
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+      - name: Disable Jekyll
+        run: touch apps/landing/out/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: apps/front/out
+          path: ./apps/landing/out
 
   deploy:
-    name: Deploy
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
