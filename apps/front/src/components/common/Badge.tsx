@@ -1,6 +1,7 @@
 import { Box, Flex, Text } from '@devup-ui/react'
 
 import { ICON_PATHS } from '@/components/icons/iconPaths'
+import { asset } from '@/lib/asset'
 import type { AccidentCause, AccidentDamage } from '@/static/accidents'
 import { CAUSE_LABELS, formatDamage } from '@/static/accidents'
 
@@ -44,7 +45,7 @@ export function Badge(props: BadgeProps) {
       <Box
         bg={color}
         boxSize="14px"
-        maskImage={`url(${iconPath})`}
+        maskImage={`url(${asset(iconPath)})`}
         maskPos="center"
         maskRepeat="no-repeat"
         maskSize="contain"
