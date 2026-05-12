@@ -2,7 +2,6 @@
 import { Box, Center, Flex, Grid, Text, VStack } from '@devup-ui/react'
 import { useReducer } from 'react'
 
-import { asset } from '@/lib/asset'
 import { buildIssueUrl } from '@/lib/issue-template'
 import { CAUSE_OPTIONS, DAMAGE_UNIT_OPTIONS } from '@/static/accidents'
 import { COUNTRY_OPTIONS } from '@/static/countries'
