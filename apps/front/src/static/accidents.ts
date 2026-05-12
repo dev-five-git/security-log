@@ -49,6 +49,10 @@ export const CAUSE_LABELS: Record<AccidentCause, string> = {
   unknown: '미상',
 }
 
+export const CAUSE_OPTIONS: { value: AccidentCause; label: string }[] = (
+  Object.keys(CAUSE_LABELS) as AccidentCause[]
+).map((value) => ({ value, label: CAUSE_LABELS[value] }))
+
 export const DAMAGE_UNIT_OPTIONS: {
   value: AccidentDamageUnit
   label: string
