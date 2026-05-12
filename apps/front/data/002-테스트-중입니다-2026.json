@@ -1,0 +1,47 @@
+{
+  "id": "2",
+  "companyName": "테스트 중입니다.",
+  "date": "2026-05-12",
+  "country": "GH",
+  "cause": "insider",
+  "damage": {
+    "value": 0,
+    "unit": ""
+  },
+  "leaks": [
+    "유출 내역 테스트"
+  ],
+  "secondaryDamage": [
+    "유출 내역 테스트"
+  ],
+  "causeAnalyses": [
+    {
+      "content": "원인 분석 테스트",
+      "date": "2026-05-13"
+    },
+    {
+      "content": "ㅂㅈㄷㅂㅈㄼㅈ",
+      "date": "2026-05-20"
+    }
+  ],
+  "rootCauses": [
+    "근본 원인 분석 테스트",
+    "근본 원인 분석 테스트2"
+  ],
+  "prevention": {
+    "personal": [
+      "테스트 중",
+      "테스트 중"
+    ],
+    "corporate": [
+      "테스트 중",
+      "테스트 중"
+    ]
+  },
+  "tags": [
+    "테스트2",
+    "테스트1"
+  ],
+  "createdAt": "2026-05-12T08:28:22.482Z",
+  "issueUrl": "https://github.com/dev-five-git/security-log/issues/2"
+}
