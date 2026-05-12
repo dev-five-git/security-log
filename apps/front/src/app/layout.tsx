@@ -68,11 +68,8 @@ export const metadata: Metadata = {
     images: [DEFAULT_OG_IMAGE_URL],
   },
   icons: {
-    icon: [
-      { url: '/favicon.ico', type: 'image/x-icon' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-    ],
-    shortcut: '/favicon.ico',
+    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+    shortcut: '/favicon.svg',
   },
   manifest: '/manifest.webmanifest',
   category: 'technology',
