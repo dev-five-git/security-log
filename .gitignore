@@ -30,3 +30,6 @@ test.db
 tsconfig.tsbuildinfo
 
 .omc
+.omx
+
+./llms.txt

@@ -1,6 +1,15 @@
 import { Center, Text, VStack } from '@devup-ui/react'
+import type { Metadata } from 'next'
 
+import { buildPageMetadata } from '@/app/site-metadata'
 import { AccidentListDetail } from '@/components/pages/(home)/AccidentList/AccidentListDetail'
+
+export const metadata: Metadata = buildPageMetadata({
+  pageTitle: '보안 사고 목록',
+  description:
+    '대한민국에서 실제로 발생한 보안 사고를 모아 피해 규모와 원인, 관련 키워드를 한눈에 확인할 수 있습니다.',
+  path: '/accidents',
+})
 
 export default function AccidentsPage() {
   return (

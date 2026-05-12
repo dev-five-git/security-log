@@ -5,7 +5,6 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
   /* config options here */
   output: 'export',
-  basePath: '/security-log',
   trailingSlash: true,
   images: {
     unoptimized: true,

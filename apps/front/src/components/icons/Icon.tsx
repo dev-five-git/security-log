@@ -1,7 +1,5 @@
 import { Box } from '@devup-ui/react'
 
-import { asset } from '@/lib/asset'
-
 export function Icon({
   iconPath,
   color = '$text',
@@ -18,7 +16,7 @@ export function Icon({
       bg={color}
       boxSize={boxSize}
       className={className}
-      maskImage={`url(${asset(iconPath)})`}
+      maskImage={`url(${iconPath})`}
       maskPos="center"
       maskRepeat="no-repeat"
       maskSize="contain"
