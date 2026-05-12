@@ -1,4 +1,7 @@
+'use client'
+
 import { Center, Flex, Grid, Text, VStack } from '@devup-ui/react'
+import { useSearchParams } from 'next/navigation'
 
 import { AccidentCard } from '@/components/pages/(home)/AccidentList/AccidentCard'
 import { type Accident, ACCIDENTS, CAUSE_LABELS } from '@/static/accidents'
@@ -18,13 +21,10 @@ function filterAccidents(query: string, category?: string): Accident[] {
   })
 }
 
-export function SearchResults({
-  query,
-  category,
-}: {
-  query: string
-  category?: string
-}) {
+export function SearchResults() {
+  const searchParams = useSearchParams()
+  const query = searchParams.get('q') ?? ''
+  const category = searchParams.get('category') ?? undefined
   const results = filterAccidents(query, category)
   return (
     <Center

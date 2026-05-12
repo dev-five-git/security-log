@@ -7,6 +7,7 @@ import { MoreButton } from '@/components/buttons/MoreButton'
 import { Segment } from '@/components/common/Segment'
 import { SortDropdown, type SortOption } from '@/components/common/SortDropdown'
 import { DesktopOnly } from '@/components/layout/responsive/DesktopOnly'
+import { asset } from '@/lib/asset'
 import {
   type Accident,
   ACCIDENTS,
@@ -195,7 +196,7 @@ export function AccidentListDetail({ mode = 'home' }: AccidentListDetailProps) {
               borderRadius="$borderRadiusRadius20"
               h="auto"
               justifySelf="start"
-              src="/images/accidents/accident-ads-desktop.webp"
+              src={asset('/images/accidents/accident-ads-desktop.webp')}
               transition="scale .2s ease"
               w="100%"
             />

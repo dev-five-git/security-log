@@ -4,7 +4,12 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   /* config options here */
-  output: 'standalone',
+  output: 'export',
+  basePath: '/security-log',
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
+  },
   experimental: {
     optimizePackageImports: ['@devup-ui/reset-css', '@devup-ui/components'],
   },

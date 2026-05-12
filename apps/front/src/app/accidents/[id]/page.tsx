@@ -7,6 +7,10 @@ interface AccidentDetailPageProps {
   params: Promise<{ id: string }>
 }
 
+export function generateStaticParams() {
+  return ACCIDENTS.map((accident) => ({ id: accident.id }))
+}
+
 export default async function AccidentDetailPage({
   params,
 }: AccidentDetailPageProps) {

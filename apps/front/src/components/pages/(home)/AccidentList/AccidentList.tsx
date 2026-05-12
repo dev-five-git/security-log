@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { MoreButton } from '@/components/buttons/MoreButton'
 import { DesktopOnly } from '@/components/layout/responsive/DesktopOnly'
 import { MobileOnly } from '@/components/layout/responsive/MobileOnly'
+import { asset } from '@/lib/asset'
 
 import { AccidentListDetail } from './AccidentListDetail'
 
@@ -28,7 +29,7 @@ export function AccidentList() {
               <Image
                 alt="광고이미지"
                 h="230px"
-                src="/images/home/main-banner-ads-desktop.webp"
+                src={asset('/images/home/main-banner-ads-desktop.webp')}
                 w="1280px"
               />
             </DesktopOnly>
@@ -38,7 +39,7 @@ export function AccidentList() {
                 aspectRatio="540 / 360"
                 h="auto"
                 maxW="540px"
-                src="/images/home/main-banner-ads-mobile.webp"
+                src={asset('/images/home/main-banner-ads-mobile.webp')}
                 w="100%"
               />
             </MobileOnly>

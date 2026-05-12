@@ -84,7 +84,7 @@ export function ProgressBar({ data, isDimmed, onHover }: ProgressBarProps) {
             bg="$text"
             boxSize="20px"
             cursor="pointer"
-            maskImage="url(/icons/icon_info.svg)"
+            maskImage="url(/security-log/icons/icon_info.svg)"
             maskPos="center"
             maskRepeat="no-repeat"
             maskSize="contain"
