@@ -1,18 +1,12 @@
-# service-template
+# security-log
 
-service-template
+보안사고 사례 공유 프론트엔드.
 
 ## 실행
 
-기본적으로 docker compose로 작동되게 설계됨
+```sh
+bun install
+bun run dev
+```
 
-아래 파일을 apis 폴더로 옮김
-
-- uv.lock
-- pyproject.toml
-
-아래 파일을 apps 폴더로 옮김
-
-- bun.lock
-- package.json
-- ecosystem.json
+배포는 docker compose로 작동되게 설계됨.

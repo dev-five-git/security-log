@@ -6,8 +6,6 @@ node_modules
 schema.d.ts
 !apps/*/schema.d.ts
 
-apis/*
-!apis/*/
 apps/*
 !apps/*/
 
@@ -24,10 +22,7 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
-/target
 /coverage
-tarpaulin-report.html
-cobertura.xml
 
 .claude
 test.db

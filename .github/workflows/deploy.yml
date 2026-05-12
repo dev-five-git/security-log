@@ -19,18 +19,6 @@ jobs:
     runs-on:
       group: default
       labels: linux
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -39,8 +27,6 @@ jobs:
           node-version: 24
 
       - uses: oven-sh/setup-bun@v2
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
       - name: Install dependencies
         run: bun install
 
@@ -49,13 +35,6 @@ jobs:
 
       - name: Test
         run: bun run test
-        env:
-          DB_SCHEMA: public
-          DB_URL: localhost
-          DB_PORT: ${{ job.services.postgres.ports[5432] }}
-          DB_ID: postgres
-          DB_PW: postgres
-          DB_DB: postgres
 
       - name: Build
         run: bun run build
@@ -92,13 +71,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-      - name: Collect API environment variables
-        uses: dev-five-git/collect-env-action@main
-        with:
-          prefix: 'API_ENV_'
-          output: 'apis/api/.env'
-          remove-prefix: true
-          secrets: ${{ toJson(secrets) }}
       - name: Overwrite .env
         uses: dev-five-git/overwrite-env-file-action@main
         if: ${{ !(contains(needs.changepacks.outputs.changepacks, 'package.json') || github.event_name == 'workflow_dispatch') }}
@@ -107,10 +79,8 @@ jobs:
           docker build -f Dockerfile.build -t build:latest .
           CONTAINER_ID=$(docker create build:latest)
           docker cp $CONTAINER_ID:/app/front.tar.gz ./front.tar.gz
-          docker cp $CONTAINER_ID:/app/api.tar.gz ./api.tar.gz
 
-          tar -czf deploy.tar.gz api.tar.gz front.tar.gz docker-compose.yml Dockerfile.front Dockerfile.api nginx.conf apis/api/.env
-          # zip -r deploy.zip api.tar.gz front.tar.gz docker-compose.yml Dockerfile.front Dockerfile.api nginx.conf apis/api/.env
+          tar -czf deploy.tar.gz front.tar.gz docker-compose.yml Dockerfile.front nginx.conf
       - name: upload
         uses: actions/upload-artifact@v4
         with:
@@ -181,6 +151,5 @@ jobs:
             docker compose up -d --build
 
             rm -f "$DIR/front.tar.gz"
-            rm -f "$DIR/api.tar.gz"
       - uses: atos-actions/clean-self-hosted-runner@v1
         if: ${{ always() }}
