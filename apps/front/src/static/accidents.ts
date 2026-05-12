@@ -21,6 +21,7 @@ export interface Accident {
   damage: number
   date: string
   companyName: string
+  country: string
   tags: string[]
   leaks: string[]
   secondaryDamage: string[]
@@ -61,6 +62,7 @@ export const ACCIDENTS: Accident[] = [
     damage: 1200,
     date: '2026.04.07',
     companyName: '회사명',
+    country: '대한민국',
     tags: ['사고 요약', '보이스피싱'],
     leaks: DEFAULT_LEAKS,
     secondaryDamage: DEFAULT_SECONDARY,
@@ -74,6 +76,7 @@ export const ACCIDENTS: Accident[] = [
     damage: 500,
     date: '2026.04.07',
     companyName: '회사명',
+    country: '대한민국',
     tags: ['사고 요약', '보이스피싱', '관리자페이지무단접속'],
     leaks: DEFAULT_LEAKS,
     secondaryDamage: DEFAULT_SECONDARY,
@@ -87,6 +90,7 @@ export const ACCIDENTS: Accident[] = [
     damage: 1200,
     date: '2026.04.07',
     companyName: '회사명',
+    country: '대한민국',
     tags: ['사고 요약', '보이스피싱'],
     leaks: DEFAULT_LEAKS,
     secondaryDamage: DEFAULT_SECONDARY,
@@ -100,6 +104,7 @@ export const ACCIDENTS: Accident[] = [
     damage: 1000,
     date: '2026.04.07',
     companyName: '회사명',
+    country: '대한민국',
     tags: ['사고 요약', '보이스피싱', '관리자페이지무단접속'],
     leaks: DEFAULT_LEAKS,
     secondaryDamage: DEFAULT_SECONDARY,
@@ -113,6 +118,7 @@ export const ACCIDENTS: Accident[] = [
     damage: 1,
     date: '2026.04.07',
     companyName: '회사명',
+    country: '대한민국',
     tags: ['사고 요약', '관리자페이지무단접속'],
     leaks: DEFAULT_LEAKS,
     secondaryDamage: DEFAULT_SECONDARY,
@@ -126,6 +132,7 @@ export const ACCIDENTS: Accident[] = [
     damage: 1000,
     date: '2026.04.07',
     companyName: '회사명',
+    country: '대한민국',
     tags: ['사고 요약', '보이스피싱', '관리자페이지무단접속'],
     leaks: DEFAULT_LEAKS,
     secondaryDamage: DEFAULT_SECONDARY,
@@ -139,6 +146,7 @@ export const ACCIDENTS: Accident[] = [
     damage: 1000,
     date: '2026.04.07',
     companyName: '회사명',
+    country: '대한민국',
     tags: ['보이스피싱', '관리자페이지무단접속'],
     leaks: DEFAULT_LEAKS,
     secondaryDamage: DEFAULT_SECONDARY,
@@ -152,6 +160,7 @@ export const ACCIDENTS: Accident[] = [
     damage: 1500,
     date: '2026.04.07',
     companyName: '회사명',
+    country: '대한민국',
     tags: ['사고 요약', '보이스피싱', '관리자페이지무단접속'],
     leaks: DEFAULT_LEAKS,
     secondaryDamage: DEFAULT_SECONDARY,
@@ -165,6 +174,7 @@ export const ACCIDENTS: Accident[] = [
     damage: 1000,
     date: '2026.04.07',
     companyName: '회사명',
+    country: '대한민국',
     tags: ['사고 요약', '보이스피싱', '관리자페이지무단접속'],
     leaks: DEFAULT_LEAKS,
     secondaryDamage: DEFAULT_SECONDARY,

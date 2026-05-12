@@ -1,4 +1,5 @@
 import { Center, Image, Text, VStack } from '@devup-ui/react'
+import Link from 'next/link'
 
 import { MoreButton } from '@/components/buttons/MoreButton'
 import { DesktopOnly } from '@/components/layout/responsive/DesktopOnly'
@@ -21,26 +22,28 @@ export function AccidentList() {
         maxW="1280px"
         w="100%"
       >
-        <VStack py={['20px', null, null, null, '40px']}>
-          <DesktopOnly>
-            <Image
-              alt="광고이미지"
-              h="230px"
-              src="/images/home/main-banner-ads-desktop.webp"
-              w="1280px"
-            />
-          </DesktopOnly>
-          <MobileOnly>
-            <Image
-              alt="광고이미지"
-              aspectRatio="540 / 360"
-              h="auto"
-              maxW="540px"
-              src="/images/home/main-banner-ads-mobile.webp"
-              w="100%"
-            />
-          </MobileOnly>
-        </VStack>
+        <Link href="https://devfive.kr" target="_blank">
+          <VStack py={['20px', null, null, null, '40px']}>
+            <DesktopOnly>
+              <Image
+                alt="광고이미지"
+                h="230px"
+                src="/images/home/main-banner-ads-desktop.webp"
+                w="1280px"
+              />
+            </DesktopOnly>
+            <MobileOnly>
+              <Image
+                alt="광고이미지"
+                aspectRatio="540 / 360"
+                h="auto"
+                maxW="540px"
+                src="/images/home/main-banner-ads-mobile.webp"
+                w="100%"
+              />
+            </MobileOnly>
+          </VStack>
+        </Link>
         <VStack
           gap="$spacingSpacing12"
           maxW="1280px"
@@ -57,7 +60,7 @@ export function AccidentList() {
         </VStack>
         <AccidentListDetail />
         <MobileOnly>
-          <MoreButton buttonLabel="사례 더보기" href="/" />
+          <MoreButton buttonLabel="사례 더보기" href="/accidents" />
         </MobileOnly>
       </VStack>
     </Center>

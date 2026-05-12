@@ -15,6 +15,7 @@ export function AccidentCard({ accident }: { accident: Accident }) {
           scale: 1.05,
         }}
         bg="$containerBackground"
+        border="solid 1px $border"
         borderRadius="$borderRadiusRadius20"
         boxShadow="$shadowShadowXs"
         cursor="pointer"
@@ -22,7 +23,7 @@ export function AccidentCard({ accident }: { accident: Accident }) {
         h="100%"
         px="$spacingSpacing24"
         py="$spacingSpacing20"
-        transition="scale .2s ease"
+        transition="scale .2s ease, box-shadow .2s ease"
       >
         <Flex alignItems="center" justifyContent="space-between" w="100%">
           <Flex alignItems="center" gap="$spacingSpacing06">

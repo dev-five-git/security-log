@@ -158,6 +158,10 @@ function DonutChart({ data, hoverIndex, onHoverIndex }: DonutChartProps) {
             const dashArray = `${length} ${circumference - length}`
             const segmentOpacity =
               hoverIndex === null || hoverIndex === idx ? 1 : 0.25
+            const segmentColor =
+              hoverIndex === idx
+                ? 'var(--primary)'
+                : SEGMENT_COLORS[idx % SEGMENT_COLORS.length]
             return (
               <circle
                 key={item.label}
@@ -167,14 +171,14 @@ function DonutChart({ data, hoverIndex, onHoverIndex }: DonutChartProps) {
                 onMouseEnter={() => onHoverIndex(idx)}
                 onMouseLeave={() => onHoverIndex(null)}
                 r={radius}
-                stroke={SEGMENT_COLORS[idx % SEGMENT_COLORS.length]}
+                stroke={segmentColor}
                 strokeDasharray={dashArray}
                 strokeDashoffset={-offset}
                 strokeWidth={strokeWidth}
                 style={{
                   cursor: 'pointer',
                   opacity: segmentOpacity,
-                  transition: 'opacity 0.2s ease',
+                  transition: 'opacity 0.2s ease, stroke 0.2s ease',
                 }}
               />
             )

@@ -5,6 +5,7 @@ export const ICON_PATHS = {
   theme: '/icons/icon_theme.svg',
   caretDown: '/icons/icon_caret_down.svg',
   caretLeft: '/icons/icon_caret_left.svg',
+  close: '/icons/icon_close.svg',
   hacking: '/icons/icon_hacking.svg',
   insider: '/icons/icon_user_one.svg',
   negligence: '/icons/icon_negligence.svg',
@@ -18,6 +19,7 @@ export const ICON_PATHS = {
   userOne: '/icons/icon_user_one.svg',
   company: '/icons/icon_company.svg',
   link: '/icons/icon_link.svg',
+  calendar: '/icons/icon_calendar.svg',
 } as const
 
 export type IconName = keyof typeof ICON_PATHS

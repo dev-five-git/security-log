@@ -1,0 +1,1456 @@
+# DEVFIVE DESIGN SYSTEM — LLMS.TXT (v2)
+# Format-version: 2.0 · Schema: per-section uniform · Optimized-for: LLM parsing
+# Source-of-truth: Devfive DS PDF specification (10 documents).
+# tokens.css and HTML are downstream implementations and may diverge from spec.
+#
+# AUTHORITY MARKERS used throughout this file:
+#   [SPEC]               = stated in PDF spec — normative
+#   [IMPLEMENTATION_ONLY] = present in tokens.css but NOT in PDF spec
+#   [SPEC_GAP]           = stated in PDF spec but NOT yet in tokens.css
+#   [SYNTHESIZED]        = author-derived guideline for agent decisions, not from spec
+#
+# Section order matches PDF index. Each section uses the IDENTICAL 10-field schema:
+#   IDENTITY, PURPOSE, WHEN_TO_USE, WHEN_NOT_TO_USE, TOKENS, DEFAULTS,
+#   DECISION_RULES, CONSTRAINTS, DEPENDENCIES, ANTI_PATTERNS, CODE_PATTERN.
+
+================================================================================
+SECTION 00 · SYSTEM_OVERVIEW
+================================================================================
+
+IDENTITY:
+  system: Devfive Design System
+  scope: foundation only (no formal component library yet)
+  themes: light + dark (every Devup Palette token has both modes)
+  source-of-truth: 10 PDF spec documents (Breakpoints / Color / Grid / Icon /
+                   Motion / Naming / Style / Spacing / State / Typography)
+  implementation-files: tokens.css, base.css (downstream — may lag spec)
+  language-of-tokens: camelCase
+  language-of-components: PascalCase
+
+GLOBAL_RULES_FROM_SPEC:
+  - [SPEC] Every UI component renders across multiple states; default state is
+    only the comparison baseline.
+  - [SPEC] All PC design canvases start at 1920×1080 or 1600×900.
+  - [SPEC] Color variables in Devup colors folder MUST have both Light and Dark
+    values entered together.
+  - [SPEC] Typography is responsive by default (except native-app contexts).
+  - [SPEC] Spacing/Style primitives use 4-multiples; responsive variants live in
+    Semantic via folder modes (0~5) or variable modes.
+
+SECTION_INDEX (PDF order):
+  01 BREAKPOINTS  — 6 viewport keys (xs..2xl)
+  02 COLOR        — Primary (10 palettes) · Gray (Cool/Warm) · Devup Palette semantic
+  03 GRID         — Desktop 12-col + Mobile 4-col/2-col
+  04 ICON         — 16/24px sizes · 36/48px touch · Phosphor library
+  05 MOTION       — Duration · Easing · Scale · Slide · Fade
+  06 NAMING       — token camelCase · component PascalCase · asset snake/kebab
+  07 STYLE        — Radius · Shadow · Dimmed · Opacity
+  08 SPACING      — 14 primitives · 4px rhythm · Semantic on demand
+  09 STATE        — 7 states (Hover/Pressed/Selected/Focus/Disabled/Loading/Read-only)
+  10 TYPOGRAPHY   — SUIT Variable · 14-step scale × Desktop/Mobile
+
+CANONICAL_DEFAULTS_FROM_SPEC:
+  primary-color: Violet (Base = #5E50FF) — marked ★ in spec
+  font-family: SUIT Variable [IMPLEMENTATION_ONLY for fontSans value;
+               PDF shows previews but does not name the family in spec text]
+  duration: Normal (250ms) for typical UI moves
+  easing: Ease-out for entry · Ease-in for exit
+  radius (default surface): md (16px)
+  icon-size: 24px · touch-area: 48px
+  spacing-base-unit: 4px
+  pc-canvas: 1920×1080 or 1600×900
+  responsive-typography: yes (except native app)
+
+================================================================================
+SECTION 01 · BREAKPOINTS
+================================================================================
+
+IDENTITY:
+  id: foundation/breakpoints
+  order: 01/10
+  related: [grid, typography, spacing-semantic]
+  spec-status: [SPEC] — fully grounded
+
+PURPOSE:
+  Define 6 viewport ranges that drive responsive behavior across every other
+  token. Breakpoint key (0..5) is referenced by Figma folder name to apply
+  per-viewport variants of typography and spacing without touching code.
+
+WHEN_TO_USE:
+  - Setting Figma frame width for a new design canvas.
+  - Authoring CSS @media queries.
+  - Defining responsive Figma variables (typography/spacing per-mode).
+  - Deciding which mobile/desktop type scale applies.
+
+WHEN_NOT_TO_USE:
+  - Custom one-off widths inside a single component.
+  - Targeting print media or email clients (out of scope).
+
+TOKENS:
+  | key | index | range          | device-class                        |
+  |-----|-------|----------------|-------------------------------------|
+  | xs  | 0     | 0–479 px       | small mobile (phone portrait)       |
+  | sm  | 1     | 480–767 px     | large mobile (phone landscape)      |
+  | md  | 2     | 768–991 px     | tablet (iPad, GalaxyTab)            |
+  | lg  | 3     | 992–1279 px    | laptop / small monitor (13–15")     |
+  | xl  | 4     | 1280–1599 px   | desktop (general monitor)           |
+  | 2xl | 5     | 1600+ px       | wide / 4K monitor                   |
+
+  Working-canvas-presets (PC):
+  | preset      | resolution    | role                              |
+  |-------------|---------------|-----------------------------------|
+  | low-laptop  | 1366 × 768    | MUST_TEST — narrow viewport QA    |
+  | hd-plus     | 1600 × 900    | working baseline                  |
+  | fhd        | 1920 × 1080    | working baseline (preferred)      |
+
+  Folder-aliases (only these three keys have device-class aliases):
+    0 ↔ Mobile · 2 ↔ Tablet · 4 ↔ Desktop
+  Keys 1 / 3 / 5 must be referenced by index or token name (sm / lg / 2xl).
+
+DEFAULTS:
+  fallback-key-when-not-set: 0 (xs)
+  pc-canvas: 1920×1080 (or 1600×900 if working at smaller scale)
+
+DECISION_RULES:
+  IF viewport_width < 480           THEN apply key=0 (xs)
+  IF 480 <= viewport_width < 768    THEN apply key=1 (sm)
+  IF 768 <= viewport_width < 992    THEN apply key=2 (md)
+  IF 992 <= viewport_width < 1280   THEN apply key=3 (lg)
+  IF 1280 <= viewport_width < 1600  THEN apply key=4 (xl)
+  IF viewport_width >= 1600         THEN apply key=5 (2xl)
+
+  IF Figma-token-defined-at-key=N AND viewport-resolves-to=N
+    THEN use that variant.
+  ELSE-IF token-defined-at-key=N AND viewport-resolves-to=M (M>N)
+    THEN cascade-down: use highest defined key <= M.
+  ELSE
+    THEN use key=0 default.
+
+CONSTRAINTS:
+  HARD:
+    - [SPEC] Designs MUST be QA-tested at 1366×768. CTAs cannot overflow.
+    - [SPEC] DO NOT design separate canvases above 1920px — browser/OS auto-scales.
+    - [SPEC] Breakpoint values are FIXED. Never invent new keys.
+  SOFT:
+    - [SYNTHESIZED] Prefer designing at xl (1280–1599) first, then derive xs.
+    - [SPEC] Keep critical above-the-fold content visible at 1366×768.
+
+DEPENDENCIES:
+  - GRID:       column count switches at md (4→8 or 4→12-style transition).
+                See Section 03 — PDF only specifies Mobile and Desktop grids.
+  - TYPOGRAPHY: Desktop scale at lg+, Mobile scale at xs/sm/md.
+  - SPACING:    Semantic spacing variables hold per-key primitive references.
+
+ANTI_PATTERNS:
+  - WRONG: `@media (max-width: 1024px)` (arbitrary px value).
+    REASON: Doesn't align to system breakpoints; drifts over time.
+    RIGHT:  Use 992px (lg lower bound) or 768px (md lower bound) per spec.
+  - WRONG: Designing only at 1920×1080 and skipping 1366×768 QA.
+    REASON: Low-res laptops are common; CTAs get clipped.
+    RIGHT:  QA at 1366×768 mandatory before handoff.
+
+CODE_PATTERN:
+  /* CSS — gate behavior on lg+ */
+  @media (min-width: 992px) { /* lg and up */ }
+
+  // Figma — folder structure
+  // 0/body  → 16px  (xs/sm/md fallback)
+  // 3/body  → 18px  (lg/xl)
+  // 5/body  → 20px  (2xl)
+
+================================================================================
+SECTION 02 · COLOR
+================================================================================
+
+IDENTITY:
+  id: foundation/color
+  order: 02/10
+  related: [state, style, naming]
+  spec-status: [SPEC] partially complete — see SPEC_GAP markers below
+
+PURPOSE:
+  Two-layer color system. PRIMITIVE = raw palettes by color-name + scale.
+  SEMANTIC = "Devup Palette" mapping role → primitive. Product code
+  references SEMANTIC only so theme/brand swaps require zero refactor.
+
+WHEN_TO_USE:
+  - Any UI surface, text, border, or feedback color.
+  - Picking a brand color for a new project (swap primitive into Primary alias).
+  - Implementing light/dark theme.
+
+WHEN_NOT_TO_USE:
+  - Marketing illustrations or branded posters with custom palette.
+  - Data viz needing >10 categorical colors (extend separately).
+
+TOKENS:
+
+  ── PRIMITIVE · Brand palettes (10 palettes total)
+  Each palette has 6 semantic variants per mode:
+    Base (500) · Hover (600) · Pressed (700) · Bg (50) · BgHover (100) · BgPressed (200)
+  And exists in BOTH Light and Dark modes.
+
+  | palette   | Base hex  | role                                  | default |
+  |-----------|-----------|---------------------------------------|---------|
+  | Violet    | #5E50FF   | Devup default — most projects         | ★ YES   |
+  | Purple    | #A855F7   | swap option                           |         |
+  | Pink      | #EC4899   | swap option                           |         |
+  | Red       | #EF4444   | swap option                           |         |
+  | Orange    | #F97316   | swap option                           |         |
+  | Green     | #22C55E   | swap option                           |         |
+  | Teal      | #14B8A6   | swap option                           |         |
+  | LightBlue | #0EA5E9   | swap option                           |         |
+  | Blue      | #3B82F6   | swap option                           |         |
+  | Navy      | #6366F1   | swap option                           |         |
+
+  Violet full scale [IMPLEMENTATION confirmed in tokens.css]:
+    50:#F4F1FF · 100:#E5DFFF · 200:#CAC0FF · 300:#A99BFF · 400:#8372F5
+    500:#5E50FF · 600:#4A3FD9 · 700:#3A32AD · 800:#2B2580 · 900:#1B1754
+
+  [SPEC_GAP] The other 9 primary palettes are defined in spec with full
+  Light+Dark 6-variant sets, but tokens.css currently wires only Violet.
+  Other palettes must be added when a project elects them.
+
+  ── PRIMITIVE · Gray (choose ONE family per project)
+  | family    | Base (500) | use-case                                |
+  |-----------|------------|------------------------------------------|
+  | Cool Gray | #64748B    | service / finance / enterprise (default) |
+  | Warm Gray | #78716C    | brand / lifestyle                        |
+
+  Cool Gray scale [tokens.css]:
+    0:#FFFFFF · 50:#F8FAFC · 100:#F1F5F9 · 200:#E2E8F0 · 300:#CBD5E1
+    400:#94A3B8 · 500:#64748B · 600:#475569 · 700:#334155
+    800:#1E293B · 900:#0F172A
+  Warm Gray scale [tokens.css]:
+    50:#FAFAF9 · 100:#F5F5F4 · 200:#E7E5E4 · 300:#D6D3D1 · 400:#A8A29E
+    500:#78716C · 600:#57534E · 700:#44403C · 800:#292524 · 900:#1C1917
+
+  ── SEMANTIC · Devup Palette (USE THESE IN PRODUCT CODE)
+
+  Surface (Bg group):
+  | role        | light                | dark                    | description       |
+  |-------------|----------------------|-------------------------|-------------------|
+  | background  | coolGray50  #F8FAFC  | coolGray900 #0F172A     | page background   |
+  | containerBg | coolGray0   #FFFFFF  | coolGray800 #1E293B     | card/section bg   |
+  | innerBg     | coolGray100 #F1F5F9  | coolGray700 #334155     | input/nested area |
+
+  Text:
+  | role     | light                | dark                    | description     |
+  |----------|----------------------|-------------------------|-----------------|
+  | title    | coolGray900 #0F172A  | #F8FAFC                 | page title      |
+  | text     | coolGray800 #1E293B  | coolGray100 #F1F5F9     | body text       |
+  | textSub  | coolGray600 #475569  | coolGray400 #94A3B8     | secondary text  |
+  | caption  | coolGray500 #64748B  | coolGray500 #64748B     | caption / meta  |
+
+  Border:
+  | role        | light                | dark                    | description    |
+  |-------------|----------------------|-------------------------|----------------|
+  | border      | coolGray200 #E2E8F0  | coolGray700 #334155     | default border |
+  | borderLight | coolGray100 #F1F5F9  | coolGray800 #1E293B     | subtle border  |
+
+  Primary (6 variants per mode — ALL are semantic-level tokens):
+  | role             | light       | dark       | description           |
+  |------------------|-------------|------------|-----------------------|
+  | primaryBase      | violet500   | violet400  | brand / focus accent  |
+  | primaryHover     | violet600   | violet300  | brand hover           |
+  | primaryPressed   | violet700   | violet200  | brand pressed         |
+  | primaryBg        | violet50    | violet50@16% | brand subtle bg     |
+  | primaryBgHover   | violet100   | violet50@24% | brand subtle hover  |
+  | primaryBgPressed | violet200   | violet50@32% | brand subtle pressed|
+
+  Feedback (6 variants per mode — Success / Warning / Error):
+  | role            | spec-defined | tokens.css implementation               |
+  |-----------------|:------------:|------------------------------------------|
+  | successBase     | yes          | success500 #10B981                       |
+  | successHover    | yes          | [SPEC_GAP] not in tokens.css yet         |
+  | successPressed  | yes          | [SPEC_GAP] (success600 #059669 is close) |
+  | successBg       | yes          | successBg #D1FAE5                        |
+  | successBgHover  | yes          | [SPEC_GAP]                               |
+  | successBgPressed| yes          | [SPEC_GAP]                               |
+
+  Same 6-variant pattern applies to Warning (warning500 #F59E0B,
+  warningBg #FEF3C7) and Error (error500 #EF4444, errorBg #FEE2E2).
+  When a project needs the missing 4 variants per feedback color, derive from
+  the parent palette using the same Base/Hover/Pressed/Bg/BgHover/BgPressed
+  contract used by Primary.
+
+  Disabled (3 variants only — NOT 6):
+  | role            | light                | dark                |
+  |-----------------|----------------------|---------------------|
+  | disabledBg      | coolGray100 #F1F5F9  | coolGray800 #1E293B |
+  | disabledContent | coolGray400 #94A3B8  | coolGray600 #475569 |
+  | disabledBorder  | coolGray200 #E2E8F0  | coolGray700 #334155 |
+
+DEFAULTS:
+  primary: Violet (★)
+  gray: Cool Gray
+  mode: light
+  surface-stack: background → containerBg → innerBg
+
+DECISION_RULES:
+  IF writing-product-code            THEN reference SEMANTIC alias only.
+  IF defining-the-alias-layer-itself THEN reference PRIMITIVE.
+  IF [SYNTHESIZED] brand=service|finance|enterprise THEN gray = Cool Gray.
+  IF [SYNTHESIZED] brand=lifestyle|consumer         THEN gray = Warm Gray.
+  IF need-hover-of-primary           THEN primaryHover (or violet600).
+  IF need-pressed-of-primary         THEN primaryPressed (or violet700).
+  IF need-subtle-brand-bg            THEN primaryBg (or violet50).
+  IF state=success                   THEN successBase + successBg.
+  IF state=warning                   THEN warningBase + warningBg.
+  IF state=error                     THEN errorBase + errorBg.
+  IF state=disabled                  THEN disabledBg + disabledContent
+                                          + disabledBorder.
+
+CONSTRAINTS:
+  HARD:
+    - [SPEC] Color variables MUST be entered with both Light and Dark values
+      together in the Devup colors folder. Single-mode entries are forbidden.
+    - [SYNTHESIZED] Product code SHOULD reference semantic aliases, not
+      primitives. (Spec implies via "Devup Palette" naming but doesn't bind it.)
+    - [SYNTHESIZED] Disabled elements should use disabled* tokens, not opacity.
+  SOFT:
+    - [SYNTHESIZED] One project = one primary palette.
+    - [SPEC] caption color is identical across light and dark (#64748B).
+
+DEPENDENCIES:
+  - STATE: hover/pressed values map to 600/700 of the primary scale.
+  - STYLE: Dimmed tokens (Section 07) provide overlay colors.
+  - ICON: stroke = currentColor follows whatever text token the icon inherits.
+
+ANTI_PATTERNS:
+  - WRONG: `color: #5E50FF;` in a component file.
+    REASON: Bypasses theming and brand-swap.
+    RIGHT:  `color: var(--primaryBase);`
+  - WRONG: Defining a new gray scale per component.
+    REASON: Drift across the product.
+    RIGHT:  Use coolGray (or warmGray) scale only.
+  - WRONG: Entering only Light values into Devup colors folder.
+    REASON: Spec mandates Light + Dark together.
+    RIGHT:  Always add both values when defining the variable.
+
+CODE_PATTERN:
+  /* component */
+  .card { background: var(--containerBg); color: var(--text); border: 1px solid var(--border); }
+  .card.is-disabled { background: var(--disabledBg); color: var(--disabledContent); }
+  .button-primary { background: var(--primaryBase); color: #fff; }
+  .button-primary:hover { background: var(--primaryHover); }
+  .button-primary:active { background: var(--primaryPressed); }
+
+================================================================================
+SECTION 03 · GRID
+================================================================================
+
+IDENTITY:
+  id: foundation/grid
+  order: 03/10
+  related: [breakpoints, spacing]
+  spec-status: [SPEC] — Desktop and Mobile only; Tablet not separately specified
+
+PURPOSE:
+  Layout adapts fluidly to viewport size while preserving column structure and
+  gutter consistency. Spec defines two grid configurations: Desktop (1440 or
+  1280 container) and Mobile (4-column or 2-column at 360px base).
+
+WHEN_TO_USE:
+  - Page-level layout structure.
+  - Multi-column content blocks.
+  - Aligning cards/sections to a shared rhythm.
+
+WHEN_NOT_TO_USE:
+  - Internal layout of small components (use flexbox + spacing tokens).
+  - Free-form marketing illustrations.
+
+TOKENS:
+
+  ── DESKTOP GRID
+  columns: 12
+  gutter:  20 px
+  margins: 0 px
+  container-max-width: 1440 px OR 1280 px (choose by content density)
+
+  ── MOBILE GRID (360px reference width)
+  Two configurations — choose by content type:
+
+  | type           | columns | gutter | margins | use-case                  |
+  |----------------|---------|--------|---------|---------------------------|
+  | categorical    | 4       | 16 px  | 20 px   | category lists, mixed UI  |
+  | card-layout    | 2       | 16 px  | 20 px   | card grids · max 2/row    |
+
+  ── CONTAINER STRATEGY (mandatory pattern for desktop)
+  Even when the design canvas is 1920px, implementation uses two zones:
+
+  Zone A — Width 100%:
+    Applies to full-bleed elements: GNB (global nav), Hero Banner, Footer.
+    Even if Figma shows a fixed 1920px width, code MUST use width: 100%.
+
+  Zone B — Max-Width Container (centered):
+    Applies to body content. Use max-width: 1440px OR 1280px (per project),
+    centered with margin: 0 auto, to prevent line-length readability loss
+    on ultra-wide screens.
+
+  Most page sections wrap their content in a Container that is itself
+  width: 100% with a max-width inside.
+
+  ── TABLET (md, 768–991)
+  [SPEC_GAP] PDF Grid spec does not separately define tablet grid. Treat as
+  cascade target: choose between Desktop 12-col (responsive down) or Mobile
+  4-col (responsive up) per content density. Fall back to design judgment.
+
+DEFAULTS:
+  desktop-container: max-width 1440 (or 1280 for narrower content)
+  mobile-grid: 4-column (use 2-column only for card-list patterns)
+
+DECISION_RULES:
+  IF target = desktop AND viewport >= lg
+    THEN 12 columns / 20 gutter / 0 margin / max-width 1440 or 1280.
+  IF element = full-bleed (GNB / Hero / Footer)
+    THEN width: 100%.
+  IF element = body-content section
+    THEN width: 100% wrapper + max-width container inside + margin: 0 auto.
+  IF target = mobile (xs/sm) AND content = card-list
+    THEN 2 columns · gutter 16 · margins 20 · MAX 2 cards per row.
+  IF target = mobile (xs/sm) AND content = mixed/categorical
+    THEN 4 columns · gutter 16 · margins 20.
+
+CONSTRAINTS:
+  HARD:
+    - [SPEC] Desktop container max-width is either 1440 or 1280 — no other.
+    - [SPEC] Mobile card layout is at most 2 cards per row.
+    - [SPEC] Full-bleed elements (GNB/Hero/Footer) implement as width: 100%
+      regardless of fixed width values shown in Figma.
+  SOFT:
+    - [SYNTHESIZED] Avoid spanning >8 of 12 columns for body text (line-length).
+
+DEPENDENCIES:
+  - BREAKPOINTS: Desktop grid applies at lg/xl/2xl (>=992px); Mobile applies
+    at xs/sm. md (768–991) is undefined in Grid spec — see SPEC_GAP above.
+  - SPACING: gutter values (16, 20) are drawn from spacing primitives.
+
+ANTI_PATTERNS:
+  - WRONG: Using fixed 1920px width in code because Figma shows 1920px.
+    REASON: Spec mandates Container pattern; full-bleed = 100%, body = max-width.
+    RIGHT:  Wrap body in `width: 100%; max-width: 1440px; margin: 0 auto`.
+  - WRONG: Three or more cards per row on mobile.
+    REASON: Spec caps at 2; readability and tap target degrade.
+    RIGHT:  Use 4-col layout for non-card content; 2-col strict for cards.
+  - WRONG: Inventing custom desktop max-width like 1320 or 1200.
+    REASON: Spec only allows 1440 or 1280.
+    RIGHT:  Choose 1440 (default) or 1280 (denser content).
+
+CODE_PATTERN:
+  /* Desktop — full-bleed header */
+  .gnb { width: 100%; }
+
+  /* Desktop — body content with container */
+  .section {
+    width: 100%;
+  }
+  .section > .container {
+    max-width: 1440px;       /* or 1280px */
+    margin: 0 auto;
+    /* internal grid */
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 20px;
+  }
+
+  /* Mobile — card layout (2-column) */
+  @media (max-width: 767px) {
+    .card-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      padding: 0 20px;
+    }
+  }
+
+================================================================================
+SECTION 04 · ICON
+================================================================================
+
+IDENTITY:
+  id: foundation/icon
+  order: 04/10
+  related: [color, typography]
+  spec-status: [SPEC] — fully grounded
+
+PURPOSE:
+  Icons share a consistent feel by drawing from a single library (Phosphor
+  Icons). Each icon has both an icon-size (visual extent) and a touch-area
+  (interactive hit-target) — minimums and defaults are fixed by spec.
+
+WHEN_TO_USE:
+  - Navigation items, action buttons, list affordances.
+  - Inline text accents (status, meta).
+  - SNS / social platform indicators (use color SNS icon set).
+
+WHEN_NOT_TO_USE:
+  - Brand logos (use logo asset, not icon).
+  - Photographic or filled illustrations.
+
+TOKENS:
+
+  ── SIZE (icon visual extent) AND TOUCH AREA (interactive hit target)
+  | dimension      | min  | default |
+  |----------------|------|---------|
+  | icon-size      | 16px | 24px    |
+  | touch-area     | 36px | 48px    |
+
+  Touch area is the SQUARE clickable region surrounding the icon — typically
+  larger than the icon itself. A 24px icon centered in a 48px touch target
+  has 12px padding on each side.
+
+  ── ICON LIBRARY [SPEC]
+  Primary library: Phosphor Icons
+    - Figma community: https://www.figma.com/community/file/1071678557813409125
+    - Browser: https://phosphoricons.com/?size=24&weight=bold&q=file
+  All UI icons MUST be drawn from Phosphor for visual consistency.
+
+  ── SNS COLOR ICONS [SPEC]
+  Separate set for social-platform brands. Use brand-colored marks (not
+  monochrome line icons) for: Google, KakaoTalk, Apple, Naver, Facebook.
+
+DEFAULTS:
+  icon-size: 24px
+  touch-area: 48px
+  library: Phosphor Icons
+  sns-icons: full color (brand-accurate)
+
+DECISION_RULES:
+  IF target = inline-with-body-text AND space-constrained
+    THEN icon-size = 16px (minimum) AND touch-area = 36px (minimum).
+  IF target = nav / action-button / standard UI
+    THEN icon-size = 24px AND touch-area = 48px (defaults).
+  IF target = SNS / social-platform
+    THEN use SNS color icon set, NOT Phosphor mono icon.
+  IF target = decorative / illustrative emphasis
+    THEN icon-size MAY exceed 24px; touch-area still required for interactives.
+
+CONSTRAINTS:
+  HARD:
+    - [SPEC] Minimum icon size is 16px. Smaller renders are forbidden.
+    - [SPEC] Minimum touch area is 36px. Smaller hit targets are forbidden.
+    - [SPEC] UI icons come from Phosphor Icons. Mixing libraries is forbidden.
+    - [SPEC] SNS icons use brand colors; do NOT recolor them.
+  SOFT:
+    - [SYNTHESIZED] Pair 16px icon with 36px touch; pair 24px with 48px.
+
+DEPENDENCIES:
+  - COLOR: Phosphor icons render in currentColor (or assigned text color),
+    inheriting from the parent element's color token.
+  - TYPOGRAPHY: 16px icon pairs naturally with Body / BodySm; 24px pairs with
+    Title or H4-H5.
+
+ANTI_PATTERNS:
+  - WRONG: Using a 12px icon for a dense table.
+    REASON: Below 16px minimum; legibility and accessibility fail.
+    RIGHT:  Stick to 16px minimum even in dense layouts.
+  - WRONG: A 24px icon with no surrounding padding (24px hit target).
+    REASON: Below 36px minimum; tap targets fail on mobile.
+    RIGHT:  Wrap icon in 48px touch area: `padding: 12px;`
+  - WRONG: Mixing Material Icons or Heroicons with Phosphor.
+    REASON: Spec mandates Phosphor as the single library.
+    RIGHT:  All UI icons sourced from Phosphor.
+  - WRONG: Recoloring SNS icons to monochrome to match theme.
+    REASON: Spec keeps SNS icons in brand color for recognizability.
+    RIGHT:  Preserve original brand colors of SNS icons.
+
+CODE_PATTERN:
+  <!-- Standard UI icon: 24px icon, 48px touch area -->
+  <button style="width: 48px; height: 48px; display: grid; place-items: center;">
+    <svg width="24" height="24"><!-- Phosphor icon --></svg>
+  </button>
+
+  <!-- Inline minimum: 16px icon, 36px touch area -->
+  <button style="width: 36px; height: 36px; display: grid; place-items: center;">
+    <svg width="16" height="16"><!-- Phosphor icon --></svg>
+  </button>
+
+================================================================================
+SECTION 05 · MOTION
+================================================================================
+
+IDENTITY:
+  id: foundation/motion
+  order: 05/10
+  related: [state]
+  spec-status: [SPEC] — fully grounded
+
+PURPOSE:
+  Motion expresses information flow, hierarchy, and transition context.
+  Spec defines five primitive properties: Duration, Easing, Scale, Slide, Fade.
+  These compose to form any UI animation in the system.
+
+WHEN_TO_USE:
+  - State transitions (hover, press, focus).
+  - Layer entry/exit (modal, drawer, popover, dropdown).
+  - Page transitions, route changes.
+  - Loading affordances (sparingly).
+
+WHEN_NOT_TO_USE:
+  - Decorative motion that doesn't communicate state change.
+
+TOKENS:
+
+  ── DURATION [SPEC]
+  | key    | time   | description                                          |
+  |--------|--------|------------------------------------------------------|
+  | Fast   | 150ms  | Hover, Pressed, tooltip — instant feedback           |
+  | Normal | 250ms  | Modal open, tab switch — typical UI movement         |
+  | Slow   | 400ms  | Bottom sheet rise, full-page transition — large move |
+
+  ── EASING [SPEC]
+  | key            | description                                               |
+  |----------------|-----------------------------------------------------------|
+  | Linear         | Constant rate, no acceleration                            |
+  | Ease-out       | Fast start, soft stop — used heavily for ENTRY            |
+  | Ease-in        | Slow start, accelerating — used for EXIT (off-screen)     |
+  | Ease-in-out    | Slow→fast→slow — switches/toggles, lateral motion         |
+
+  [IMPLEMENTATION_ONLY] tokens.css cubic-bezier values:
+    --easeLinear:  cubic-bezier(0, 0, 1, 1)
+    --easeOut:     cubic-bezier(0.2, 0.8, 0.2, 1)
+    --easeIn:      cubic-bezier(0.4, 0, 1, 1)
+    --easeInOut:   cubic-bezier(0.4, 0, 0.2, 1)
+
+  ── SCALE [SPEC]
+  Resize an element — center-anchored unless otherwise noted. Notation: percent
+  expressed as decimal (140% → 1.4).
+  | key        | description                                                   |
+  |------------|---------------------------------------------------------------|
+  | Scale-Up   | Grows beyond original — modal pop-in, hover lift              |
+  | Scale-Down | Shrinks below original — press effect, dismissal              |
+
+  Spec example: 50→80px = 1.6 scale-up · 80→48px = 0.6 scale-down.
+
+  ── SLIDE [SPEC]
+  Translate position. Notation: distance in px or %, e.g. "Slide-Up 20px".
+  | key         | description                                  |
+  |-------------|----------------------------------------------|
+  | Slide-Up    | Moves from below upward                      |
+  | Slide-Down  | Moves from above downward                    |
+  | Slide-Left  | Moves from right to left                     |
+  | Slide-Right | Moves from left to right                     |
+
+  ── FADE [SPEC]
+  Animate opacity. Notation: percent as decimal (40% → 0.4).
+  | key      | description       |
+  |----------|-------------------|
+  | Fade-In  | 0% → 100%         |
+  | Fade-Out | 100% → 0%         |
+
+DEFAULTS:
+  duration-for-state-change: Normal (250ms)
+  duration-for-feedback: Fast (150ms)
+  duration-for-page/modal: Slow (400ms)
+  easing-for-entry: Ease-out
+  easing-for-exit: Ease-in
+  easing-for-bidirectional: Ease-in-out
+
+DECISION_RULES:
+  IF interaction = hover / press / tooltip
+    THEN Duration=Fast (150ms) + Easing=Ease-out.
+  IF interaction = modal-open / tab-switch / popover
+    THEN Duration=Normal (250ms) + Easing=Ease-out.
+  IF interaction = modal-close / element-exit
+    THEN Duration=Normal-or-Slow + Easing=Ease-in.
+  IF interaction = bottom-sheet / page-transition
+    THEN Duration=Slow (400ms) + Easing=Ease-out (in) / Ease-in (out).
+  IF interaction = toggle / switch / lateral-motion
+    THEN Easing=Ease-in-out.
+  IF interaction = progress-indicator
+    THEN Easing=Linear.
+  IF need-element-emphasis-on-appear
+    THEN Scale-Up (e.g. 1.0 → 1.04) + Fade-In + Ease-out.
+  IF need-element-de-emphasis-on-press
+    THEN Scale-Down (e.g. 1.0 → 0.96) + Ease-out.
+  IF need-element-rise-from-bottom
+    THEN Slide-Up (e.g. 20px) + Fade-In.
+
+CONSTRAINTS:
+  HARD:
+    - [SPEC] Avoid durations of 500ms or more. Users perceive sluggishness.
+  SOFT:
+    - [SYNTHESIZED] Maximum 2-3 simultaneous motions per screen.
+
+DEPENDENCIES:
+  - STATE: state transitions consume Duration=Fast for hover/press.
+  - COLOR: theme switch may animate background/color over Duration=Normal.
+
+ANTI_PATTERNS:
+  - WRONG: `transition: all 800ms ease;` for a hover.
+    REASON: Above 500ms cap; feels sluggish.
+    RIGHT:  150ms (Fast) + Ease-out for hover.
+  - WRONG: Ease-in for entry animations.
+    REASON: Slow start = element appears reluctantly.
+    RIGHT:  Ease-out for entry, Ease-in for exit.
+  - WRONG: Bottom-anchored Scale-Up for a top dropdown.
+    REASON: Default anchor is center; off-anchor needs explicit declaration.
+    RIGHT:  Note transform-origin explicitly when off-center.
+
+CODE_PATTERN:
+  /* Duration tokens (from tokens.css) */
+  .surface       { transition: all var(--durNormal) var(--easeOut); }
+  .button:hover  { transition: all var(--durFast)   var(--easeOut); }
+
+  /* Modal entry: Slide-Up + Fade-In + Slow duration */
+  @keyframes modal-enter {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .modal { animation: modal-enter 400ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+  /* Press effect: Scale-Down */
+  .button:active { transform: scale(0.96); transition: transform 150ms; }
+
+================================================================================
+SECTION 06 · NAMING
+================================================================================
+
+IDENTITY:
+  id: foundation/naming
+  order: 06/10
+  related: [ALL — naming applies system-wide]
+  spec-status: [SPEC] — fully grounded
+
+PURPOSE:
+  Naming conventions for design tokens, components, and asset files. Two
+  primary patterns: tokens use camelCase with Concept+Variant+State ordering;
+  components use PascalCase with Context+Element ordering.
+
+WHEN_TO_USE:
+  - Creating any new token, component, or asset.
+  - Reviewing PRs, Figma libraries, file uploads for compliance.
+
+WHEN_NOT_TO_USE:
+  - Internal local variables inside a single function (any name OK).
+  - Third-party imports (preserve original names).
+
+TOKENS:
+
+  ── PATTERN A · DESIGN TOKENS [SPEC]
+  Case: camelCase (lowercase-first, no spaces, capitalize subsequent words)
+  Order: Concept (역할/요소) + Variant (속성/변형) + State
+
+  Examples from spec:
+    backgroundDark        — Concept(background) + Variant(Dark)
+    primaryBg             — Concept(primary) + Variant(Bg)
+    bodyLgBold            — Concept(body) + Variant(Lg) + State(Bold)
+
+  Unnecessary segments may be omitted.
+
+  ── PATTERN B · COMPONENTS [SPEC]
+  Case: PascalCase (each word capitalized, no separators)
+  Order: Context (맥락/위치) + Element (UI 종류)
+  IMPORTANT: NO slash separators. NO size/state suffixes glued with slashes.
+             It is a single PascalCase identifier.
+
+  Examples from spec:
+    ContactCard           — Context(Contact) + Element(Card)
+    MyPageList            — Context(MyPage) + Element(List)
+    ProgressBar           — Context(Progress) + Element(Bar)
+    PageTitle             — Context(Page) + Element(Title)
+
+  Auto-generated Figma names like `Component 1` or `Frame 4879542` MUST be
+  renamed to a meaningful identifier per the pattern above.
+
+  ── PATTERN C · IMAGE/ICON ASSET FILES [SPEC]
+  Case: snake_case OR kebab-case — choose one per project, lowercase only.
+  Reason: uppercase letters in image filenames cause errors in many pipelines.
+
+  Examples from spec:
+    ic_search_24.png      — snake_case
+    ic-search-24.png      — kebab-case
+
+  ── CATEGORY-SPECIFIC SETUP RULES [SPEC]
+  Color variables:
+    - Define inside the "Devup colors" folder.
+    - Light value AND Dark value MUST be entered together when defining.
+  Typography:
+    - Responsive by default (use Breakpoint-folder pattern from Section 01).
+    - Exception: native app contexts may use static (non-responsive) values.
+  Spacing / Style primitives:
+    - Inside "Primitive" collection.
+    - Use 4-multiples for spacing00 / radius00 forms.
+  Spacing / Style responsive variants:
+    - Inside "Semantic" collection.
+    - Either set Variable Modes, OR organize via 0~5 folders sharing names.
+
+DEFAULTS:
+  token-case: camelCase
+  component-case: PascalCase (single word, no separators)
+  asset-case: snake_case OR kebab-case (project chooses one and stays consistent)
+
+DECISION_RULES:
+  IF naming-token         THEN camelCase, Concept + Variant + State order.
+  IF naming-component     THEN PascalCase, Context + Element, no separators.
+  IF naming-asset-file    THEN snake_case or kebab-case, all lowercase.
+  IF defining-color       THEN add BOTH Light and Dark values at creation time.
+  IF defining-typography  THEN responsive (unless native-app context).
+  IF defining-spacing/style-primitive THEN multiple of 4.
+
+CONSTRAINTS:
+  HARD:
+    - [SPEC] Tokens MUST be camelCase. No kebab-case, no snake_case, no PascalCase.
+    - [SPEC] Components MUST be PascalCase as a single identifier. No slashes.
+    - [SPEC] Asset filenames MUST be lowercase. Uppercase causes errors.
+    - [SPEC] Auto-generated Figma names ("Component 1", "Frame 4879542") MUST
+      be replaced with meaningful Context+Element names.
+    - [SPEC] Color variables MUST have Light AND Dark values entered together.
+  SOFT:
+    - [SYNTHESIZED] Avoid abbreviations (btn, clr, bgM) — write full words.
+    - [SYNTHESIZED] Prefer numeric scales when value is informative
+      (spacing16 > spaceMedium).
+
+DEPENDENCIES:
+  - This section governs identifier choice across every other section.
+
+ANTI_PATTERNS:
+  - WRONG: Component named `Button/Primary/MD` with slashes.
+    REASON: Spec component pattern is single PascalCase, NOT Figma-slash form.
+    RIGHT:  `PrimaryButton` or `LargeButton` — Context+Element single word.
+            (Variants/sizes belong as Figma Variants properties, not in name.)
+  - WRONG: Component named `btn-prim-md`.
+    REASON: kebab-case, abbreviated, mixes case rules.
+    RIGHT:  `PrimaryButton` (PascalCase, full words).
+  - WRONG: Asset file `Hero_Banner.PNG`.
+    REASON: Uppercase in filename causes pipeline errors.
+    RIGHT:  `hero_banner.png` (snake_case + lowercase).
+  - WRONG: `Component 1` left in Figma.
+    REASON: Auto-generated; spec explicitly bans these.
+    RIGHT:  Rename to meaningful `LoginForm`, `HeaderNav`, etc.
+  - WRONG: Defining `--primaryBase: #5E50FF` for Light only and adding Dark later.
+    REASON: Spec mandates Light AND Dark together.
+    RIGHT:  Define both modes at the same moment of creation.
+
+CODE_PATTERN:
+  /* Token (camelCase) */
+  --primaryBase: var(--violet500);
+  --backgroundDark: ...;
+  --bodyLgBold: ...;
+
+  /* Component (PascalCase, single word) */
+  // ContactCard.tsx
+  // ProgressBar.tsx
+  // PageTitle.tsx
+
+  /* Asset (lowercase) */
+  // ic_search_24.png
+  // ic-arrow-right.svg
+
+================================================================================
+SECTION 07 · STYLE
+================================================================================
+
+IDENTITY:
+  id: foundation/style
+  order: 07/10
+  related: [color, state]
+  spec-status: [SPEC] — Radius, Shadow, Dimmed, Opacity all defined
+
+PURPOSE:
+  Surface-attribute tokens that govern corner roundness (Radius), elevation
+  feel (Shadow), modal-overlay backdrops (Dimmed), and transparency steps
+  (Opacity). Combined, they give surfaces material and spatial character.
+
+WHEN_TO_USE:
+  - Defining card/surface/container appearance (Radius, Shadow).
+  - Establishing visual hierarchy through elevation (Shadow).
+  - Modal/dialog backdrop overlay (Dimmed).
+  - Disabled or de-emphasized states (Opacity).
+
+WHEN_NOT_TO_USE:
+  - Inline text decoration.
+  - Color of surfaces (use Color section).
+
+TOKENS:
+
+  ── RADIUS [SPEC] — 7 levels
+  | key  | px         | description                              |
+  |------|------------|------------------------------------------|
+  | base | 0 px       | sharp edge — technical / data tables     |
+  | xs   | 4 px       | small chips, tags                        |
+  | sm   | 8 px       | buttons, inputs, small surfaces          |
+  | md   | 16 px      | default cards, modals, sections          |
+  | lg   | 24 px      | large cards, feature blocks              |
+  | xl   | 32 px      | hero surfaces                            |
+  | max  | 999 px or 50% | pill / circle (avatars, fully-rounded)|
+
+  Like Spacing, Radius supports responsive Semantic registration if needed.
+
+  ── SHADOW [SPEC] — 6 elevation levels
+  | key  | role                                                       |
+  |------|------------------------------------------------------------|
+  | base | flat — no shadow                                           |
+  | xs   | subtle separation                                          |
+  | sm   | typical card                                               |
+  | md   | elevated surface (dropdown, popover)                       |
+  | lg   | high elevation (modal)                                     |
+  | xl   | top elevation (drawer, sheet)                              |
+
+  [IMPLEMENTATION_ONLY] tokens.css values:
+    --shadowXs: 0 1px 2px rgba(15,23,42,0.06)
+    --shadowSm: 0 2px 6px rgba(15,23,42,0.08)
+    --shadowMd: 0 6px 16px rgba(15,23,42,0.10)
+    --shadowLg: 0 12px 28px rgba(15,23,42,0.14)
+    --shadowXl: 0 24px 48px rgba(15,23,42,0.18)
+    --shadowFocus: 0 0 0 3px rgba(94,80,255,0.28)  [IMPLEMENTATION_ONLY]
+    --cardShadow: composite token used by .card class [IMPLEMENTATION_ONLY]
+
+  Note: shadowFocus and cardShadow are implementation conveniences not
+  in the spec's 6-level scale. Use them per tokens.css if relying on those
+  classes; otherwise specify shadowSm/Md/Lg directly.
+
+  ── DIMMED [SPEC] — 3 opacity levels × 2 types
+  Used for: behind-modal overlays preventing interaction with background.
+
+  Normal Type (no blur):
+  | token         | color           | opacity |
+  |---------------|-----------------|---------|
+  | DimmedDark    | #000000         | 80%     |
+  | DimmedNormal  | #000000         | 50%     |
+  | DimmedLight   | #000000         | 30%     |
+
+  Blur Type (same opacities + 12px blur):
+  | token         | color           | opacity | blur  |
+  |---------------|-----------------|---------|-------|
+  | DimmedDark    | #000000         | 80%     | 12px  |
+  | DimmedNormal  | #000000         | 50%     | 12px  |
+  | DimmedLight   | #000000         | 30%     | 12px  |
+
+  ── OPACITY [SPEC] — 11 steps
+  | key  | value | use                                              |
+  |------|-------|--------------------------------------------------|
+  | base | 100%  | fully opaque (default)                           |
+  | 90   | 90%   | very subtle de-emphasis                          |
+  | 80   | 80%   | mild de-emphasis                                 |
+  | 70   | 70%   | hover ghosting                                   |
+  | 60   | 60%   | secondary de-emphasis                            |
+  | 50   | 50%   | half-transparent (overlays)                      |
+  | 40   | 40%   | strong de-emphasis                               |
+  | 30   | 30%   | near-faded                                       |
+  | 20   | 20%   | very faded (placeholders)                        |
+  | 10   | 10%   | barely visible                                   |
+  | 0    | 0%    | invisible (animation start/end)                  |
+
+DEFAULTS:
+  card-radius: md (16px)
+  button-radius: sm (8px)  [SYNTHESIZED — spec doesn't bind buttons specifically]
+  card-elevation: sm
+  modal-overlay: DimmedNormal (Normal Type) or DimmedNormal (Blur) per project
+
+DECISION_RULES:
+  IF surface = card / section / modal       THEN radius=md (16).
+  IF surface = button / input / chip        THEN radius=sm (8) [SYNTHESIZED].
+  IF surface = avatar / circle              THEN radius=max.
+  IF surface = data-table / technical-grid  THEN radius=base (0).
+
+  IF elevation-role = base-card             THEN shadow=sm.
+  IF elevation-role = popover / dropdown    THEN shadow=md.
+  IF elevation-role = modal                 THEN shadow=lg.
+  IF elevation-role = drawer / sheet        THEN shadow=xl.
+
+  IF modal-shown                            THEN apply Dimmed overlay behind it.
+  IF modal-style = standard                 THEN DimmedDark / Normal / Light per
+                                              attention level.
+  IF modal-style = focus-content            THEN Blur type for stronger isolation.
+
+CONSTRAINTS:
+  HARD:
+    - [SPEC] Use the defined Radius / Shadow / Dimmed / Opacity values; don't
+      invent intermediate values.
+    - [SYNTHESIZED] At most 3 elevation levels visible per screen.
+  SOFT:
+    - [SYNTHESIZED] Pill (radius max) is for fully circular shapes — avoid on
+      wide rectangles unless intentionally stadium-shaped.
+
+DEPENDENCIES:
+  - COLOR: Dimmed overlays sit on top of any color surface; their black-with-
+    opacity values are independent of theme.
+  - STATE: opacity steps may be used for some state visualizations
+    (e.g. tooltip enter via opacity 0→100).
+
+ANTI_PATTERNS:
+  - WRONG: Custom `box-shadow: 0 4px 8px rgba(0,0,0,0.1)` per component.
+    REASON: Drifts from the 6-level spec; depth perception breaks.
+    RIGHT:  Use one of base/xs/sm/md/lg/xl.
+  - WRONG: Modal with no Dimmed overlay.
+    REASON: Background remains interactive and visually competes.
+    RIGHT:  Apply DimmedNormal (or DimmedDark for high-attention modals).
+  - WRONG: Using opacity to indicate disabled state.
+    REASON: Disabled has dedicated tokens (Color section); opacity is for
+            transparency stepping, not state semantics.
+    RIGHT:  Use disabledBg / disabledContent / disabledBorder.
+
+CODE_PATTERN:
+  /* Card */
+  .card {
+    border-radius: 16px;        /* radius md */
+    box-shadow: 0 2px 6px rgba(15,23,42,0.08);  /* shadow sm */
+  }
+
+  /* Modal with Dimmed Normal overlay */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.50);   /* DimmedNormal */
+  }
+  .modal-backdrop.is-blur {
+    backdrop-filter: blur(12px);       /* Blur Type */
+  }
+
+  /* Pill avatar */
+  .avatar { border-radius: 9999px; }   /* radius max */
+
+================================================================================
+SECTION 08 · SPACING
+================================================================================
+
+IDENTITY:
+  id: foundation/spacing
+  order: 08/10
+  related: [grid, breakpoints, naming]
+  spec-status: [SPEC] — fully grounded
+
+PURPOSE:
+  14 primitive spacing values on a 4px rhythm cover all gap/padding/margin
+  needs. Semantic spacing aliases are NOT pre-defined system-wide — they are
+  created on-demand per project when a responsive padding pattern recurs.
+
+WHEN_TO_USE:
+  - gap, padding, margin on any layout or component.
+  - Authoring Figma frame auto-layout values.
+
+WHEN_NOT_TO_USE:
+  - Border widths.
+  - Border-radius (use Style/Radius).
+  - Stroke widths in icons.
+
+TOKENS:
+  | token      | px   | suggested-use (general)                       |
+  |------------|------|-----------------------------------------------|
+  | spacing02  | 2    | hairline gap                                  |
+  | spacing04  | 4    | tight inline icon gap                         |
+  | spacing06  | 6    | dense control padding                         |
+  | spacing08  | 8    | tight inline gap, button inner gap            |
+  | spacing12  | 12   | input padding, list item gap                  |
+  | spacing16  | 16   | body rhythm, card padding-inner               |
+  | spacing20  | 20   | container padding-X on mobile (per spec)      |
+  | spacing24  | 24   | card padding (default), section row gap       |
+  | spacing32  | 32   | card padding (large), block gap               |
+  | spacing40  | 40   | container padding-X on tablet (per spec)      |
+  | spacing48  | 48   | section vertical rhythm                       |
+  | spacing64  | 64   | page section divider                          |
+  | spacing80  | 80   | large section gap                             |
+  | spacing120 | 120  | hero / page-level breathing room              |
+
+  ── SEMANTIC SPACING [SPEC]
+  Pattern: <target/element> + <spacing-property (X, Y, etc.)>
+  Spec example:
+    containerX:
+      Mobile  = 20px (spacing20)
+      Tablet  = 40px (spacing40)
+  Such variables are created ONLY when the pattern recurs at multiple
+  breakpoints. There is no fixed library of Semantic spacing variables.
+
+DEFAULTS:
+  body-rhythm: spacing16
+  card-padding: spacing24
+  section-rhythm: spacing48
+  inline-icon-text-gap: spacing08
+
+DECISION_RULES:
+  IF need-spacing-not-in-set
+    THEN ROUND to nearest 4-multiple from the set. Do NOT introduce new value.
+  IF need-responsive-padding
+    THEN create a Semantic alias following the pattern above.
+  IF gap-feels-too-tight-at-N
+    THEN step UP one (spacing16 → spacing24).
+  IF gap-feels-too-loose-at-N
+    THEN step DOWN one.
+
+CONSTRAINTS:
+  HARD:
+    - [SPEC] Spacing primitives MUST be 4-multiples.
+    - [SYNTHESIZED] Avoid raw px in code; reference a token.
+  SOFT:
+    - [SPEC] Don't enforce a global Semantic spacing system; create per-context
+      aliases only when reuse demands it.
+
+DEPENDENCIES:
+  - BREAKPOINTS: Semantic spacing variables hold per-key primitive references.
+  - GRID: gutter values (16, 20) come from this set.
+
+ANTI_PATTERNS:
+  - WRONG: `padding: 18px` (off-rhythm).
+    REASON: Breaks 4-multiple rhythm.
+    RIGHT:  `padding: var(--spacing16)` or `--spacing20`.
+  - WRONG: `--paddingMedium` Semantic name.
+    REASON: Loses the actual value; conflates concept with use-context.
+    RIGHT:  Either spacing16 (primitive) OR `containerX` (target+property).
+
+CODE_PATTERN:
+  /* Responsive container padding via Semantic alias */
+  --containerX-mobile: var(--spacing20);  /*  20px */
+  --containerX-tablet: var(--spacing40);  /*  40px */
+
+  .card { padding: var(--spacing24); gap: var(--spacing16); }
+
+================================================================================
+SECTION 09 · STATE
+================================================================================
+
+IDENTITY:
+  id: foundation/state
+  order: 09/10
+  related: [color, motion, style]
+  spec-status: [SPEC] — 7 states fully defined
+
+PURPOSE:
+  Define how interactive elements signal interactivity and feedback through
+  visual differences from the default (resting) baseline. Spec defines 7
+  states; default is the comparison baseline rather than a 7th state.
+
+WHEN_TO_USE:
+  - Any clickable, hoverable, focusable element (button, link, input, card).
+  - Form fields, toggles, menu items, list rows.
+  - Any element that performs async work (Loading).
+  - Any input that may render in non-editable form (Read-only).
+
+WHEN_NOT_TO_USE:
+  - Pure decorative elements with no interaction.
+  - Static text content.
+
+TOKENS:
+
+  ── 7 STATES [SPEC]
+  | state     | trigger                                  | applies to             |
+  |-----------|------------------------------------------|------------------------|
+  | Hover     | mouse over element                       | any interactive        |
+  | Pressed   | mouse-down / actively clicking           | any interactive        |
+  | Selected  | element chosen/activated after press     | tabs, toggles, options |
+  | Focus     | keyboard navigation (Tab) lands on it    | any focusable          |
+  | Disabled  | element is non-interactive               | any interactive        |
+  | Loading   | server communication / async in progress | buttons, forms         |
+  | Read-only | Input ONLY — viewable + selectable but   | text inputs            |
+  |           | not editable                             |                        |
+
+  Default is the resting comparison baseline, NOT a 7th distinct state.
+  Spec convention: write activated/normal as `default` and inactive as
+  `disabled` to clarify polarity.
+
+  ── STATE SEMANTICS [SPEC]
+  Hover:    visual feedback that the element is interactive.
+  Pressed:  visual feedback that the element is being clicked right now.
+  Selected: persistent indication that the element is currently chosen/active
+            (e.g. active tab, on-toggle).
+  Focus:    accessibility-critical — keyboard focus must remain visibly clear.
+  Disabled: not interactive; activation conditions not met.
+  Loading:  async work in flight. CRITICAL RULE: a Loading button MUST be
+            simultaneously disabled to prevent double-submission.
+  Read-only: text in an Input is selectable / focusable / draggable but the
+            content cannot be edited.
+
+  ── COMPONENT STATE PATTERNS [SYNTHESIZED — pattern guide for agents]
+
+  Primary Button (background-driven):
+    Default:  bg=primaryBase    fg=#fff
+    Hover:    bg=primaryHover   fg=#fff
+    Pressed:  bg=primaryPressed fg=#fff   transform=Scale-Down (~0.96)
+    Selected: bg=primaryPressed fg=#fff   (persistent — only if used as toggle)
+    Focus:    bg=primaryBase    fg=#fff   focus-ring (e.g. 3px primary @ 28% alpha)
+    Disabled: bg=disabledBg     fg=disabledContent  cursor=not-allowed
+    Loading:  bg=primaryBase    fg=#fff   spinner-icon  ALSO disabled
+
+  Ghost Button (border + transparent):
+    Default:  bg=transparent    fg=primaryBase   border=1px primaryBase
+    Hover:    bg=primaryBg      fg=primaryBase   border=1px primaryBase
+    Pressed:  bg=primaryBgHover fg=primaryBase   border=1px primaryBase
+    Selected: bg=primaryBg      fg=primaryBase   border=1px primaryBase (persistent)
+    Focus:    bg=transparent    fg=primaryBase   focus-ring
+    Disabled: bg=transparent    fg=disabledContent  border=1px disabledBorder
+              [SYNTHESIZED EXCEPTION: Ghost preserves transparent bg even
+              when disabled; uses disabledContent + disabledBorder only.]
+    Loading:  bg=transparent    fg=primaryBase   spinner  ALSO disabled
+
+  Text Input:
+    Default:   border=1px border    bg=containerBg
+    Hover:     border=1px coolGray400
+    Focus:     border=1px primaryBase   focus-ring   outline=none
+    Disabled:  bg=disabledBg        fg=disabledContent  cursor=not-allowed
+    Read-only: bg=containerBg       fg=text            cursor=text  readonly attr
+
+DEFAULTS:
+  transition-duration: Fast (150ms)
+  transition-easing: Ease-out
+
+DECISION_RULES:
+  IF element = primary-action          THEN apply 7 states per Primary Button pattern.
+  IF element = secondary-action        THEN apply 7 states per Ghost Button pattern.
+  IF element = form-field              THEN apply per Text Input pattern (incl. Read-only).
+  IF element = toggle-or-tab           THEN MUST define Selected state.
+  IF element = async-action-button     THEN MUST define Loading state with disabled.
+  IF user-uses-keyboard-only           THEN Focus state MUST be visually distinct.
+  IF element-is-disabled               THEN suppress Hover/Pressed/Selected/Focus visuals.
+  IF input-is-read-only                THEN content selectable but NOT editable.
+
+CONSTRAINTS:
+  HARD:
+    - [SPEC] Loading on a button MUST be paired with disabled to prevent
+      duplicate clicks.
+    - [SPEC] Read-only is Input-only — do NOT generalize it to non-input
+      components.
+    - [SYNTHESIZED] Focus state MUST be visually distinct from Hover; don't
+      hide focus rings without replacement.
+  SOFT:
+    - [SPEC] Default ↔ Disabled is the polarity convention; use those exact
+      labels when documenting.
+
+DEPENDENCIES:
+  - COLOR: Hover/Pressed pull primaryHover/primaryPressed; Disabled pulls
+    disabled* tokens.
+  - MOTION: state transitions use Duration=Fast + Easing=Ease-out by default.
+  - STYLE: Focus uses a focus-ring (implementation typically shadowFocus).
+
+ANTI_PATTERNS:
+  - WRONG: Submit button stays clickable while a request is in flight.
+    REASON: Spec mandates Loading + Disabled together.
+    RIGHT:  Set both states simultaneously when async begins.
+  - WRONG: Tab component without a Selected state.
+    REASON: User loses persistent indication of which tab is active.
+    RIGHT:  Define and apply Selected styling on the active tab.
+  - WRONG: Treating Read-only as just "lighter Disabled."
+    REASON: Spec distinguishes them — Read-only allows selection/focus,
+            Disabled does not.
+    RIGHT:  Use HTML `readonly` attribute (not `disabled`) for Read-only inputs.
+  - WRONG: `outline: none` on focus with no replacement.
+    REASON: Keyboard users lose all affordance; accessibility failure.
+    RIGHT:  `outline: none; box-shadow: <focus-ring-token>;`
+
+CODE_PATTERN:
+  /* 7-state primary button */
+  .btn-primary { background: var(--primaryBase); color: #fff;
+                 transition: all 150ms cubic-bezier(0.2,0.8,0.2,1); }
+  .btn-primary:hover                        { background: var(--primaryHover); }
+  .btn-primary:active                       { background: var(--primaryPressed);
+                                              transform: scale(0.96); }
+  .btn-primary[aria-pressed="true"]         { background: var(--primaryPressed); } /* Selected */
+  .btn-primary:focus-visible                { box-shadow: var(--shadowFocus); outline: none; }
+  .btn-primary:disabled                     { background: var(--disabledBg);
+                                              color: var(--disabledContent);
+                                              cursor: not-allowed; }
+  .btn-primary[data-loading="true"]         { /* show spinner; also set disabled */ }
+
+  /* Read-only input */
+  <input type="text" value="locked" readonly />
+  /* Different from: <input type="text" disabled /> */
+
+================================================================================
+SECTION 10 · TYPOGRAPHY
+================================================================================
+
+IDENTITY:
+  id: foundation/typography
+  order: 10/10
+  related: [breakpoints, color, naming]
+  spec-status: [SPEC] — fully grounded
+
+PURPOSE:
+  Single font family with a 14-step scale that exists in Desktop and Mobile
+  variants. Hierarchy is expressed via weight and size, with letter-spacing
+  and line-height pre-tuned per row.
+
+WHEN_TO_USE:
+  - Any text node in product UI.
+
+WHEN_NOT_TO_USE:
+  - Logo wordmarks (use brand asset).
+  - Decorative posters needing a custom face.
+
+TOKENS:
+
+  ── FAMILIES [IMPLEMENTATION_ONLY for the literal family name]
+  Spec previews use a single Latin+Korean family. tokens.css implements:
+    fontSans: "SUIT Variable", "SUIT", "Pretendard Variable", "Pretendard",
+              -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+              "Segoe UI", Roboto, sans-serif
+    fontMono: "JetBrains Mono", Menlo, Consolas, ui-monospace, monospace
+
+  ── WEIGHTS [SPEC]
+  The scale uses these weights only:
+    Regular   400
+    Medium    500
+    Bold      700
+    ExtraBold 800
+
+  ── SCALE — DESKTOP [SPEC] (apply at lg/xl/2xl, viewport >= 992px)
+  | name      | weight       | px  | line-height | letter-spacing |
+  |-----------|--------------|-----|-------------|----------------|
+  | Display   | ExtraBold 800| 64  | 130%        | -2%            |
+  | DisplaySm | ExtraBold 800| 48  | 130%        | -2%            |
+  | H1        | ExtraBold 800| 40  | 130%        | -1%            |
+  | H2        | ExtraBold 800| 36  | 130%        | -1%            |
+  | H3        | ExtraBold 800| 32  | 130%        | -1%            |
+  | H4        | ExtraBold 800| 28  | 140%        | -1%            |
+  | H5        | ExtraBold 800| 24  | 140%        | -1%            |
+  | Title     | Bold     700 | 20  | 140%        | -2%            |
+  | TitleSm   | Bold     700 | 18  | 140%        | -1%            |
+  | BodyLg    | Regular  400 | 18  | 160%        | -2%            |
+  | Body      | Regular  400 | 16  | 160%        | -2%            |
+  | BodySm    | Regular  400 | 15  | 160%        | -2%            |
+  | Caption   | Medium   500 | 14  | 150%        | -1%            |
+  | Tiny      | Medium   500 | 12  | 150%        | -1%            |
+
+  ── SCALE — MOBILE [SPEC] (apply at xs/sm/md, viewport < 992px)
+  | name      | weight       | px  | line-height | letter-spacing |
+  |-----------|--------------|-----|-------------|----------------|
+  | Display   | ExtraBold 800| 36  | 130%        | -2%            |
+  | DisplaySm | ExtraBold 800| 32  | 130%        | -2%            |
+  | H1        | ExtraBold 800| 28  | 140%        | -1%            |
+  | H2        | ExtraBold 800| 24  | 140%        | -1%            |
+  | H3        | ExtraBold 800| 22  | 140%        | -1%            |
+  | H4        | ExtraBold 800| 20  | 140%        | -1%            |
+  | H5        | ExtraBold 800| 18  | 140%        | -1%            |
+  | Title     | Bold     700 | 17  | 140%        | -2%            |
+  | TitleSm   | Bold     700 | 16  | 140%        | -1%            |
+  | BodyLg    | Medium   500 | 16  | 150%        | -2%            |
+  | Body      | Medium   500 | 15  | 150%        | -2%            |
+  | BodySm    | Medium   500 | 14  | 150%        | -2%            |
+  | Caption   | Regular  400 | 13  | 150%        | -1%            |
+  | Tiny      | Medium   500 | 12  | 150%        | -1%            |
+
+  Note: BodyLg / Body / BodySm shift from Regular 400 (Desktop) to Medium 500
+  (Mobile) — this is intentional for small-screen readability. Caption is the
+  exception: Mobile Caption stays Regular 400.
+
+DEFAULTS:
+  body-text: Body (Desktop 16/Mobile 15)
+  page-h1: H1 (Desktop 40 / Mobile 28)
+  meta-text: Caption
+  responsive: yes (per spec) unless native-app context
+
+DECISION_RULES:
+  IF role = page-headline-hero        THEN Display.
+  IF role = section-heading-level-N   THEN H{N}.
+  IF role = card-title                THEN Title or TitleSm.
+  IF role = paragraph                 THEN Body (BodyLg for emphasis, BodySm for dense).
+  IF role = label / meta / timestamp  THEN Caption or Tiny.
+  IF showing-code-or-token-name       THEN fontMono family.
+  IF viewport >= 992px                THEN Desktop scale.
+  IF viewport <  992px                THEN Mobile scale (note Body shift to Medium 500).
+
+CONSTRAINTS:
+  HARD:
+    - [SPEC] Use the 4 weights listed (400/500/700/800) when picking from the
+      scale. The scale entries are pre-tuned and must be respected.
+    - [SPEC] Letter-spacing values are negative across the scale; do not flip sign.
+  SOFT:
+    - [SPEC] Typography is responsive by default; only native-app contexts
+      may use static values.
+    - [SYNTHESIZED] Limit to ~3 type-scale levels per visual zone
+      (e.g. H2 + Body + Caption).
+
+DEPENDENCIES:
+  - BREAKPOINTS: 992px gates Desktop ↔ Mobile scale.
+  - COLOR: title→title token, body→text, caption→caption.
+  - NAMING: Typography tokens follow camelCase Concept+Variant pattern
+    (bodyLgBold, etc. per spec example).
+
+ANTI_PATTERNS:
+  - WRONG: Positive letter-spacing on display headings.
+    REASON: Tracking-tight scale; positive values look airy and broken.
+    RIGHT:  Use the negative values from the table.
+  - WRONG: Static Mobile typography in a responsive web product.
+    REASON: Spec mandates responsive typography (web).
+    RIGHT:  Implement Desktop + Mobile scales with breakpoint-folder Figma
+            variables, OR per-breakpoint CSS.
+  - WRONG: Body at Mobile rendered as Regular 400.
+    REASON: Mobile spec explicitly upgrades body weights to Medium 500
+            (except Caption).
+    RIGHT:  Mobile Body / BodyLg / BodySm = Medium 500.
+
+CODE_PATTERN:
+  /* H1 desktop */
+  font: 800 40px/1.30 var(--fontSans); letter-spacing: -0.01em;
+
+  /* Body desktop */
+  font: 400 16px/1.60 var(--fontSans); letter-spacing: -0.02em;
+
+  /* Body mobile (note: Medium not Regular) */
+  font: 500 15px/1.50 var(--fontSans); letter-spacing: -0.02em;
+
+  /* Caption mobile (still Regular, exception) */
+  font: 400 13px/1.50 var(--fontSans); letter-spacing: -0.01em;
+
+================================================================================
+APPENDIX A · QUICK_REFERENCE_FOR_AGENT
+================================================================================
+
+[SYNTHESIZED]  This appendix is author-derived guidance for agents. It is NOT
+               normative spec. When this conflicts with a SPEC entry above,
+               the SPEC entry wins.
+
+WHEN_GENERATING_CODE_AGAINST_THIS_SYSTEM:
+  1. Reference SEMANTIC tokens (var(--text), var(--primaryBase)) in product code.
+  2. Use spacing primitives — no raw px.
+  3. Implement all 7 states for interactive elements (Section 09).
+     Critical: Loading button MUST also be disabled.
+  4. Pair Duration=Fast (150ms) with Easing=Ease-out for hover/state changes.
+  5. Default: card radius=md (16), card shadow=sm, icon=24px, touch=48px.
+  6. Mobile body shifts to Medium 500 — this is intentional (Section 10).
+  7. Always include focus-visible styles (Section 09).
+  8. Modal MUST have a Dimmed overlay (Section 07).
+  9. Use Phosphor Icons; preserve SNS brand colors (Section 04).
+  10. Never invent new breakpoint or grid values; the spec's set is fixed.
+
+WHEN_REVIEWING_DESIGN_OR_CODE:
+  - Token references → semantic aliases in product code.
+  - Spacing 4-multiple rhythm → flag 18, 22, 30, etc.
+  - Focus visibility → flag `outline: none` without replacement.
+  - Disabled state → flag `opacity` shortcuts.
+  - Naming: tokens camelCase, components PascalCase (single word, no slashes),
+            assets lowercase snake/kebab.
+  - Color variables: both Light and Dark entered together?
+  - Loading button: also disabled?
+  - Mobile body weight: Medium 500 (not Regular 400)?
+  - Modal: Dimmed overlay present?
+
+[SYNTHESIZED] CROSS_SECTION_RESOLUTION_ORDER:
+  When two sections give competing guidance for the same value, prefer in
+  order:
+    1. SPEC entry (any section) > IMPLEMENTATION_ONLY entry (tokens.css)
+    2. STATE      (overrides surface tokens during interaction)
+    3. COLOR      (semantic alias defines the actual rendered value)
+    4. STYLE      (radius/shadow/dimmed/opacity for the surface)
+    5. TYPOGRAPHY (text properties)
+    6. SPACING    (interior and exterior spacing)
+    7. GRID       (layout column placement)
+    8. BREAKPOINTS(gates which scale/value applies)
+    9. MOTION     (transitions between any of the above)
+    10. ICON      (when icon is present)
+    11. NAMING    (governs identifiers across all of the above)
+
+================================================================================
+APPENDIX B · KNOWN_GAPS_AND_DIVERGENCES
+================================================================================
+
+[SPEC_GAP] items present in spec but not yet in tokens.css:
+  - 9 of 10 primary palettes (Purple/Pink/Red/Orange/Green/Teal/LightBlue/Blue/Navy)
+    in full Light+Dark 6-variant form.
+  - Success/Warning/Error 6-variant Devup Palette tokens
+    (currently only 500/600/Bg are implemented; missing Hover/Pressed/BgHover/BgPressed).
+  - Tablet (md, 768–991) grid configuration.
+
+[IMPLEMENTATION_ONLY] items in tokens.css but not in PDF spec:
+  - shadowFocus token.
+  - cardShadow / cardShadowHover composite tokens.
+  - SUIT Variable as the explicit fontSans family name (spec shows previews only).
+  - Specific cubic-bezier coefficients for the 4 easings.
+
+[SYNTHESIZED] guidelines added by this document for agent decisions:
+  - Cool Gray vs Warm Gray brand-domain mapping.
+  - Component state matrix concrete bg/fg/border per state.
+  - Card radius=md / Button radius=sm bindings.
+  - "Avoid abbreviations" naming guideline.
+  - "Max 3 elevation levels per screen" rule.
+  - Cross-section resolution order in Appendix A.
+
+# END OF LLMS.TXT v2

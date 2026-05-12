@@ -32,22 +32,26 @@ export function SearchResults({
       justifyContent="flex-start"
       minH={['calc(100dvh - 196px)', null, null, null, 'calc(100dvh - 212px)']}
       pb={['30px', null, null, null, '$spacingSpacing80']}
-      pt={['68px', null, null, null, '$spacingSpacing160']}
-      px="$spacingSpacing40"
+      pt={['$spacingSpacing120', null, null, null, '$spacingSpacing160']}
+      px={['$spacingSpacing20', null, null, null, '$spacingSpacing40']}
     >
       <VStack
-        gap="$spacingSpacing40"
+        gap={['$spacingSpacing24', null, null, null, '$spacingSpacing40']}
         maxW="1280px"
-        py="$spacingSpacing48"
         w="100%"
       >
-        <Flex alignItems="center" justifyContent="space-between" w="100%">
-          <Text color="$title" typography="title">
-            &apos;{query}&apos;검색 결과 입니다.
+        <Flex
+          alignItems="center"
+          flexWrap="wrap"
+          gap="$spacingSpacing12"
+          justifyContent="space-between"
+          w="100%"
+        >
+          <Text color="$title" typography="h4" wordBreak="keep-all">
+            &apos;{query}&apos; 검색 결과 입니다.
           </Text>
           <Text
             color="$caption"
-            flex="1"
             textAlign="right"
             typography="title"
             wordBreak="keep-all"

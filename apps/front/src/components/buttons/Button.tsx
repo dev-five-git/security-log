@@ -5,6 +5,9 @@ export interface ButtonProps {
   size: 'Md' | 'Sm'
   label?: string
   className?: string
+  onClick?: () => void
+  type?: 'button' | 'submit' | 'reset'
+  disabled?: boolean
 }
 
 export function Button({
@@ -12,6 +15,9 @@ export function Button({
   size,
   label = 'label',
   className,
+  onClick,
+  type = 'button',
+  disabled,
 }: ButtonProps) {
   return (
     <Center
@@ -22,22 +28,29 @@ export function Button({
         }[varient],
         border: varient === 'white' && 'solid 1px $primary',
       }}
+      _disabled={{
+        cursor: 'not-allowed',
+        opacity: 0.5,
+      }}
       _hover={{
         bg: varient === 'primary' && '$primaryHover',
         boxShadow:
           '0 $spacingSpacing04 $spacingSpacing06 0 #0000001A, 0 0 $spacingSpacing02 0 #0000001A',
         border: varient === 'white' && 'solid 1px $primary',
       }}
+      as="button"
       bg={
         {
           primary: '$primary',
           white: '$innerBg',
         }[varient]
       }
-      border={varient === 'white' && 'solid 1px $border'}
+      border={varient === 'white' ? 'solid 1px $border' : 'none'}
       borderRadius="8px"
       className={className}
       cursor="pointer"
+      disabled={disabled}
+      onClick={onClick}
       px="$spacingSpacing16"
       py={
         {
@@ -47,6 +60,7 @@ export function Button({
       }
       styleOrder={1}
       transition="all 0.2s ease"
+      type={type}
     >
       <Text
         color={

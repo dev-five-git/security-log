@@ -1,4 +1,4 @@
-import { globalCss } from '@devup-ui/react'
+import { globalCss, ThemeScript } from '@devup-ui/react'
 import { resetCss } from '@devup-ui/reset-css'
 import type { Metadata } from 'next'
 
@@ -24,7 +24,7 @@ globalCss({
 })
 
 export const metadata: Metadata = {
-  title: 'Devfive',
+  title: '보안록',
   description: 'Devfive',
 }
 
@@ -35,6 +35,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body>
         <Header />
         {children}

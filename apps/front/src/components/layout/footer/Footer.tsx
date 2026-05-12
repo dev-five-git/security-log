@@ -41,7 +41,7 @@ export function Footer() {
               gap="4px"
               transition="scale .2s ease"
             >
-              <Text color="#FFFFFF" typography="footerBold">
+              <Text color="#FFFFFF" typography="bodyB">
                 DEVFIVE{' '}
               </Text>
               <Icon
@@ -57,7 +57,7 @@ export function Footer() {
           order={[1, null, null, null, 0]}
           w={['320px', null, null, null, 'auto']}
         >
-          <Text color="#FFF" typography="footerBold" wordBreak="keep-all">
+          <Text color="#FFF" typography="bodyB" wordBreak="keep-all">
             문의 및 의견 제출
             <br />
             <Link
@@ -72,7 +72,7 @@ export function Footer() {
               contact@devfive.kr
             </Link>
           </Text>
-          <Text color="#CACACA" typography="footerCopy">
+          <Text color="#CACACA" typography="caption">
             Copyright © DEVFIVE. All Rights Reserved.{' '}
           </Text>
         </VStack>

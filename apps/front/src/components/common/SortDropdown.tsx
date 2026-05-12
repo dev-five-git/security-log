@@ -5,23 +5,22 @@ import { useEffect, useRef, useState } from 'react'
 import { Icon } from '@/components/icons/Icon'
 import { ICON_PATHS } from '@/components/icons/iconPaths'
 
-export const CATEGORIES = [
-  '전체',
-  '해킹',
-  '내부자',
-  '관리부실',
-  '기술결함',
-  '미상',
-] as const
-
-export type Category = (typeof CATEGORIES)[number]
-
-interface DropdownProps {
-  value: Category
-  onChange: (value: Category) => void
+export interface SortOption<T extends string> {
+  value: T
+  label: string
 }
 
-export function Dropdown({ value, onChange }: DropdownProps) {
+interface SortDropdownProps<T extends string> {
+  options: readonly SortOption<T>[]
+  value: T
+  onChange: (value: T) => void
+}
+
+export function SortDropdown<T extends string>({
+  options,
+  value,
+  onChange,
+}: SortDropdownProps<T>) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -36,55 +35,37 @@ export function Dropdown({ value, onChange }: DropdownProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [open])
 
+  const selectedLabel = options.find((o) => o.value === value)?.label ?? ''
+
   return (
     <Box ref={ref} pos="relative">
-      <VStack
+      <Flex
         alignItems="center"
         aria-expanded={open}
         aria-haspopup="listbox"
         as="button"
-        bg="$containerBackground"
-        borderColor="$border"
-        borderRadius="$spacingSpacing24 0 0 $spacingSpacing24"
-        borderStyle="solid"
-        borderWidth="1px"
+        bg="transparent"
+        border="none"
         cursor="pointer"
         gap="$spacingSpacing04"
-        h="48px"
         onClick={() => setOpen((prev) => !prev)}
-        pl="$spacingSpacing20"
-        pr="10px"
-        py="$spacingSpacing12"
+        px="$spacingSpacing08"
+        py="$spacingSpacing06"
         type="button"
-        w="110px"
       >
-        <Flex
-          alignItems="center"
-          gap="4px"
-          h="100%"
-          justifyContent="space-between"
-          w="100%"
-        >
-          <Text
-            color="$text"
-            flex="1"
-            textAlign="left"
-            typography="buttonSm"
-            wordBreak="keep-all"
-          >
-            {value}
-          </Text>
-          <Icon
-            boxSize="20px"
-            className={css({
-              transition: 'transform 0.2s ease',
-              transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-            })}
-            color="var(--caption)"
-            iconPath={ICON_PATHS.caretDown}
-          />
-        </Flex>
-      </VStack>
+        <Text color="$text" typography="buttonSm" wordBreak="keep-all">
+          {selectedLabel}
+        </Text>
+        <Icon
+          boxSize="20px"
+          className={css({
+            transition: 'transform 0.2s ease',
+            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+          })}
+          color="var(--caption)"
+          iconPath={ICON_PATHS.caretDown}
+        />
+      </Flex>
       {open && (
         <VStack
           alignItems="stretch"
@@ -95,35 +76,37 @@ export function Dropdown({ value, onChange }: DropdownProps) {
           borderWidth="1px"
           boxShadow="$shadowShadowXs"
           gap="0"
-          left="0"
+          left={['0', null, '0', null, 'auto']}
+          minW="120px"
           mt="$spacingSpacing04"
           overflow="hidden"
           pos="absolute"
+          right={['auto', null, 'auto', null, '0']}
           role="listbox"
           top="100%"
-          w="110px"
           zIndex="10"
         >
-          {CATEGORIES.map((category) => (
+          {options.map((option) => (
             <Box
-              key={category}
+              key={option.value}
               _hover={{ bg: '$background' }}
-              aria-selected={category === value}
-              bg={category === value ? 'var(--background)' : 'transparent'}
+              aria-selected={option.value === value}
+              as="button"
+              bg={option.value === value ? 'var(--background)' : 'transparent'}
               border="none"
               cursor="pointer"
               onClick={() => {
-                onChange(category)
+                onChange(option.value)
                 setOpen(false)
               }}
-              px="$spacingSpacing20"
-              py="$spacingSpacing12"
+              px="$spacingSpacing16"
+              py="$spacingSpacing08"
               role="option"
               textAlign="left"
               w="100%"
             >
               <Text color="$text" typography="buttonSm" wordBreak="keep-all">
-                {category}
+                {option.label}
               </Text>
             </Box>
           ))}

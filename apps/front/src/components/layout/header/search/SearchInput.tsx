@@ -6,7 +6,15 @@ import { useState } from 'react'
 
 import { IconButton } from '@/components/buttons/IconButton'
 
-export function SearchInput() {
+import { DesktopOnly } from '../../responsive/DesktopOnly'
+import { MobileOnly } from '../../responsive/MobileOnly'
+import type { Category } from './Dropdown'
+
+interface SearchInputProps {
+  category: Category
+}
+
+export function SearchInput({ category }: SearchInputProps) {
   const router = useRouter()
   const params = useSearchParams()
   const [value, setValue] = useState(params.get('q') ?? '')
@@ -14,48 +22,81 @@ export function SearchInput() {
   const submit = () => {
     const trimmed = value.trim()
     if (!trimmed) return
-    router.push(`/search?q=${encodeURIComponent(trimmed)}`)
+    const query = new URLSearchParams()
+    query.set('q', trimmed)
+    if (category !== '전체') query.set('category', category)
+    router.push(`/search?${query.toString()}`)
   }
 
   return (
     <Flex
       alignItems="center"
-      bg="#FFF"
+      bg="$containerBackground"
       borderColor="$border"
-      borderRadius={[
-        null,
-        null,
-        null,
-        null,
-        '0 $spacingSpacing24 $spacingSpacing24 0',
-      ]}
+      borderRadius="0 $spacingSpacing24 $spacingSpacing24 0"
       borderStyle="solid"
       borderWidth="1px"
+      flex="1"
       gap="$spacingSpacing12"
       h="100%"
+      minW="0"
       px="$spacingSpacing16"
       py="$spacingSpacing12"
     >
-      <Flex alignItems="center" w="350px">
-        <Input
-          className={css({
+      <Flex
+        alignItems="center"
+        flex="1"
+        selectors={{
+          '& > div': {
             w: '100%',
-            outline: 'none',
-            border: 'none',
-            color: '$caption',
-            typography: 'caption',
-            h: '20px',
-          })}
-          onChange={(e) => setValue(e.currentTarget.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              submit()
-            }
-          }}
-          placeholder="기업명, 서비스명 등 검색어를 입력해주세요."
-          value={value}
-        />
+          },
+        }}
+        w={[null, null, null, null, '350px']}
+      >
+        <MobileOnly>
+          <Input
+            className={css({
+              w: '100%',
+              outline: 'none',
+              border: 'none',
+              color: '$caption',
+              typography: 'caption',
+              h: '20px',
+              bg: '$containerBackground',
+            })}
+            onChange={(e) => setValue(e.currentTarget.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                submit()
+              }
+            }}
+            placeholder="기업명, 서비스명 검색"
+            value={value}
+          />
+        </MobileOnly>
+        <DesktopOnly>
+          <Input
+            className={css({
+              w: '100%',
+              outline: 'none',
+              border: 'none',
+              color: '$caption',
+              typography: 'caption',
+              h: '20px',
+              bg: '$containerBackground',
+            })}
+            onChange={(e) => setValue(e.currentTarget.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                submit()
+              }
+            }}
+            placeholder="기업명, 서비스명 등 검색어를 입력해주세요."
+            value={value}
+          />
+        </DesktopOnly>
       </Flex>
       <IconButton
         aria-label="검색"

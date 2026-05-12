@@ -9,7 +9,7 @@ interface MoreButtonProps {
   href?: string
   target?: string
   className?: string
-  colors: {
+  colors?: {
     textColor?: string
     iconColor?: string
   }
