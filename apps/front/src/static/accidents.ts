@@ -1,12 +1,21 @@
-export type AccidentCategory =
-  | '해킹'
-  | '내부자'
-  | '관리부실'
-  | '기술결함'
-  | '미상'
+import { ACCIDENT_DATA } from './accidents-data.generated'
 
-export interface AccidentTimelineStep {
-  title: string
+export type AccidentCause =
+  | 'hacking'
+  | 'insider'
+  | 'negligence'
+  | 'technical'
+  | 'unknown'
+
+export type AccidentDamageUnit = '억' | '만' | '천' | ''
+
+export interface AccidentDamage {
+  value: number
+  unit: AccidentDamageUnit
+}
+
+export interface CauseAnalysisStep {
+  content: string
   date: string
 }
 
@@ -17,172 +26,80 @@ export interface AccidentPrevention {
 
 export interface Accident {
   id: string
-  category: AccidentCategory
-  damage: number
-  date: string
   companyName: string
+  date: string
   country: string
-  tags: string[]
+  cause: AccidentCause
+  damage: AccidentDamage
   leaks: string[]
   secondaryDamage: string[]
-  timeline: AccidentTimelineStep[]
+  causeAnalyses: CauseAnalysisStep[]
   rootCauses: string[]
   prevention: AccidentPrevention
+  tags: string[]
+  createdAt: string
+  issueUrl?: string
 }
 
-const DEFAULT_LEAKS = ['이름', '아이디', '생년 월일', '주소', '연락처']
-const DEFAULT_SECONDARY = ['이름', '아이디', '생년 월일', '주소', '연락처']
-const DEFAULT_TIMELINE: AccidentTimelineStep[] = [
-  { title: '비인가 접근 시작 추정', date: '2025-06-24' },
-  { title: '비정상 접근 탐지 및 최초 인지', date: '2025-11-18' },
-  { title: '공식 유출 발표 & 신고 접수', date: '2025-11-29' },
-  { title: 'CEO 사임 및 추가 대응', date: '2025-12-09' },
-  { title: '경찰·공식 조사·규제 논의 진행', date: '2026-01' },
-]
-const DEFAULT_ROOT_CAUSES = [
-  '퇴사자 권한 회수와 토큰 관리 미흡',
-  '비정상 접근 탐지 시스템 미구축',
-]
-const DEFAULT_PREVENTION: AccidentPrevention = {
-  personal: [
-    '아이디와 비밀번호 외에 일회용 비밀번호(OTP) 등 안전한 인증수단을 이용해 접속',
-  ],
-  corporate: [
-    'MFA(다중 인증) 적용',
-    '외부 접근에 대한 IP 제한 / 방화벽 설정 강화',
-    '관리자 접근 로그의 실시간 모니터링 및 알람 체계',
-    '보안 운영 절차 문서화 및 정기 점검',
-  ],
+export const CAUSE_LABELS: Record<AccidentCause, string> = {
+  hacking: '해킹',
+  insider: '내부자',
+  negligence: '관리부실',
+  technical: '기술결함',
+  unknown: '미상',
 }
 
-export const ACCIDENTS: Accident[] = [
-  {
-    id: '1',
-    category: '내부자',
-    damage: 1200,
-    date: '2026.04.07',
-    companyName: '회사명',
-    country: '대한민국',
-    tags: ['사고 요약', '보이스피싱'],
-    leaks: DEFAULT_LEAKS,
-    secondaryDamage: DEFAULT_SECONDARY,
-    timeline: DEFAULT_TIMELINE,
-    rootCauses: DEFAULT_ROOT_CAUSES,
-    prevention: DEFAULT_PREVENTION,
-  },
-  {
-    id: '2',
-    category: '해킹',
-    damage: 500,
-    date: '2026.04.07',
-    companyName: '회사명',
-    country: '대한민국',
-    tags: ['사고 요약', '보이스피싱', '관리자페이지무단접속'],
-    leaks: DEFAULT_LEAKS,
-    secondaryDamage: DEFAULT_SECONDARY,
-    timeline: DEFAULT_TIMELINE,
-    rootCauses: DEFAULT_ROOT_CAUSES,
-    prevention: DEFAULT_PREVENTION,
-  },
-  {
-    id: '3',
-    category: '내부자',
-    damage: 1200,
-    date: '2026.04.07',
-    companyName: '회사명',
-    country: '대한민국',
-    tags: ['사고 요약', '보이스피싱'],
-    leaks: DEFAULT_LEAKS,
-    secondaryDamage: DEFAULT_SECONDARY,
-    timeline: DEFAULT_TIMELINE,
-    rootCauses: DEFAULT_ROOT_CAUSES,
-    prevention: DEFAULT_PREVENTION,
-  },
-  {
-    id: '4',
-    category: '관리부실',
-    damage: 1000,
-    date: '2026.04.07',
-    companyName: '회사명',
-    country: '대한민국',
-    tags: ['사고 요약', '보이스피싱', '관리자페이지무단접속'],
-    leaks: DEFAULT_LEAKS,
-    secondaryDamage: DEFAULT_SECONDARY,
-    timeline: DEFAULT_TIMELINE,
-    rootCauses: DEFAULT_ROOT_CAUSES,
-    prevention: DEFAULT_PREVENTION,
-  },
-  {
-    id: '5',
-    category: '미상',
-    damage: 1,
-    date: '2026.04.07',
-    companyName: '회사명',
-    country: '대한민국',
-    tags: ['사고 요약', '관리자페이지무단접속'],
-    leaks: DEFAULT_LEAKS,
-    secondaryDamage: DEFAULT_SECONDARY,
-    timeline: DEFAULT_TIMELINE,
-    rootCauses: DEFAULT_ROOT_CAUSES,
-    prevention: DEFAULT_PREVENTION,
-  },
-  {
-    id: '6',
-    category: '해킹',
-    damage: 1000,
-    date: '2026.04.07',
-    companyName: '회사명',
-    country: '대한민국',
-    tags: ['사고 요약', '보이스피싱', '관리자페이지무단접속'],
-    leaks: DEFAULT_LEAKS,
-    secondaryDamage: DEFAULT_SECONDARY,
-    timeline: DEFAULT_TIMELINE,
-    rootCauses: DEFAULT_ROOT_CAUSES,
-    prevention: DEFAULT_PREVENTION,
-  },
-  {
-    id: '7',
-    category: '기술결함',
-    damage: 1000,
-    date: '2026.04.07',
-    companyName: '회사명',
-    country: '대한민국',
-    tags: ['보이스피싱', '관리자페이지무단접속'],
-    leaks: DEFAULT_LEAKS,
-    secondaryDamage: DEFAULT_SECONDARY,
-    timeline: DEFAULT_TIMELINE,
-    rootCauses: DEFAULT_ROOT_CAUSES,
-    prevention: DEFAULT_PREVENTION,
-  },
-  {
-    id: '8',
-    category: '해킹',
-    damage: 1500,
-    date: '2026.04.07',
-    companyName: '회사명',
-    country: '대한민국',
-    tags: ['사고 요약', '보이스피싱', '관리자페이지무단접속'],
-    leaks: DEFAULT_LEAKS,
-    secondaryDamage: DEFAULT_SECONDARY,
-    timeline: DEFAULT_TIMELINE,
-    rootCauses: DEFAULT_ROOT_CAUSES,
-    prevention: DEFAULT_PREVENTION,
-  },
-  {
-    id: '9',
-    category: '해킹',
-    damage: 1000,
-    date: '2026.04.07',
-    companyName: '회사명',
-    country: '대한민국',
-    tags: ['사고 요약', '보이스피싱', '관리자페이지무단접속'],
-    leaks: DEFAULT_LEAKS,
-    secondaryDamage: DEFAULT_SECONDARY,
-    timeline: DEFAULT_TIMELINE,
-    rootCauses: DEFAULT_ROOT_CAUSES,
-    prevention: DEFAULT_PREVENTION,
-  },
+export const DAMAGE_UNIT_OPTIONS: {
+  value: AccidentDamageUnit
+  label: string
+}[] = [
+  { value: '억', label: '억' },
+  { value: '만', label: '만' },
+  { value: '천', label: '천' },
+  { value: '', label: '없음' },
 ]
+
+const DAMAGE_UNIT_FACTOR: Record<AccidentDamageUnit, number> = {
+  억: 100_000_000,
+  만: 10_000,
+  천: 1_000,
+  '': 1,
+}
+
+export const COUNTRY_LABELS: Record<string, string> = {
+  KR: '대한민국',
+  US: '미국',
+  JP: '일본',
+  CN: '중국',
+  GB: '영국',
+  DE: '독일',
+  FR: '프랑스',
+}
+
+export function getCountryLabel(code: string): string {
+  return COUNTRY_LABELS[code] ?? code
+}
+
+export function formatAccidentDate(iso: string): string {
+  if (!iso) return ''
+  return iso.replaceAll('-', '.')
+}
+
+export function formatDamage(damage: AccidentDamage): string {
+  if (!damage || !Number.isFinite(damage.value) || damage.value <= 0) {
+    return '미상'
+  }
+  const value = damage.value.toLocaleString('ko-KR')
+  return damage.unit ? `약 ${value}${damage.unit}` : `약 ${value}`
+}
+
+export function getDamageWeight(damage: AccidentDamage): number {
+  if (!damage || !Number.isFinite(damage.value)) return 0
+  const factor = DAMAGE_UNIT_FACTOR[damage.unit] ?? 1
+  return damage.value * factor
+}
+
+export const ACCIDENTS: Accident[] = ACCIDENT_DATA
 
 export function getAccidentById(id: string): Accident | undefined {
   return ACCIDENTS.find((a) => a.id === id)

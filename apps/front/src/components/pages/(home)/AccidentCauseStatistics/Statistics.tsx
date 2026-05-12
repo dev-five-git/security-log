@@ -2,7 +2,7 @@
 import { Box, Flex, Grid, Text, VStack } from '@devup-ui/react'
 import { useState } from 'react'
 
-import { CATEGORY } from '@/static/category'
+import { type AccidentCause, ACCIDENTS, CAUSE_LABELS } from '@/static/accidents'
 
 export interface ACCIDENTCAUSEDATA {
   label: string
@@ -10,28 +10,42 @@ export interface ACCIDENTCAUSEDATA {
   description: string
 }
 
-const ACCIDENTCAUSEDATAS: ACCIDENTCAUSEDATA[] = [
-  {
-    percentage: 52,
-    description: `외부 공격자의 침입으로 인한 유출.\nex)SQL 인젝션, 랜섬웨어 공격 등`,
-  },
-  {
-    percentage: 12,
-    description: `외부 공격자의 침입으로 인한 유출.\nex)SQL 인젝션, 랜섬웨어 공격 등`,
-  },
-  {
-    percentage: 27,
-    description: `외부 공격자의 침입으로 인한 유출.\nex)SQL 인젝션, 랜섬웨어 공격 등`,
-  },
-  {
-    percentage: 6,
-    description: `외부 공격자의 침입으로 인한 유출.\nex)SQL 인젝션, 랜섬웨어 공격 등`,
-  },
-  {
-    percentage: 3,
-    description: `외부 공격자의 침입으로 인한 유출.\nex)SQL 인젝션, 랜섬웨어 공격 등`,
-  },
-].map((item, idx) => ({ ...item, label: CATEGORY[idx + 1] }))
+const CAUSE_ORDER: AccidentCause[] = [
+  'hacking',
+  'insider',
+  'negligence',
+  'technical',
+  'unknown',
+]
+
+const CAUSE_DESCRIPTIONS: Record<AccidentCause, string> = {
+  hacking: `외부 공격자의 침입으로 인한 유출.\nex) SQL 인젝션, 랜섬웨어, 피싱 등`,
+  insider: `내부 직원·외주 인력에 의한 의도된 정보 반출.\nex) USB 반출, 권한 남용 등`,
+  negligence: `관리 부실로 인한 유출.\nex) 권한 회수 누락, 보안 설정 미흡 등`,
+  technical: `시스템·서비스의 기술적 결함.\nex) API 인증 누락, 라이브러리 취약점 등`,
+  unknown: `원인이 밝혀지지 않았거나 조사 진행 중인 사고.`,
+}
+
+function buildCauseStatistics(): ACCIDENTCAUSEDATA[] {
+  const total = ACCIDENTS.length
+  const counts = CAUSE_ORDER.reduce<Record<AccidentCause, number>>(
+    (acc, cause) => {
+      acc[cause] = 0
+      return acc
+    },
+    {} as Record<AccidentCause, number>,
+  )
+  for (const accident of ACCIDENTS) {
+    counts[accident.cause] += 1
+  }
+  return CAUSE_ORDER.map((cause) => ({
+    label: CAUSE_LABELS[cause],
+    percentage: total === 0 ? 0 : Math.round((counts[cause] / total) * 100),
+    description: CAUSE_DESCRIPTIONS[cause],
+  }))
+}
+
+const ACCIDENTCAUSEDATAS: ACCIDENTCAUSEDATA[] = buildCauseStatistics()
 
 const SEGMENT_COLORS = [
   'var(--violetPressed)',

@@ -7,7 +7,7 @@ import { ICON_PATHS } from '@/components/icons/iconPaths'
 export function Footer() {
   return (
     <Flex
-      bg="$title"
+      bg="$footerBg"
       boxShadow={[
         '0 4px 4px 0 #00000040, 0 4px 4px 0 #00000040',
         null,

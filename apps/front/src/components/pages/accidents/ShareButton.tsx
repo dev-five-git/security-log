@@ -89,13 +89,7 @@ export function ShareButton() {
             'var(--text) transparent transparent transparent',
           ]}
           borderStyle="solid"
-          borderWidth={[
-            '0 4px 4px 4px',
-            null,
-            null,
-            null,
-            '4px 4px 0 4px',
-          ]}
+          borderWidth={['0 4px 4px 4px', null, null, null, '4px 4px 0 4px']}
           bottom={['100%', null, null, null, 'auto']}
           h="0"
           left={['auto', null, null, null, '50%']}

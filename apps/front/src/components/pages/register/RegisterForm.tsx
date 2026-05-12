@@ -1,4 +1,5 @@
 'use client'
+
 import {
   Box,
   Center,
@@ -10,14 +11,15 @@ import {
   VStack,
 } from '@devup-ui/react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 import { Icon } from '@/components/icons/Icon'
 import { ICON_PATHS } from '@/components/icons/iconPaths'
+import { buildIssueUrl } from '@/lib/issue-template'
+import type { AccidentCause, AccidentDamageUnit } from '@/static/accidents'
+import { DAMAGE_UNIT_OPTIONS } from '@/static/accidents'
 
-type Cause = 'hacking' | 'insider' | 'negligence' | 'technical' | 'unknown'
-type Scale = 'critical' | 'high' | 'medium' | 'low'
+type Cause = AccidentCause
 
 const CAUSE_OPTIONS: { value: Cause; label: string }[] = [
   { value: 'hacking', label: '해킹' },
@@ -25,16 +27,6 @@ const CAUSE_OPTIONS: { value: Cause; label: string }[] = [
   { value: 'negligence', label: '관리부실' },
   { value: 'technical', label: '기술결함' },
   { value: 'unknown', label: '미상' },
-]
-
-const SCALE_OPTIONS: { value: Scale; label: string }[] = [
-  {
-    value: 'critical',
-    label: '크리티컬: 1000만 이상 또는 금융정보, 개인정보 등',
-  },
-  { value: 'high', label: '하이: 1000만 - 100만' },
-  { value: 'medium', label: '미디엄: 100만 - 10만' },
-  { value: 'low', label: '로우: 10만 미만' },
 ]
 
 const COUNTRY_OPTIONS: { value: string; label: string }[] = [
@@ -267,13 +259,13 @@ const COUNTRY_OPTIONS: { value: string; label: string }[] = [
 ]
 
 export function RegisterForm() {
-  const router = useRouter()
-
   const [company, setCompany] = useState('')
   const [date, setDate] = useState('')
   const [country, setCountry] = useState<string>('')
   const [cause, setCause] = useState<Cause>('hacking')
-  const [scale, setScale] = useState<Scale | ''>('')
+  const [damageValue, setDamageValue] = useState('')
+  const [damageUnit, setDamageUnit] = useState<AccidentDamageUnit>('만')
+  const [tags, setTags] = useState('')
   const [leak, setLeak] = useState('')
   const [secondary, setSecondary] = useState('')
   const [causeAnalyses, setCauseAnalyses] = useState<
@@ -285,20 +277,37 @@ export function RegisterForm() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!company.trim() || !date || !scale || !leak.trim()) return
-    // TODO: hook into API once endpoint is available.
-    router.push('/accidents')
+    const parsedValue = Number(damageValue.replaceAll(',', ''))
+    const url = buildIssueUrl({
+      companyName: company,
+      date,
+      country,
+      cause,
+      damageValue: Number.isFinite(parsedValue) ? parsedValue : 0,
+      damageUnit,
+      tagsRaw: tags,
+      leakRaw: leak,
+      secondaryRaw: secondary,
+      causeAnalyses,
+      rootCauses,
+      preventPersonal,
+      preventCorporate,
+    })
+    window.location.href = url
   }
 
   return (
     <Center
+      _themeDark={{
+        bg: 'url(/images/home/main-banner-background-dark.webp) center/cover no-repeat, $background',
+      }}
       bg="url(/images/home/main-banner-background.webp) top center / 100% 500px no-repeat, $background"
       flexDir="column"
       justifyContent="flex-start"
       minH={['calc(100dvh - 196px)', null, null, null, 'calc(100dvh - 212px)']}
-      pb={['$spacingSpacing64', null, null, null, '$spacingSpacing80']}
+      pb={['40px', null, null, null, '$spacingSpacing80']}
       pt={['$spacingSpacing120', null, null, null, '$spacingSpacing160']}
-      px={['$spacingSpacing20', null, null, null, '$spacingSpacing40']}
+      px={[null, null, null, null, '$spacingSpacing40']}
       w="100%"
     >
       <VStack
@@ -324,239 +333,303 @@ export function RegisterForm() {
         <VStack
           alignItems="center"
           as="form"
-          bg="$containerBackground"
-          border="solid 1px $border"
-          borderRadius="$spacingSpacing24"
-          boxShadow="$shadowShadowXs"
+          gap={['$spacingSpacing24', null, null, null, '$spacingSpacing40']}
           onSubmit={handleSubmit}
-          overflow="hidden"
-          px={['$spacingSpacing20', null, null, null, '$spacingSpacing48']}
-          py={['$spacingSpacing24', null, null, null, '$spacingSpacing40']}
           w="100%"
         >
-          <VStack gap={['28px', null, null, null, '46px']} w="100%">
-            <Grid
-              columnGap="$spacingSpacing20"
-              gridTemplateColumns={['1fr', null, null, null, 'repeat(2, 1fr)']}
-              rowGap="$spacingSpacing24"
-            >
-              <Field label="회사명">
-                <TextInput
-                  onChange={setCompany}
-                  placeholder="회사명을 입력하세요."
-                  value={company}
-                />
-              </Field>
-              <Field label="사고 날짜">
-                <DateInput onChange={setDate} value={date} />
-              </Field>
-            </Grid>
-
-            <Grid
-              columnGap="$spacingSpacing20"
-              gridTemplateColumns={['1fr', null, null, null, 'repeat(2, 1fr)']}
-              rowGap="$spacingSpacing24"
-            >
-              <Field label="국가">
-                <Select
-                  onChange={setCountry}
-                  options={COUNTRY_OPTIONS}
-                  searchable
-                  value={country}
-                />
-              </Field>
-              <Field hint="(단위: 건)" label="피해 규모">
-                <Select
-                  onChange={setScale}
-                  options={SCALE_OPTIONS}
-                  value={scale}
-                />
-              </Field>
-            </Grid>
-
-            <Field label="사고 원인">
-              <Flex flexWrap="wrap" gap={['16px', null, null, null, '28px']}>
-                {CAUSE_OPTIONS.map((option) => (
-                  <RadioOption
-                    key={option.value}
-                    checked={cause === option.value}
-                    label={option.label}
-                    onSelect={() => setCause(option.value)}
+          <VStack
+            alignItems="center"
+            bg="$containerBackground"
+            border="solid 1px $border"
+            borderRadius={[null, null, null, null, '$spacingSpacing24']}
+            boxShadow="$shadowShadowXs"
+            overflow="hidden"
+            px={['$spacingSpacing20', null, null, null, '$spacingSpacing48']}
+            py={['$spacingSpacing24', null, null, null, '$spacingSpacing40']}
+            w="100%"
+          >
+            <VStack gap={['28px', null, null, null, '46px']} w="100%">
+              <Grid
+                columnGap="$spacingSpacing20"
+                gridTemplateColumns={[
+                  '1fr',
+                  null,
+                  null,
+                  null,
+                  'repeat(2, 1fr)',
+                ]}
+                rowGap="$spacingSpacing24"
+              >
+                <Field label="회사명">
+                  <TextInput
+                    onChange={setCompany}
+                    placeholder="회사명을 입력하세요."
+                    value={company}
                   />
-                ))}
-              </Flex>
-            </Field>
+                </Field>
+                <Field label="사고 날짜">
+                  <DateInput onChange={setDate} value={date} />
+                </Field>
+              </Grid>
 
-            <Field label="유출 내역">
-              <TextInput
-                onChange={setLeak}
-                placeholder="이름, 아이디, 생년 월/일"
-                value={leak}
-              />
-            </Field>
+              <Grid
+                columnGap="$spacingSpacing20"
+                gridTemplateColumns={[
+                  '1fr',
+                  null,
+                  null,
+                  null,
+                  'repeat(2, 1fr)',
+                ]}
+                rowGap="$spacingSpacing24"
+              >
+                <Field label="국가">
+                  <Select
+                    onChange={setCountry}
+                    options={COUNTRY_OPTIONS}
+                    searchable
+                    value={country}
+                  />
+                </Field>
+                <Field hint="(단위: 건)" label="피해 규모">
+                  <Flex alignItems="center" gap="$spacingSpacing08" w="100%">
+                    <Box flex="1" minW="0">
+                      <NumberInput
+                        onChange={setDamageValue}
+                        placeholder="예: 2500"
+                        value={damageValue}
+                      />
+                    </Box>
+                    <Box flexShrink="0" w="120px">
+                      <Select
+                        onChange={setDamageUnit}
+                        options={DAMAGE_UNIT_OPTIONS}
+                        value={damageUnit}
+                      />
+                    </Box>
+                  </Flex>
+                </Field>
+              </Grid>
 
-            <Field hint="(선택)" label="2차 피해 내역">
-              <TextInput
-                onChange={setSecondary}
-                placeholder="이름, 아이디, 생년 월/일"
-                value={secondary}
-              />
-            </Field>
+              <Field label="사고 원인">
+                <Flex flexWrap="wrap" gap={['16px', null, null, null, '28px']}>
+                  {CAUSE_OPTIONS.map((option) => (
+                    <RadioOption
+                      key={option.value}
+                      checked={cause === option.value}
+                      label={option.label}
+                      onSelect={() => setCause(option.value)}
+                    />
+                  ))}
+                </Flex>
+              </Field>
 
-            <Field hint="(선택)" label="원인 분석">
-              <VStack gap="$spacingSpacing16" w="100%">
-                {causeAnalyses.map((item, idx) => (
-                  <Grid
-                    key={idx}
-                    alignItems="center"
-                    columnGap="$spacingSpacing08"
-                    gridTemplateColumns={[
-                      '1fr auto',
-                      null,
-                      null,
-                      null,
-                      '1fr 200px auto',
-                    ]}
-                    rowGap="$spacingSpacing08"
-                    w="100%"
-                  >
-                    <Box
-                      gridColumn={['1 / -1', null, null, null, 'auto']}
+              <Field hint="(쉼표로 구분)" label="태그">
+                <TextInput
+                  onChange={setTags}
+                  placeholder="예: 보이스피싱, 관리자페이지무단접속"
+                  value={tags}
+                />
+              </Field>
+
+              <Field label="유출 내역">
+                <TextInput
+                  onChange={setLeak}
+                  placeholder="이름, 아이디, 생년 월/일"
+                  value={leak}
+                />
+              </Field>
+
+              <Field hint="(선택)" label="2차 피해 내역">
+                <TextInput
+                  onChange={setSecondary}
+                  placeholder="이름, 아이디, 생년 월/일"
+                  value={secondary}
+                />
+              </Field>
+
+              <Field hint="(선택)" label="원인 분석">
+                <VStack gap="$spacingSpacing16" w="100%">
+                  {causeAnalyses.map((item, idx) => (
+                    <Grid
+                      key={idx}
+                      alignItems="center"
+                      columnGap="$spacingSpacing08"
+                      gridTemplateColumns={[
+                        '1fr auto',
+                        null,
+                        null,
+                        null,
+                        '1fr 200px auto',
+                      ]}
+                      rowGap="$spacingSpacing08"
+                      w="100%"
+                    >
+                      <Box
+                        gridColumn={['1 / -1', null, null, null, 'auto']}
+                        w="100%"
+                      >
+                        <TextInput
+                          h="42px"
+                          multiline
+                          onChange={(value) =>
+                            setCauseAnalyses((prev) =>
+                              prev.map((it, i) =>
+                                i === idx ? { ...it, content: value } : it,
+                              ),
+                            )
+                          }
+                          placeholder="내용을 입력하세요."
+                          value={item.content}
+                        />
+                      </Box>
+                      <DateInput
+                        h="42px"
+                        maxW={[null, null, null, null, '200px']}
+                        onChange={(value) =>
+                          setCauseAnalyses((prev) =>
+                            prev.map((it, i) =>
+                              i === idx ? { ...it, date: value } : it,
+                            ),
+                          )
+                        }
+                        value={item.date}
+                      />
+                      {idx === causeAnalyses.length - 1 ? (
+                        <AddButton
+                          onClick={() =>
+                            setCauseAnalyses((prev) => [
+                              ...prev,
+                              { content: '', date: '' },
+                            ])
+                          }
+                        />
+                      ) : (
+                        <DeleteButton
+                          onClick={() =>
+                            setCauseAnalyses((prev) =>
+                              prev.filter((_, i) => i !== idx),
+                            )
+                          }
+                        />
+                      )}
+                    </Grid>
+                  ))}
+                </VStack>
+              </Field>
+
+              <Field hint="(선택)" label="근본 원인 분석">
+                <VStack gap="$spacingSpacing08" w="100%">
+                  {rootCauses.map((value, idx) => (
+                    <Flex
+                      key={idx}
+                      alignItems="center"
+                      gap="$spacingSpacing08"
                       w="100%"
                     >
                       <TextInput
                         h="42px"
                         multiline
-                        onChange={(value) =>
-                          setCauseAnalyses((prev) =>
-                            prev.map((it, i) =>
-                              i === idx ? { ...it, content: value } : it,
-                            ),
+                        onChange={(next) =>
+                          setRootCauses((prev) =>
+                            prev.map((it, i) => (i === idx ? next : it)),
                           )
                         }
                         placeholder="내용을 입력하세요."
-                        value={item.content}
+                        value={value}
                       />
-                    </Box>
-                    <DateInput
-                      h="42px"
-                      maxW={[null, null, null, null, '200px']}
-                      onChange={(value) =>
-                        setCauseAnalyses((prev) =>
-                          prev.map((it, i) =>
-                            i === idx ? { ...it, date: value } : it,
-                          ),
-                        )
-                      }
-                      value={item.date}
-                    />
-                    {idx === causeAnalyses.length - 1 ? (
-                      <AddButton
-                        onClick={() =>
-                          setCauseAnalyses((prev) => [
-                            ...prev,
-                            { content: '', date: '' },
-                          ])
-                        }
-                      />
-                    ) : (
-                      <DeleteButton
-                        onClick={() =>
-                          setCauseAnalyses((prev) =>
-                            prev.filter((_, i) => i !== idx),
-                          )
-                        }
-                      />
-                    )}
-                  </Grid>
-                ))}
-              </VStack>
-            </Field>
+                      {idx === rootCauses.length - 1 ? (
+                        <AddButton
+                          onClick={() => setRootCauses((prev) => [...prev, ''])}
+                        />
+                      ) : (
+                        <DeleteButton
+                          onClick={() =>
+                            setRootCauses((prev) =>
+                              prev.filter((_, i) => i !== idx),
+                            )
+                          }
+                        />
+                      )}
+                    </Flex>
+                  ))}
+                </VStack>
+              </Field>
 
-            <Field hint="(선택)" label="근본 원인 분석">
-              <VStack gap="$spacingSpacing08" w="100%">
-                {rootCauses.map((value, idx) => (
-                  <Flex
-                    key={idx}
-                    alignItems="center"
-                    gap="$spacingSpacing08"
-                    w="100%"
-                  >
-                    <TextInput
-                      h="42px"
-                      multiline
-                      onChange={(next) =>
-                        setRootCauses((prev) =>
-                          prev.map((it, i) => (i === idx ? next : it)),
-                        )
-                      }
-                      placeholder="내용을 입력하세요."
-                      value={value}
-                    />
-                    {idx === rootCauses.length - 1 ? (
-                      <AddButton
-                        onClick={() => setRootCauses((prev) => [...prev, ''])}
-                      />
-                    ) : (
-                      <DeleteButton
-                        onClick={() =>
-                          setRootCauses((prev) =>
-                            prev.filter((_, i) => i !== idx),
-                          )
-                        }
-                      />
-                    )}
-                  </Flex>
-                ))}
-              </VStack>
-            </Field>
-
-            <Field hint="(선택)" label="예방 교훈">
-              <VStack
-                borderBottom="solid 1px $borderDark"
-                borderTop="solid 1px $borderDark"
-                gap="0"
-                overflow="hidden"
-                w="100%"
-              >
-                <PreventionRow
-                  label="개인"
-                  onAdd={() => setPreventPersonal((prev) => [...prev, ''])}
-                  onChange={(idx, value) =>
-                    setPreventPersonal((prev) =>
-                      prev.map((it, i) => (i === idx ? value : it)),
-                    )
-                  }
-                  onDelete={(idx) =>
-                    setPreventPersonal((prev) =>
-                      prev.filter((_, i) => i !== idx),
-                    )
-                  }
-                  values={preventPersonal}
-                />
-                <Box bg="$border" h="1px" w="100%" />
-                <PreventionRow
-                  label="기업"
-                  onAdd={() => setPreventCorporate((prev) => [...prev, ''])}
-                  onChange={(idx, value) =>
-                    setPreventCorporate((prev) =>
-                      prev.map((it, i) => (i === idx ? value : it)),
-                    )
-                  }
-                  onDelete={(idx) =>
-                    setPreventCorporate((prev) =>
-                      prev.filter((_, i) => i !== idx),
-                    )
-                  }
-                  values={preventCorporate}
-                />
-              </VStack>
-            </Field>
+              <Field hint="(선택)" label="예방 교훈">
+                <VStack
+                  borderBottom="solid 1px $borderDark"
+                  borderTop="solid 1px $borderDark"
+                  gap="0"
+                  overflow="hidden"
+                  w="100%"
+                >
+                  <PreventionRow
+                    label="개인"
+                    onAdd={() => setPreventPersonal((prev) => [...prev, ''])}
+                    onChange={(idx, value) =>
+                      setPreventPersonal((prev) =>
+                        prev.map((it, i) => (i === idx ? value : it)),
+                      )
+                    }
+                    onDelete={(idx) =>
+                      setPreventPersonal((prev) =>
+                        prev.filter((_, i) => i !== idx),
+                      )
+                    }
+                    values={preventPersonal}
+                  />
+                  <Box bg="$border" h="1px" w="100%" />
+                  <PreventionRow
+                    label="기업"
+                    onAdd={() => setPreventCorporate((prev) => [...prev, ''])}
+                    onChange={(idx, value) =>
+                      setPreventCorporate((prev) =>
+                        prev.map((it, i) => (i === idx ? value : it)),
+                      )
+                    }
+                    onDelete={(idx) =>
+                      setPreventCorporate((prev) =>
+                        prev.filter((_, i) => i !== idx),
+                      )
+                    }
+                    values={preventCorporate}
+                  />
+                </VStack>
+              </Field>
+            </VStack>
           </VStack>
-        </VStack>
 
-        <Flex gap="$spacingSpacing06" justifyContent="center" w="100%">
-          <Link href="/">
+          <Flex gap="$spacingSpacing06" justifyContent="center" w="100%">
+            <Link href="/">
+              <Center
+                _active={{
+                  scale: 1,
+                }}
+                _hover={{
+                  scale: 1.05,
+                }}
+                bg="$containerBackground"
+                border="solid 1px $borderLight"
+                borderRadius="$spacingSpacing20"
+                cursor="pointer"
+                overflow="hidden"
+                pl="$spacingSpacing16"
+                pr="$spacingSpacing08"
+                py="10px"
+                transition="scale .2s ease"
+              >
+                <Flex alignItems="center" h="20px" pr="$spacingSpacing06">
+                  <Text
+                    color="$text"
+                    typography="buttonSm"
+                    wordBreak="keep-all"
+                  >
+                    이전으로
+                  </Text>
+                </Flex>
+              </Center>
+            </Link>
             <Center
               _active={{
                 scale: 1,
@@ -564,50 +637,23 @@ export function RegisterForm() {
               _hover={{
                 scale: 1.05,
               }}
-              bg="$containerBackground"
-              border="solid 1px $borderLight"
+              as="button"
+              bg="$primary"
+              border="none"
               borderRadius="$spacingSpacing20"
               cursor="pointer"
-              overflow="hidden"
-              pl="$spacingSpacing16"
-              pr="$spacingSpacing08"
+              outline="none"
+              px="$spacingSpacing16"
               py="10px"
               transition="scale .2s ease"
+              type="submit"
             >
-              <Flex alignItems="center" h="20px" pr="$spacingSpacing06">
-                <Text color="$text" typography="buttonSm" wordBreak="keep-all">
-                  이전으로
-                </Text>
-              </Flex>
+              <Text color="#FFF" typography="buttonSm" wordBreak="keep-all">
+                등록하기
+              </Text>
             </Center>
-          </Link>
-          <Center
-            _active={{
-              scale: 1,
-            }}
-            _hover={{
-              scale: 1.05,
-            }}
-            as="button"
-            bg="$primary"
-            border="none"
-            borderRadius="$spacingSpacing20"
-            cursor="pointer"
-            onClick={() => {
-              if (!company.trim() || !date || !scale || !leak.trim()) return
-              router.push('/accidents')
-            }}
-            outline="none"
-            px="$spacingSpacing16"
-            py="10px"
-            transition="scale .2s ease"
-            type="submit"
-          >
-            <Text color="#FFF" typography="buttonSm" wordBreak="keep-all">
-              등록하기
-            </Text>
-          </Center>
-        </Flex>
+          </Flex>
+        </VStack>
       </VStack>
     </Center>
   )
@@ -724,6 +770,52 @@ function TextInput({
   )
 }
 
+function NumberInput({
+  value,
+  onChange,
+  placeholder,
+  h = '50px',
+}: {
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+  h?: string
+}) {
+  return (
+    <Flex
+      alignItems="center"
+      border="solid 1px $border"
+      borderRadius="12px"
+      h={h}
+      px="12px"
+      w="100%"
+    >
+      <Input
+        className={css({
+          bg: 'transparent',
+          border: 'none',
+          color: '$text',
+          flex: '1',
+          minW: '0',
+          outline: 'none',
+          typography: 'body',
+          width: '100%',
+          _placeholder: {
+            color: '$borderDark',
+          },
+        })}
+        inputMode="numeric"
+        onChange={(e) => {
+          const next = e.currentTarget.value.replace(/[^0-9]/g, '')
+          onChange(next)
+        }}
+        placeholder={placeholder}
+        value={value}
+      />
+    </Flex>
+  )
+}
+
 function DateInput({
   value,
   onChange,
@@ -732,7 +824,7 @@ function DateInput({
 }: {
   value: string
   onChange: (value: string) => void
-  maxW?: string
+  maxW?: string | (string | null)[]
   h?: string
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -981,7 +1073,6 @@ function Select<T extends string>({
               py="$spacingSpacing08"
             >
               <Input
-                autoFocus
                 className={css({
                   bg: 'transparent',
                   border: 'none',

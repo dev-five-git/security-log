@@ -2,7 +2,7 @@
 
 import { css, Flex, Input } from '@devup-ui/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 
 import { IconButton } from '@/components/buttons/IconButton'
 
@@ -15,9 +15,27 @@ interface SearchInputProps {
 }
 
 export function SearchInput({ category }: SearchInputProps) {
-  const router = useRouter()
+  return (
+    <Suspense fallback={<SearchInputView category={category} initial="" />}>
+      <SearchInputWithParams category={category} />
+    </Suspense>
+  )
+}
+
+function SearchInputWithParams({ category }: SearchInputProps) {
   const params = useSearchParams()
-  const [value, setValue] = useState(params.get('q') ?? '')
+  return <SearchInputView category={category} initial={params.get('q') ?? ''} />
+}
+
+function SearchInputView({
+  category,
+  initial,
+}: {
+  category: Category
+  initial: string
+}) {
+  const router = useRouter()
+  const [value, setValue] = useState(initial)
 
   const submit = () => {
     const trimmed = value.trim()

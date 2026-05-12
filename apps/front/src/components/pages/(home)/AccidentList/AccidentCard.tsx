@@ -2,7 +2,7 @@ import { Flex, Text, VStack } from '@devup-ui/react'
 import Link from 'next/link'
 
 import { Badge } from '@/components/common/Badge'
-import type { Accident } from '@/static/accidents'
+import { type Accident, formatAccidentDate } from '@/static/accidents'
 
 export function AccidentCard({ accident }: { accident: Accident }) {
   return (
@@ -27,11 +27,11 @@ export function AccidentCard({ accident }: { accident: Accident }) {
       >
         <Flex alignItems="center" justifyContent="space-between" w="100%">
           <Flex alignItems="center" gap="$spacingSpacing06">
-            <Badge category={accident.category} variant="category" />
-            <Badge amount={accident.damage} variant="damage" />
+            <Badge cause={accident.cause} variant="category" />
+            <Badge damage={accident.damage} variant="damage" />
           </Flex>
           <Text color="$caption" typography="caption">
-            {accident.date}
+            {formatAccidentDate(accident.date)}
           </Text>
         </Flex>
 

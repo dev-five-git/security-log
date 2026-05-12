@@ -1,3 +1,4 @@
+'use client'
 import { Center, Flex, Grid, Image, Text, VStack } from '@devup-ui/react'
 
 import { DesktopOnly } from '@/components/layout/responsive/DesktopOnly'
@@ -6,6 +7,9 @@ import { MobileOnly } from '@/components/layout/responsive/MobileOnly'
 export function MainBanner() {
   return (
     <VStack
+      _themeDark={{
+        bg: 'url(/images/home/main-banner-background-dark.webp) center/cover no-repeat, $background',
+      }}
       alignItems="center"
       bg="url(/images/home/main-banner-background.webp) center/cover no-repeat, $background"
       gap="36px"

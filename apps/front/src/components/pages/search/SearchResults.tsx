@@ -1,17 +1,18 @@
 import { Center, Flex, Grid, Text, VStack } from '@devup-ui/react'
 
 import { AccidentCard } from '@/components/pages/(home)/AccidentList/AccidentCard'
-import { type Accident, ACCIDENTS } from '@/static/accidents'
+import { type Accident, ACCIDENTS, CAUSE_LABELS } from '@/static/accidents'
 
 function filterAccidents(query: string, category?: string): Accident[] {
   const q = query.trim().toLowerCase()
   return ACCIDENTS.filter((accident) => {
-    if (category && category !== '전체' && accident.category !== category) {
+    const causeLabel = CAUSE_LABELS[accident.cause]
+    if (category && category !== '전체' && causeLabel !== category) {
       return false
     }
     if (!q) return true
     if (accident.companyName.toLowerCase().includes(q)) return true
-    if (accident.category.toLowerCase().includes(q)) return true
+    if (causeLabel.toLowerCase().includes(q)) return true
     if (accident.tags.some((tag) => tag.toLowerCase().includes(q))) return true
     return false
   })

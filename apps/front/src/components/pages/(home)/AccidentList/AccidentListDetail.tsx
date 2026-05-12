@@ -7,7 +7,12 @@ import { MoreButton } from '@/components/buttons/MoreButton'
 import { Segment } from '@/components/common/Segment'
 import { SortDropdown, type SortOption } from '@/components/common/SortDropdown'
 import { DesktopOnly } from '@/components/layout/responsive/DesktopOnly'
-import { type Accident, ACCIDENTS } from '@/static/accidents'
+import {
+  type Accident,
+  ACCIDENTS,
+  CAUSE_LABELS,
+  getDamageWeight,
+} from '@/static/accidents'
 import { CATEGORY } from '@/static/category'
 
 import { AccidentCard } from './AccidentCard'
@@ -30,7 +35,9 @@ function sortAccidents(accidents: Accident[], sort: SortKey): Accident[] {
     case 'oldest':
       return copy.sort((a, b) => a.date.localeCompare(b.date))
     case 'damage':
-      return copy.sort((a, b) => b.damage - a.damage)
+      return copy.sort(
+        (a, b) => getDamageWeight(b.damage) - getDamageWeight(a.damage),
+      )
   }
 }
 
@@ -77,7 +84,9 @@ export function AccidentListDetail({ mode = 'home' }: AccidentListDetailProps) {
     const filtered =
       selected === CATEGORY[0]
         ? ACCIDENTS
-        : ACCIDENTS.filter((accident) => accident.category === selected)
+        : ACCIDENTS.filter(
+            (accident) => CAUSE_LABELS[accident.cause] === selected,
+          )
     return mode === 'list' ? sortAccidents(filtered, sort) : filtered
   }, [selected, sort, mode])
 

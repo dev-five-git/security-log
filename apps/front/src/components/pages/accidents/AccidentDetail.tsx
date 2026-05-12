@@ -6,7 +6,11 @@ import { Icon } from '@/components/icons/Icon'
 import { ICON_PATHS } from '@/components/icons/iconPaths'
 import { AccidentCard } from '@/components/pages/(home)/AccidentList/AccidentCard'
 import { ShareButton } from '@/components/pages/accidents/ShareButton'
-import type { Accident } from '@/static/accidents'
+import {
+  type Accident,
+  formatAccidentDate,
+  getCountryLabel,
+} from '@/static/accidents'
 
 interface AccidentDetailProps {
   accident: Accident
@@ -115,8 +119,8 @@ function DetailCard({ accident }: { accident: Accident }) {
             w="100%"
           >
             <Flex flexWrap="wrap" gap="$spacingSpacing06">
-              <Badge category={accident.category} variant="category" />
-              <Badge amount={accident.damage} variant="damage" />
+              <Badge cause={accident.cause} variant="category" />
+              <Badge damage={accident.damage} variant="damage" />
             </Flex>
             <Flex
               alignItems="center"
@@ -124,7 +128,7 @@ function DetailCard({ accident }: { accident: Accident }) {
               gap="$spacingSpacing08"
             >
               <Text color="$caption" typography="caption">
-                {accident.date}
+                {formatAccidentDate(accident.date)}
               </Text>
               <ShareButton />
             </Flex>
@@ -138,7 +142,7 @@ function DetailCard({ accident }: { accident: Accident }) {
             display={['block', null, null, null, 'none']}
             typography="caption"
           >
-            {accident.date}
+            {formatAccidentDate(accident.date)}
           </Text>
         </VStack>
         <VStack gap="$spacingSpacing12" w="100%">
@@ -171,7 +175,10 @@ function DetailCard({ accident }: { accident: Accident }) {
 
       <VStack gap="$spacingSpacing40" w="100%">
         <VStack gap="$spacingSpacing32" w="100%">
-          <LabeledBlock label="피해 국가" value={accident.country} />
+          <LabeledBlock
+            label="피해 국가"
+            value={getCountryLabel(accident.country)}
+          />
           <Flex
             flexDir={['column', null, null, null, 'row']}
             gap="$spacingSpacing32"
@@ -196,7 +203,7 @@ function DetailCard({ accident }: { accident: Accident }) {
           <Text color="$textSub" typography="buttonSm" wordBreak="keep-all">
             원인 분석
           </Text>
-          <Timeline steps={accident.timeline} />
+          <Timeline steps={accident.causeAnalyses} />
         </VStack>
 
         <VStack gap="$spacingSpacing04" w="100%">
@@ -256,7 +263,7 @@ function LabeledBlock({ label, value }: { label: string; value: string }) {
   )
 }
 
-function Timeline({ steps }: { steps: { title: string; date: string }[] }) {
+function Timeline({ steps }: { steps: { content: string; date: string }[] }) {
   return (
     <VStack
       bg="$borderLight"
@@ -271,7 +278,7 @@ function Timeline({ steps }: { steps: { title: string; date: string }[] }) {
         const isLast = idx === steps.length - 1
         return (
           <Flex
-            key={`${step.title}-${step.date}`}
+            key={`${step.content}-${step.date}`}
             alignItems="flex-start"
             gap="$spacingSpacing12"
             pos="relative"
@@ -309,10 +316,10 @@ function Timeline({ steps }: { steps: { title: string; date: string }[] }) {
               pt="0px"
             >
               <Text color="$text" typography="bodyLgSb" wordBreak="keep-all">
-                {step.title}
+                {step.content}
               </Text>
               <Text color="$caption" typography="captionSb">
-                {step.date}
+                {formatAccidentDate(step.date)}
               </Text>
             </VStack>
           </Flex>

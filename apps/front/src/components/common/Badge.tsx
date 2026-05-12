@@ -1,25 +1,20 @@
 import { Box, Flex, Text } from '@devup-ui/react'
 
 import { ICON_PATHS } from '@/components/icons/iconPaths'
-import type { AccidentCategory } from '@/static/accidents'
+import type { AccidentCause, AccidentDamage } from '@/static/accidents'
+import { CAUSE_LABELS, formatDamage } from '@/static/accidents'
 
-const CATEGORY_ICON: Record<AccidentCategory, string> = {
-  해킹: ICON_PATHS.hacking,
-  내부자: ICON_PATHS.insider,
-  관리부실: ICON_PATHS.negligence,
-  기술결함: ICON_PATHS.technical,
-  미상: ICON_PATHS.unknown,
+const CAUSE_ICON: Record<AccidentCause, string> = {
+  hacking: ICON_PATHS.hacking,
+  insider: ICON_PATHS.insider,
+  negligence: ICON_PATHS.negligence,
+  technical: ICON_PATHS.technical,
+  unknown: ICON_PATHS.unknown,
 }
 
 type BadgeProps =
-  | { variant: 'category'; category: AccidentCategory }
-  | { variant: 'damage'; amount: number }
-
-function getDamageStyle(amount: number): { bg: string; color: string } {
-  if (amount > 1000) return { bg: 'var(--erroBg)', color: 'var(--error)' }
-  if (amount >= 500) return { bg: 'var(--warnigBg)', color: 'var(--warning)' }
-  return { bg: 'var(--successBg)', color: 'var(--success)' }
-}
+  | { variant: 'category'; cause: AccidentCause }
+  | { variant: 'damage'; damage: AccidentDamage }
 
 export function Badge(props: BadgeProps) {
   const { bg, color, iconPath, label } =
@@ -27,13 +22,14 @@ export function Badge(props: BadgeProps) {
       ? {
           bg: 'var(--violetBg)',
           color: 'var(--primary)',
-          iconPath: CATEGORY_ICON[props.category],
-          label: props.category,
+          iconPath: CAUSE_ICON[props.cause],
+          label: CAUSE_LABELS[props.cause],
         }
       : {
-          ...getDamageStyle(props.amount),
+          bg: 'var(--erroBg)',
+          color: 'var(--error)',
           iconPath: ICON_PATHS.userGroup,
-          label: `약 ${props.amount}만`,
+          label: formatDamage(props.damage),
         }
 
   return (
