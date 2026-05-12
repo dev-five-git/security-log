@@ -48,9 +48,9 @@ export function RegisterForm() {
   return (
     <Center
       _themeDark={{
-        bg: 'url(/security-log/images/home/main-banner-background-dark.webp) center/cover no-repeat, $background',
+        bg: 'url(/images/home/main-banner-background-dark.webp) center/cover no-repeat, $background',
       }}
-      bg="url(/security-log/images/home/main-banner-background.webp) top center / 100% 500px no-repeat, $background"
+      bg="url(/images/home/main-banner-background.webp) top center / 100% 500px no-repeat, $background"
       flexDir="column"
       justifyContent="flex-start"
       minH={['calc(100dvh - 196px)', null, null, null, 'calc(100dvh - 212px)']}

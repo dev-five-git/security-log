@@ -29,7 +29,7 @@ const SERVICES = [
 export function Service() {
   return (
     <Center
-      bg="url(/security-log/images/home/main-banner-background2.webp) center/cover no-repeat"
+      bg="url(/images/home/main-banner-background2.webp) center/cover no-repeat"
       flexDir="column"
       objectFit="cover"
       overflow="hidden"
