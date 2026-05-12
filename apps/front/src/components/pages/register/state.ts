@@ -89,9 +89,7 @@ export function registerFormReducer(
     case 'REMOVE_CAUSE_ANALYSIS':
       return {
         ...state,
-        causeAnalyses: state.causeAnalyses.filter(
-          (_, i) => i !== action.index,
-        ),
+        causeAnalyses: state.causeAnalyses.filter((_, i) => i !== action.index),
       }
     case 'UPDATE_LIST':
       return {

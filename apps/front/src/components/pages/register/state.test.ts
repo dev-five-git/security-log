@@ -6,7 +6,9 @@ import {
   type RegisterFormState,
 } from './state'
 
-const seed = (overrides: Partial<RegisterFormState> = {}): RegisterFormState => ({
+const seed = (
+  overrides: Partial<RegisterFormState> = {},
+): RegisterFormState => ({
   ...INITIAL_REGISTER_FORM,
   ...overrides,
 })

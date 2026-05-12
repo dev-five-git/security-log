@@ -69,7 +69,12 @@ export function RadioOption({ label, checked, onSelect }: RadioOptionProps) {
         transition="background-color 0.15s ease, border-color 0.15s ease"
       >
         {checked && (
-          <Box aspectRatio="1" bg="$primary" borderRadius="50%" boxSize="12px" />
+          <Box
+            aspectRatio="1"
+            bg="$primary"
+            borderRadius="50%"
+            boxSize="12px"
+          />
         )}
       </Center>
       <Text color="$text" typography="body" wordBreak="keep-all">

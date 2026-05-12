@@ -90,9 +90,11 @@ describe('buildIssueBody', () => {
 describe('buildIssueUrl', () => {
   it('targets the configured repo with title/body/labels params', () => {
     const url = buildIssueUrl(basePayload)
-    expect(url.startsWith('https://github.com/dev-five-git/security-log/issues/new?')).toBe(
-      true,
-    )
+    expect(
+      url.startsWith(
+        'https://github.com/dev-five-git/security-log/issues/new?',
+      ),
+    ).toBe(true)
     const params = new URL(url).searchParams
     expect(params.get('title')).toBe('[사례] SK텔레콤 (2025)')
     expect(params.get('labels')).toBe(CASE_SUBMISSION_LABEL)

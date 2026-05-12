@@ -26,13 +26,7 @@ export function CauseAnalysisSection({
           key={idx}
           alignItems="center"
           columnGap="$spacingSpacing08"
-          gridTemplateColumns={[
-            '1fr auto',
-            null,
-            null,
-            null,
-            '1fr 200px auto',
-          ]}
+          gridTemplateColumns={['1fr auto', null, null, null, '1fr 200px auto']}
           rowGap="$spacingSpacing08"
           w="100%"
         >

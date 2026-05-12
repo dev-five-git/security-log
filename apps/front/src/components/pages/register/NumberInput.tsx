@@ -37,9 +37,7 @@ export function NumberInput({
           },
         })}
         inputMode="numeric"
-        onChange={(e) =>
-          onChange(e.currentTarget.value.replace(/[^0-9]/g, ''))
-        }
+        onChange={(e) => onChange(e.currentTarget.value.replace(/[^0-9]/g, ''))}
         placeholder={placeholder}
         value={value}
       />
