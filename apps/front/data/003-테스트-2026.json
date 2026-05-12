@@ -1,0 +1,52 @@
+{
+  "id": "3",
+  "companyName": "테스트",
+  "date": "2026-05-13",
+  "country": "GH",
+  "cause": "unknown",
+  "damage": {
+    "value": 10,
+    "unit": ""
+  },
+  "leaks": [
+    "이름",
+    "아이디"
+  ],
+  "secondaryDamage": [
+    "생년월일"
+  ],
+  "causeAnalyses": [
+    {
+      "content": "테스트",
+      "date": "2026-05-20"
+    },
+    {
+      "content": "테스트2",
+      "date": "2026-05-21"
+    },
+    {
+      "content": "테스트3",
+      "date": "2026-05-26"
+    }
+  ],
+  "rootCauses": [
+    "하입보이",
+    "테스트중"
+  ],
+  "prevention": {
+    "personal": [
+      "테스트 중",
+      "테스트 중1"
+    ],
+    "corporate": [
+      "기업 테스트",
+      "기업 테스트2"
+    ]
+  },
+  "tags": [
+    "테스트",
+    "테스트2"
+  ],
+  "createdAt": "2026-05-12T08:41:19.815Z",
+  "issueUrl": "https://github.com/dev-five-git/security-log/issues/3"
+}

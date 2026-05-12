@@ -3,7 +3,7 @@
 
 import accident0 from '../../data/001-sk-telecom-usim-2025.json'
 import accident1 from '../../data/002-테스트-중입니다-2026.json'
-import accident2 from '../../data/003-lg-uplus-2023.json'
+import accident2 from '../../data/003-테스트-2026.json'
 import accident3 from '../../data/004-interpark-2016.json'
 import accident4 from '../../data/005-auction-2008.json'
 import accident5 from '../../data/006-card-3sa-2014.json'
