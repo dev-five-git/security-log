@@ -2,13 +2,8 @@
 // Parses a "case-submission" GitHub issue body, writes a JSON data file,
 // and regenerates the static accidents data index consumed by the front app.
 
-import {
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  unlinkSync,
-  writeFileSync,
-} from 'node:fs'
+import { randomUUID } from 'node:crypto'
+import { mkdirSync, readdirSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 const ROOT = process.cwd()
@@ -52,61 +47,16 @@ try {
   process.exit(1)
 }
 
-const slug =
-  String(draft.companyName || 'unknown')
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[^\p{L}\p{N}]+/gu, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 60) || 'unknown'
-
-const year = String(draft.date || '').slice(0, 4) || 'unknown'
-const padded = issueNumber.padStart(3, '0')
-const filename = `${padded}-${slug}-${year}.json`
-
 mkdirSync(DATA_DIR, { recursive: true })
 
-// Determine accident id:
-// - If this issue already has a data file (edit case), reuse its existing id.
-// - Otherwise, assign max(existing ids) + 1 so ids stay dense even when
-//   issue numbers skip non-case issues.
-const existingFiles = readdirSync(DATA_DIR).filter((f) => f.endsWith('.json'))
-
-const readJson = (file) => {
-  try {
-    return JSON.parse(readFileSync(resolve(DATA_DIR, file), 'utf8'))
-  } catch {
-    return null
-  }
-}
-
-let accidentId
-const previousFile = existingFiles.find((f) => f.startsWith(`${padded}-`))
-if (previousFile) {
-  const prev = readJson(previousFile)
-  if (prev && prev.id != null) accidentId = String(prev.id)
-}
-if (!accidentId) {
-  const maxId = existingFiles.reduce((max, f) => {
-    const data = readJson(f)
-    const n = Number(data?.id)
-    return Number.isFinite(n) && n > max ? n : max
-  }, 0)
-  accidentId = String(maxId + 1)
-}
+const accidentId = randomUUID()
+const filename = `${accidentId}.json`
 
 const accident = {
   id: accidentId,
   ...draft,
   createdAt: new Date().toISOString(),
   issueUrl,
-}
-
-// Remove any stale entry for this issue (e.g., on issue edits with new slug/year).
-for (const existing of readdirSync(DATA_DIR)) {
-  if (existing.startsWith(`${padded}-`) && existing !== filename) {
-    unlinkSync(resolve(DATA_DIR, existing))
-  }
 }
 
 writeFileSync(
