@@ -1,0 +1,140 @@
+{
+  "nav": {
+    "register": "사례 등록하기"
+  },
+  "header": {
+    "siteName": "보안록",
+    "toggleLang": "언어 변경",
+    "toggleTheme": "테마 변경",
+    "search": "검색",
+    "openMenu": "메뉴 열기",
+    "closeSearch": "검색창 닫기"
+  },
+  "accident": {
+    "backToList": "목록으로",
+    "similarCases": "비슷한 사례",
+    "affectedCountry": "피해 국가",
+    "leaks": "유출 내역",
+    "causeAnalysis": "원인 분석",
+    "rootCauseAnalysis": "근본 원인 분석",
+    "prevention": "예방 및 교훈",
+    "personal": "개인",
+    "corporate": "기업",
+    "unknown": "미상"
+  },
+  "cause": {
+    "hacking": "해킹",
+    "insider": "내부자",
+    "negligence": "관리부실",
+    "technical": "기술결함",
+    "unknown": "미상"
+  },
+  "causeDescription": {
+    "hacking": "외부 공격자의 침입으로 인한 유출.\nex) SQL 인젝션, 랜섬웨어, 피싱 등",
+    "insider": "내부 직원·외주 인력에 의한 의도된 정보 반출.\nex) USB 반출, 권한 남용 등",
+    "negligence": "관리 부실로 인한 유출.\nex) 권한 회수 누락, 보안 설정 미흡 등",
+    "technical": "시스템·서비스의 기술적 결함.\nex) API 인증 누락, 라이브러리 취약점 등",
+    "unknown": "원인이 밝혀지지 않았거나 조사 진행 중인 사고."
+  },
+  "country": {
+    "KR": "대한민국",
+    "US": "미국",
+    "JP": "일본",
+    "CN": "중국",
+    "GB": "영국",
+    "DE": "독일",
+    "FR": "프랑스",
+    "GH": "가나"
+  },
+  "damage": {
+    "unknown": "미상",
+    "prefix": "약"
+  },
+  "search": {
+    "placeholder": "회사명, 태그, 원인 등으로 검색",
+    "placeholderMobile": "기업명, 서비스명 검색",
+    "placeholderDesktop": "기업명, 서비스명 등 검색어를 입력해주세요.",
+    "noResults": "검색 결과가 없습니다",
+    "results": "'{query}' 검색 결과 입니다.",
+    "count": "건"
+  },
+  "filter": {
+    "all": "전체",
+    "latest": "최신순",
+    "oldest": "오래된순",
+    "damage": "피해규모순"
+  },
+  "footer": {
+    "contact": "문의 및 의견 제출"
+  },
+  "home": {
+    "bannerHeadline1": "당신의 정보는 안전한가요?",
+    "bannerHeadline2": "반복되는 보안 사고의 근본적인 원인과 \n내일을 지키기 위한 단단한 예방책을 담습니다.",
+    "bannerDesc": "실제 사례와 데이터를 통해 보안 사고의 원인을 파악하고\n개인과 기업을 위한 실질적인 예방법을 확인해 볼 수 있습니다.",
+    "statIncidents": "총 사고 건수",
+    "statIncidentsValue": "1,540+",
+    "statDamage": "기업 평균 손실",
+    "statDamageValue": "45.3억",
+    "statAffected": "누적 피해 건수",
+    "statAffectedValue": "1억 2,800만+",
+    "statPreventable": "예방 가능 비율",
+    "statPreventableValue": "92%",
+    "listTitle": "보안 사고 목록",
+    "listDesc": "대한민국에서 실제로 발생한 보안 사고를 모아 규모의 크기와 원인을 확인해 볼 수 있어요.",
+    "moreButton": "사례 더보기",
+    "statisticsTitle": "사고 원인 통계",
+    "statisticsDesc": "유형별 사고 통계를 통해 대한민국 보안 위협의 주요 흐름과 원인을 파악할 수 있어요.",
+    "serviceTitle": "내 정보를 지키는 유용한 서비스",
+    "serviceDesc": "공식 채널을 통해 확인하고 대응할 수 있어요."
+  },
+  "register": {
+    "title": "사례 등록",
+    "subtitle": "보안록에 등록되지 않은 사례를 공유해 주세요.",
+    "companyName": "회사명",
+    "companyPlaceholder": "회사명을 입력하세요.",
+    "date": "사고 날짜",
+    "country": "국가",
+    "damage": "피해 규모",
+    "damageHint": "(단위: 건)",
+    "damagePlaceholder": "예: 2500",
+    "cause": "사고 원인",
+    "tags": "태그",
+    "tagsHint": "(쉼표로 구분)",
+    "tagsPlaceholder": "예: 보이스피싱, 관리자페이지무단접속",
+    "leaks": "유출 내역",
+    "leaksPlaceholder": "이름, 아이디, 생년 월/일",
+    "optional": "(선택)",
+    "causeAnalysis": "원인 분석",
+    "rootCauses": "근본 원인 분석",
+    "prevention": "예방 교훈",
+    "personal": "개인",
+    "corporate": "기업",
+    "contentPlaceholder": "내용을 입력하세요.",
+    "back": "이전으로",
+    "submit": "등록하기",
+    "add": "추가",
+    "delete": "삭제",
+    "select": "선택",
+    "search": "검색",
+    "noResults": "결과 없음",
+    "damageNone": "없음",
+    "unitHundredMillion": "억",
+    "unitTenThousand": "만",
+    "unitThousand": "천",
+    "datePlaceholder": "연도-월-일"
+  },
+  "services": [
+    {
+      "title": "털린 내 정보 찾기",
+      "description": "내 정보가 유출되었는지 조회할 수 있는\n개인정보 유출 확인 서비스"
+    },
+    {
+      "title": "개인정보침해 신고 센터",
+      "description": "개인정보 유출, 오남용 등 침해 사례를 신고하고\n상담 받을 수 있는 접수 창구"
+    },
+    {
+      "title": "개인정보 보호 위원회",
+      "description": "개인정보 보호 정책을 총괄하고 법 집행 및\n제도 개선을 담당하는 중앙행정기관"
+    }
+  ]
+}

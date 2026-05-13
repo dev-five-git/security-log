@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useState } from 'react'
 
 import { IconButton } from '@/components/buttons/IconButton'
+import { useLang } from '@/hooks/useLang'
 
 import { DesktopOnly } from '../../responsive/DesktopOnly'
 import { MobileOnly } from '../../responsive/MobileOnly'
@@ -36,13 +37,14 @@ function SearchInputView({
 }) {
   const router = useRouter()
   const [value, setValue] = useState(initial)
+  const { t } = useLang()
 
   const submit = () => {
     const trimmed = value.trim()
     if (!trimmed) return
     const query = new URLSearchParams()
     query.set('q', trimmed)
-    if (category !== '전체') query.set('category', category)
+    if (category !== 'all') query.set('category', category)
     router.push(`/search?${query.toString()}`)
   }
 
@@ -89,7 +91,7 @@ function SearchInputView({
                 submit()
               }
             }}
-            placeholder="기업명, 서비스명 검색"
+            placeholder={t.search.placeholderMobile}
             value={value}
           />
         </MobileOnly>
@@ -111,13 +113,13 @@ function SearchInputView({
                 submit()
               }
             }}
-            placeholder="기업명, 서비스명 등 검색어를 입력해주세요."
+            placeholder={t.search.placeholderDesktop}
             value={value}
           />
         </DesktopOnly>
       </Flex>
       <IconButton
-        aria-label="검색"
+        aria-label={t.header.search}
         className={css({ bg: '$caption' })}
         icon="search"
         onClick={submit}

@@ -1,5 +1,6 @@
+'use client'
 import { Flex, Input } from '@devup-ui/react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import { Icon } from '@/components/icons/Icon'
 import { ICON_PATHS } from '@/components/icons/iconPaths'
@@ -9,6 +10,7 @@ interface DateInputProps {
   onChange: (value: string) => void
   maxW?: string | (string | null)[]
   h?: string
+  placeholder?: string
 }
 
 export function DateInput({
@@ -16,8 +18,12 @@ export function DateInput({
   onChange,
   maxW,
   h = '50px',
+  placeholder = '',
 }: DateInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const [focused, setFocused] = useState(false)
+
+  const showAsDate = focused || !!value
 
   const openPicker = () => {
     const el = inputRef.current
@@ -59,18 +65,25 @@ export function DateInput({
         cursor="pointer"
         flex="1"
         minW="0"
+        onBlur={() => setFocused(false)}
         onChange={(e) => onChange(e.currentTarget.value)}
+        onFocus={() => setFocused(true)}
         outline="none"
-        selectors={{
-          '&::-webkit-calendar-picker-indicator': {
-            display: 'none',
-            WebkitAppearance: 'none',
-          },
-          '&::-webkit-datetime-edit': {
-            color: 'inherit',
-          },
-        }}
-        type="date"
+        placeholder={showAsDate ? undefined : placeholder}
+        selectors={
+          showAsDate
+            ? {
+                '&::-webkit-calendar-picker-indicator': {
+                  display: 'none',
+                  WebkitAppearance: 'none',
+                },
+                '&::-webkit-datetime-edit': {
+                  color: 'inherit',
+                },
+              }
+            : undefined
+        }
+        type={showAsDate ? 'date' : 'text'}
         typography="body"
         value={value}
         w="100%"

@@ -2,12 +2,12 @@
 import { Box, Flex, Grid, Text, VStack } from '@devup-ui/react'
 import { useState } from 'react'
 
-import { type AccidentCause, ACCIDENTS, CAUSE_LABELS } from '@/static/accidents'
+import { useLang } from '@/hooks/useLang'
+import { type AccidentCause, ACCIDENTS } from '@/static/accidents'
 
 export interface ACCIDENTCAUSEDATA {
-  label: string
+  cause: AccidentCause
   percentage: number
-  description: string
 }
 
 const CAUSE_ORDER: AccidentCause[] = [
@@ -17,14 +17,6 @@ const CAUSE_ORDER: AccidentCause[] = [
   'technical',
   'unknown',
 ]
-
-const CAUSE_DESCRIPTIONS: Record<AccidentCause, string> = {
-  hacking: `외부 공격자의 침입으로 인한 유출.\nex) SQL 인젝션, 랜섬웨어, 피싱 등`,
-  insider: `내부 직원·외주 인력에 의한 의도된 정보 반출.\nex) USB 반출, 권한 남용 등`,
-  negligence: `관리 부실로 인한 유출.\nex) 권한 회수 누락, 보안 설정 미흡 등`,
-  technical: `시스템·서비스의 기술적 결함.\nex) API 인증 누락, 라이브러리 취약점 등`,
-  unknown: `원인이 밝혀지지 않았거나 조사 진행 중인 사고.`,
-}
 
 function buildCauseStatistics(): ACCIDENTCAUSEDATA[] {
   const total = ACCIDENTS.length
@@ -39,9 +31,8 @@ function buildCauseStatistics(): ACCIDENTCAUSEDATA[] {
     counts[accident.cause] += 1
   }
   return CAUSE_ORDER.map((cause) => ({
-    label: CAUSE_LABELS[cause],
+    cause,
     percentage: total === 0 ? 0 : Math.round((counts[cause] / total) * 100),
-    description: CAUSE_DESCRIPTIONS[cause],
   }))
 }
 
@@ -63,6 +54,7 @@ interface ProgressBarProps {
 
 export function ProgressBar({ data, isDimmed, onHover }: ProgressBarProps) {
   const [showTooltip, setShowTooltip] = useState(false)
+  const { t } = useLang()
   return (
     <VStack
       gap="$spacingSpacing12"
@@ -77,7 +69,7 @@ export function ProgressBar({ data, isDimmed, onHover }: ProgressBarProps) {
       <Flex alignItems="center" justifyContent="space-between" w="100%">
         <Flex alignItems="center" gap="$spacingSpacing04" pos="relative">
           <Text color="$text" typography="bodyLgSb">
-            {data.label}
+            {t.cause[data.cause]}
           </Text>
           <Box
             aspectRatio="1"
@@ -110,7 +102,7 @@ export function ProgressBar({ data, isDimmed, onHover }: ProgressBarProps) {
               w="max-content"
             >
               <Text color="$base" typography="caption" wordBreak="keep-all">
-                {data.description}
+                {t.causeDescription[data.cause]}
               </Text>
             </Box>
           )}
@@ -178,7 +170,7 @@ function DonutChart({ data, hoverIndex, onHoverIndex }: DonutChartProps) {
                 : SEGMENT_COLORS[idx % SEGMENT_COLORS.length]
             return (
               <circle
-                key={item.label}
+                key={item.cause}
                 cx={size / 2}
                 cy={size / 2}
                 fill="none"
@@ -223,7 +215,7 @@ export function Statistics() {
       >
         {ACCIDENTCAUSEDATAS.map((data, idx) => (
           <ProgressBar
-            key={data.label}
+            key={data.cause}
             data={data}
             isDimmed={hoverIndex !== null && hoverIndex !== idx}
             onHover={(hovered) => setHoverIndex(hovered ? idx : null)}

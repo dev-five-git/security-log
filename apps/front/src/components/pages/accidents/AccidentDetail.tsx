@@ -1,3 +1,4 @@
+'use client'
 import { Box, Center, Flex, Grid, Text, VStack } from '@devup-ui/react'
 import Link from 'next/link'
 
@@ -6,10 +7,13 @@ import { Icon } from '@/components/icons/Icon'
 import { ICON_PATHS } from '@/components/icons/iconPaths'
 import { AccidentCard } from '@/components/pages/(home)/AccidentList/AccidentCard'
 import { ShareButton } from '@/components/pages/accidents/ShareButton'
+import { useLang } from '@/hooks/useLang'
 import {
   type Accident,
   formatAccidentDate,
   getCountryLabel,
+  getLocalized,
+  getLocalizedArray,
 } from '@/static/accidents'
 
 interface AccidentDetailProps {
@@ -18,6 +22,7 @@ interface AccidentDetailProps {
 }
 
 export function AccidentDetail({ accident, others }: AccidentDetailProps) {
+  const { lang, t } = useLang()
   return (
     <Center
       bg="$background"
@@ -43,7 +48,7 @@ export function AccidentDetail({ accident, others }: AccidentDetailProps) {
           minW="0"
           w="100%"
         >
-          <DetailCard accident={accident} />
+          <DetailCard accident={accident} lang={lang} t={t} />
           <Link href="/accidents">
             <Center
               _active={{ bg: '$violetBgPressed' }}
@@ -62,12 +67,12 @@ export function AccidentDetail({ accident, others }: AccidentDetailProps) {
               w="fit-content"
             >
               <Text color="$text" typography="buttonSm" wordBreak="keep-all">
-                목록으로
+                {t.accident.backToList}
               </Text>
             </Center>
           </Link>
         </VStack>
-        <OtherResults others={others} />
+        <OtherResults others={others} t={t} />
       </Flex>
     </Center>
   )
@@ -97,7 +102,18 @@ function BackButton() {
   )
 }
 
-function DetailCard({ accident }: { accident: Accident }) {
+type T = ReturnType<typeof useLang>['t']
+type Lang = ReturnType<typeof useLang>['lang']
+
+function DetailCard({
+  accident,
+  lang,
+  t,
+}: {
+  accident: Accident
+  lang: Lang
+  t: T
+}) {
   return (
     <VStack
       bg="$containerBackground"
@@ -154,10 +170,10 @@ function DetailCard({ accident }: { accident: Accident }) {
             whiteSpace="nowrap"
             wordBreak="keep-all"
           >
-            {accident.companyName}
+            {getLocalized(accident.companyName, lang)}
           </Text>
           <Flex flexWrap="wrap" gap="12px">
-            {accident.tags.map((tag) => (
+            {getLocalizedArray(accident.tags, lang).map((tag) => (
               <Text
                 key={tag}
                 color="$textSub"
@@ -176,39 +192,25 @@ function DetailCard({ accident }: { accident: Accident }) {
       <VStack gap="$spacingSpacing40" w="100%">
         <VStack gap="$spacingSpacing32" w="100%">
           <LabeledBlock
-            label="피해 국가"
-            value={getCountryLabel(accident.country)}
+            label={t.accident.affectedCountry}
+            value={getCountryLabel(accident.country, lang)}
           />
-          <Flex
-            flexDir={['column', null, null, null, 'row']}
-            gap="$spacingSpacing32"
-            w="100%"
-          >
-            <Box flex="1" w="100%">
-              <LabeledBlock
-                label="유출 내역"
-                value={accident.leaks.join(', ')}
-              />
-            </Box>
-            <Box flex="1" w="100%">
-              <LabeledBlock
-                label="2차 피해 내역"
-                value={accident.secondaryDamage.join(', ')}
-              />
-            </Box>
-          </Flex>
+          <LabeledBlock
+            label={t.accident.leaks}
+            value={getLocalizedArray(accident.leaks, lang).join(', ')}
+          />
         </VStack>
 
         <VStack gap="$spacingSpacing08" w="100%">
           <Text color="$textSub" typography="buttonSm" wordBreak="keep-all">
-            원인 분석
+            {t.accident.causeAnalysis}
           </Text>
-          <Timeline steps={accident.causeAnalyses} />
+          <Timeline lang={lang} steps={accident.causeAnalyses} />
         </VStack>
 
         <VStack gap="$spacingSpacing04" w="100%">
           <Text color="$textSub" typography="buttonSm" wordBreak="keep-all">
-            근본 원인 분석
+            {t.accident.rootCauseAnalysis}
           </Text>
           <Box
             as="ul"
@@ -218,7 +220,7 @@ function DetailCard({ accident }: { accident: Accident }) {
             typography="body"
             wordBreak="keep-all"
           >
-            {accident.rootCauses.map((cause) => (
+            {getLocalizedArray(accident.rootCauses, lang).map((cause) => (
               <li key={cause}>{cause}</li>
             ))}
           </Box>
@@ -226,7 +228,7 @@ function DetailCard({ accident }: { accident: Accident }) {
 
         <VStack gap="$spacingSpacing08" w="100%">
           <Text color="$textSub" typography="buttonSm" wordBreak="keep-all">
-            예방 및 교훈
+            {t.accident.prevention}
           </Text>
           <Flex
             flexDir={['column', null, null, null, 'row']}
@@ -235,13 +237,13 @@ function DetailCard({ accident }: { accident: Accident }) {
           >
             <PreventionCard
               iconPath={ICON_PATHS.userOne}
-              items={accident.prevention.personal}
-              label="개인"
+              items={getLocalizedArray(accident.prevention.personal, lang)}
+              label={t.accident.personal}
             />
             <PreventionCard
               iconPath={ICON_PATHS.company}
-              items={accident.prevention.corporate}
-              label="기업"
+              items={getLocalizedArray(accident.prevention.corporate, lang)}
+              label={t.accident.corporate}
             />
           </Flex>
         </VStack>
@@ -263,7 +265,13 @@ function LabeledBlock({ label, value }: { label: string; value: string }) {
   )
 }
 
-function Timeline({ steps }: { steps: { content: string; date: string }[] }) {
+function Timeline({
+  steps,
+  lang,
+}: {
+  steps: Accident['causeAnalyses']
+  lang: Lang
+}) {
   return (
     <VStack
       bg="$borderLight"
@@ -276,9 +284,10 @@ function Timeline({ steps }: { steps: { content: string; date: string }[] }) {
     >
       {steps.map((step, idx) => {
         const isLast = idx === steps.length - 1
+        const content = getLocalized(step.content, lang)
         return (
           <Flex
-            key={`${step.content}-${step.date}`}
+            key={`${content}-${step.date}`}
             alignItems="flex-start"
             gap="$spacingSpacing12"
             pos="relative"
@@ -316,7 +325,7 @@ function Timeline({ steps }: { steps: { content: string; date: string }[] }) {
               pt="0px"
             >
               <Text color="$text" typography="bodyLgSb" wordBreak="keep-all">
-                {step.content}
+                {content}
               </Text>
               <Text color="$caption" typography="captionSb">
                 {formatAccidentDate(step.date)}
@@ -374,7 +383,7 @@ function PreventionCard({
   )
 }
 
-function OtherResults({ others }: { others: Accident[] }) {
+function OtherResults({ others, t }: { others: Accident[]; t: T }) {
   if (others.length === 0) return null
   return (
     <VStack
@@ -383,7 +392,7 @@ function OtherResults({ others }: { others: Accident[] }) {
       w="100%"
     >
       <Text color="$text" typography="bodyLgSb" wordBreak="keep-all">
-        비슷한 사례
+        {t.accident.similarCases}
       </Text>
       <Grid gap="12px" gridTemplateColumns="1fr" w="100%">
         {others.map((accident) => (

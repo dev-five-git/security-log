@@ -14,7 +14,6 @@ export interface RegisterFormState {
   damageUnit: AccidentDamageUnit
   tags: string
   leak: string
-  secondary: string
   causeAnalyses: CauseAnalysisItem[]
   rootCauses: string[]
   preventPersonal: string[]
@@ -30,7 +29,6 @@ export const INITIAL_REGISTER_FORM: RegisterFormState = {
   damageUnit: '만',
   tags: '',
   leak: '',
-  secondary: '',
   causeAnalyses: [{ content: '', date: '' }],
   rootCauses: [''],
   preventPersonal: [''],
@@ -43,7 +41,6 @@ type TextField =
   | 'country'
   | 'tags'
   | 'leak'
-  | 'secondary'
   | 'damageValue'
 
 type ListField = 'rootCauses' | 'preventPersonal' | 'preventCorporate'

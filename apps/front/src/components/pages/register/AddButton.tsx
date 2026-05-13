@@ -1,13 +1,16 @@
+'use client'
 import { Center, css, Text } from '@devup-ui/react'
 
 import { Icon } from '@/components/icons/Icon'
 import { ICON_PATHS } from '@/components/icons/iconPaths'
+import { useLang } from '@/hooks/useLang'
 
 interface AddButtonProps {
   onClick: () => void
 }
 
 export function AddButton({ onClick }: AddButtonProps) {
+  const { t } = useLang()
   return (
     <Center
       _active={{ bg: '$violetBgPressed' }}
@@ -28,7 +31,7 @@ export function AddButton({ onClick }: AddButtonProps) {
       type="button"
     >
       <Text color="$textSub" typography="buttonSm" wordBreak="keep-all">
-        추가
+        {t.register.add}
       </Text>
       <Icon
         boxSize="14px"

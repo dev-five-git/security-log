@@ -1,10 +1,18 @@
+'use client'
 import { Flex, Text, VStack } from '@devup-ui/react'
 import Link from 'next/link'
 
 import { Badge } from '@/components/common/Badge'
-import { type Accident, formatAccidentDate } from '@/static/accidents'
+import { useLang } from '@/hooks/useLang'
+import {
+  type Accident,
+  formatAccidentDate,
+  getLocalized,
+  getLocalizedArray,
+} from '@/static/accidents'
 
 export function AccidentCard({ accident }: { accident: Accident }) {
+  const { lang } = useLang()
   return (
     <Link href={`/accidents/${accident.id}`}>
       <VStack
@@ -36,11 +44,11 @@ export function AccidentCard({ accident }: { accident: Accident }) {
         </Flex>
 
         <Text color="$text" typography="h5" wordBreak="keep-all">
-          {accident.companyName}
+          {getLocalized(accident.companyName, lang)}
         </Text>
 
         <Flex flexWrap="wrap" gap="12px">
-          {accident.tags.map((tag) => (
+          {getLocalizedArray(accident.tags, lang).map((tag) => (
             <Text key={tag} color="$textSub" typography="body">
               #{tag}
             </Text>

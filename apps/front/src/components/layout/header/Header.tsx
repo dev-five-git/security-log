@@ -7,6 +7,7 @@ import { Button } from '@/components/buttons/Button'
 import { IconButton } from '@/components/buttons/IconButton'
 import { DesktopOnly } from '@/components/layout/responsive/DesktopOnly'
 import { MobileOnly } from '@/components/layout/responsive/MobileOnly'
+import { useLang } from '@/hooks/useLang'
 
 import { Search } from './search/Search'
 
@@ -20,6 +21,7 @@ export function Header() {
   const [openPanel, setOpenPanel] = useState<MobilePanel>(null)
   const headerRef = useRef<HTMLDivElement>(null)
   const theme = useTheme()
+  const { t, toggleLang } = useLang()
 
   const toggle = (panel: Exclude<MobilePanel, null>) => {
     setOpenPanel((prev) => (prev === panel ? null : panel))
@@ -82,7 +84,7 @@ export function Header() {
             lineHeight="1.4"
             wordBreak="keep-all"
           >
-            보안록
+            {t.header.siteName}
           </Text>
         </Link>
         <DesktopOnly>
@@ -96,20 +98,21 @@ export function Header() {
                   borderRadius: '12px',
                   styleOrder: 2,
                 })}
-                label="사례 등록하기"
+                label={t.nav.register}
                 size="Md"
                 varient="primary"
               />
             </Link>
             <Flex alignItems="center">
               <IconButton
-                aria-label="언어 변경"
+                aria-label={t.header.toggleLang}
                 className={css({ bg: '$text' })}
                 hoverScale={1.1}
                 icon="globe"
+                onClick={toggleLang}
               />
               <IconButton
-                aria-label="테마 변경"
+                aria-label={t.header.toggleTheme}
                 className={css({ bg: '$text' })}
                 icon="theme"
                 onClick={toggleTheme}
@@ -120,13 +123,13 @@ export function Header() {
         <MobileOnly>
           <Flex alignItems="center" gap="$spacingSpacing04">
             <IconButton
-              aria-label="검색"
+              aria-label={t.header.search}
               className={css({ bg: '$text' })}
               icon="search"
               onClick={() => toggle('search')}
             />
             <IconButton
-              aria-label="메뉴 열기"
+              aria-label={t.header.openMenu}
               className={css({ bg: '$text' })}
               icon="hamburger"
               onClick={() => toggle('menu')}
@@ -155,7 +158,7 @@ export function Header() {
         >
           <Search />
           <IconButton
-            aria-label="검색창 닫기"
+            aria-label={t.header.closeSearch}
             className={css({ bg: '$text' })}
             icon="close"
             onClick={() => setOpenPanel(null)}
@@ -184,13 +187,14 @@ export function Header() {
         >
           <Flex alignItems="center" gap="$spacingSpacing04">
             <IconButton
-              aria-label="언어 변경"
+              aria-label={t.header.toggleLang}
               className={css({ bg: '$text' })}
               hoverScale={1.1}
               icon="globe"
+              onClick={toggleLang}
             />
             <IconButton
-              aria-label="테마 변경"
+              aria-label={t.header.toggleTheme}
               className={css({ bg: '$text' })}
               icon="theme"
               onClick={toggleTheme}
@@ -202,7 +206,7 @@ export function Header() {
                 borderRadius: '12px',
                 styleOrder: 2,
               })}
-              label="사례 등록하기"
+              label={t.nav.register}
               size="Md"
               varient="primary"
             />

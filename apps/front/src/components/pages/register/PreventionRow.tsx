@@ -10,6 +10,7 @@ interface PreventionRowProps {
   onChange: (idx: number, value: string) => void
   onAdd: () => void
   onDelete: (idx: number) => void
+  placeholder?: string
 }
 
 export function PreventionRow({
@@ -18,6 +19,7 @@ export function PreventionRow({
   onChange,
   onAdd,
   onDelete,
+  placeholder,
 }: PreventionRowProps) {
   return (
     <Flex flexDir="row" w="100%">
@@ -45,7 +47,7 @@ export function PreventionRow({
               h="42px"
               multiline
               onChange={(next) => onChange(idx, next)}
-              placeholder="내용을 입력하세요."
+              placeholder={placeholder}
               value={value}
             />
             {idx === values.length - 1 ? (

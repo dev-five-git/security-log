@@ -6,7 +6,7 @@ import { type Category, Dropdown } from './Dropdown'
 import { SearchInput } from './SearchInput'
 
 export function Search() {
-  const [category, setCategory] = useState<Category>('전체')
+  const [category, setCategory] = useState<Category>('all')
   return (
     <Flex
       alignItems="flex-start"

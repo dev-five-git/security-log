@@ -1,10 +1,13 @@
+'use client'
 import { css, Flex, Text, VStack } from '@devup-ui/react'
 import Link from 'next/link'
 
 import { Icon } from '@/components/icons/Icon'
 import { ICON_PATHS } from '@/components/icons/iconPaths'
+import { useLang } from '@/hooks/useLang'
 
 export function Footer() {
+  const { t } = useLang()
   return (
     <Flex
       bg="$footerBg"
@@ -58,7 +61,7 @@ export function Footer() {
           w={['320px', null, null, null, 'auto']}
         >
           <Text color="#FFF" typography="bodyB" wordBreak="keep-all">
-            문의 및 의견 제출
+            {t.footer.contact}
             <br />
             <Link
               className={css({

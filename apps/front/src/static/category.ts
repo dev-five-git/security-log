@@ -1,8 +1,10 @@
-export const CATEGORY = [
-  '전체',
-  '해킹',
-  '내부자',
-  '관리부실',
-  '기술결함',
-  '미상',
-]
+export const CATEGORY_KEYS = [
+  'all',
+  'hacking',
+  'insider',
+  'negligence',
+  'technical',
+  'unknown',
+] as const
+
+export type CategoryKey = (typeof CATEGORY_KEYS)[number]

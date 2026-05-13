@@ -1,13 +1,16 @@
+'use client'
 import { Center, Image, Text, VStack } from '@devup-ui/react'
 import Link from 'next/link'
 
 import { MoreButton } from '@/components/buttons/MoreButton'
 import { DesktopOnly } from '@/components/layout/responsive/DesktopOnly'
 import { MobileOnly } from '@/components/layout/responsive/MobileOnly'
+import { useLang } from '@/hooks/useLang'
 
 import { AccidentListDetail } from './AccidentListDetail'
 
 export function AccidentList() {
+  const { t } = useLang()
   return (
     <Center
       bg="$background"
@@ -26,7 +29,7 @@ export function AccidentList() {
           <VStack py={['20px', null, null, null, '40px']}>
             <DesktopOnly>
               <Image
-                alt="광고이미지"
+                alt={t.home.listTitle}
                 h="230px"
                 src="/images/home/main-banner-ads-desktop.webp"
                 w="1280px"
@@ -34,7 +37,7 @@ export function AccidentList() {
             </DesktopOnly>
             <MobileOnly>
               <Image
-                alt="광고이미지"
+                alt={t.home.listTitle}
                 aspectRatio="540 / 360"
                 h="auto"
                 maxW="540px"
@@ -51,16 +54,15 @@ export function AccidentList() {
           w="100%"
         >
           <Text color="$title" typography="h2" wordBreak="keep-all">
-            보안 사고 목록
+            {t.home.listTitle}
           </Text>
           <Text color="$textSub" typography="title" wordBreak="keep-all">
-            대한민국에서 실제로 발생한 보안 사고를 모아 규모의 크기와 원인을
-            확인해 볼 수 있어요.
+            {t.home.listDesc}
           </Text>
         </VStack>
         <AccidentListDetail />
         <MobileOnly>
-          <MoreButton buttonLabel="사례 더보기" href="/accidents" />
+          <MoreButton buttonLabel={t.home.moreButton} href="/accidents" />
         </MobileOnly>
       </VStack>
     </Center>

@@ -3,12 +3,12 @@ import { describe, expect, it } from 'bun:test'
 import {
   ACCIDENTS,
   CAUSE_LABELS,
-  CAUSE_OPTIONS,
-  DAMAGE_UNIT_OPTIONS,
   formatAccidentDate,
   formatDamage,
   getAccidentById,
+  getCauseOptions,
   getCountryLabel,
+  getDamageUnitOptions,
   getDamageWeight,
 } from './accidents'
 
@@ -77,15 +77,20 @@ describe('getAccidentById', () => {
 })
 
 describe('static option lists', () => {
-  it('CAUSE_OPTIONS mirrors CAUSE_LABELS', () => {
-    expect(CAUSE_OPTIONS).toHaveLength(Object.keys(CAUSE_LABELS).length)
-    for (const option of CAUSE_OPTIONS) {
+  it('getCauseOptions mirrors CAUSE_LABELS for ko', () => {
+    const options = getCauseOptions('ko')
+    expect(options).toHaveLength(Object.keys(CAUSE_LABELS).length)
+    for (const option of options) {
       expect(option.label).toBe(CAUSE_LABELS[option.value])
     }
   })
 
-  it('DAMAGE_UNIT_OPTIONS exposes the supported units in order', () => {
-    expect(DAMAGE_UNIT_OPTIONS.map((o) => o.value)).toEqual([
+  it('getDamageUnitOptions exposes the supported units in order', () => {
+    expect(
+      getDamageUnitOptions({ 억: '억', 만: '만', 천: '천', none: '없음' }).map(
+        (o) => o.value,
+      ),
+    ).toEqual([
       '억',
       '만',
       '천',

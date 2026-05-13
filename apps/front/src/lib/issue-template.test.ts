@@ -20,7 +20,6 @@ const basePayload: CaseFormPayload = {
   damageUnit: '만',
   tagsRaw: '통신사, USIM',
   leakRaw: '이름,전화번호',
-  secondaryRaw: '',
   causeAnalyses: [
     { content: 'HSS 침투', date: '2024-06-15' },
     { content: '', date: '' },
@@ -33,16 +32,18 @@ const basePayload: CaseFormPayload = {
 describe('buildAccidentDraft', () => {
   it('trims, splits CSV inputs and drops empty list entries', () => {
     const draft = buildAccidentDraft(basePayload)
-    expect(draft.companyName).toBe('SK텔레콤')
-    expect(draft.tags).toEqual(['통신사', 'USIM'])
-    expect(draft.leaks).toEqual(['이름', '전화번호'])
-    expect(draft.secondaryDamage).toEqual([])
+    expect(draft.companyName).toEqual({ ko: 'SK텔레콤', en: 'SK텔레콤' })
+    expect(draft.tags).toEqual({ ko: ['통신사', 'USIM'], en: ['통신사', 'USIM'] })
+    expect(draft.leaks).toEqual({ ko: ['이름', '전화번호'], en: ['이름', '전화번호'] })
     expect(draft.causeAnalyses).toEqual([
-      { content: 'HSS 침투', date: '2024-06-15' },
+      { content: { ko: 'HSS 침투', en: 'HSS 침투' }, date: '2024-06-15' },
     ])
-    expect(draft.rootCauses).toEqual(['접근통제 부족'])
-    expect(draft.prevention.personal).toEqual(['USIM 보호서비스 가입'])
-    expect(draft.prevention.corporate).toEqual([])
+    expect(draft.rootCauses).toEqual({ ko: ['접근통제 부족'], en: ['접근통제 부족'] })
+    expect(draft.prevention.personal).toEqual({
+      ko: ['USIM 보호서비스 가입'],
+      en: ['USIM 보호서비스 가입'],
+    })
+    expect(draft.prevention.corporate).toEqual({ ko: [], en: [] })
     expect(draft.damage).toEqual({ value: 2500, unit: '만' })
   })
 

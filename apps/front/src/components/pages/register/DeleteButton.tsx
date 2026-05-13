@@ -1,13 +1,16 @@
+'use client'
 import { Center, css, Text } from '@devup-ui/react'
 
 import { Icon } from '@/components/icons/Icon'
 import { ICON_PATHS } from '@/components/icons/iconPaths'
+import { useLang } from '@/hooks/useLang'
 
 interface DeleteButtonProps {
   onClick: () => void
 }
 
 export function DeleteButton({ onClick }: DeleteButtonProps) {
+  const { t } = useLang()
   return (
     <Center
       _active={{ bg: '$background' }}
@@ -28,7 +31,7 @@ export function DeleteButton({ onClick }: DeleteButtonProps) {
       type="button"
     >
       <Text color="$textSub" typography="buttonSm" wordBreak="keep-all">
-        삭제
+        {t.register.delete}
       </Text>
       <Icon
         boxSize="14px"

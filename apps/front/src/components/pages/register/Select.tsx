@@ -15,6 +15,8 @@ interface SelectProps<T extends string> {
   onChange: (value: T) => void
   options: SelectOption<T>[]
   placeholder?: string
+  searchPlaceholder?: string
+  emptyLabel?: string
   searchable?: boolean
   maxH?: string
 }
@@ -23,7 +25,9 @@ export function Select<T extends string>({
   value,
   onChange,
   options,
-  placeholder = '선택',
+  placeholder = '',
+  searchPlaceholder = '',
+  emptyLabel = '',
   searchable = false,
   maxH = '240px',
 }: SelectProps<T>) {
@@ -127,7 +131,7 @@ export function Select<T extends string>({
                   },
                 })}
                 onChange={(e) => setQuery(e.currentTarget.value)}
-                placeholder="검색"
+                placeholder={searchPlaceholder}
                 value={query}
               />
             </Box>
@@ -142,7 +146,7 @@ export function Select<T extends string>({
             {filtered.length === 0 ? (
               <Box px="$spacingSpacing16" py="$spacingSpacing12">
                 <Text color="$borderDark" typography="body">
-                  결과 없음
+                  {emptyLabel}
                 </Text>
               </Box>
             ) : (

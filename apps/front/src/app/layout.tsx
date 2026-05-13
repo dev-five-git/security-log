@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from 'next'
 
 import { Footer } from '@/components/layout/footer/Footer'
 import { Header } from '@/components/layout/header/Header'
+import { LanguageProvider } from '@/contexts/LanguageContext'
 
 import {
   DEFAULT_DESCRIPTION,
@@ -91,9 +92,11 @@ export default function RootLayout({
         <ThemeScript />
       </head>
       <body>
-        <Header />
-        {children}
-        <Footer />
+        <LanguageProvider>
+          <Header />
+          {children}
+          <Footer />
+        </LanguageProvider>
       </body>
     </html>
   )

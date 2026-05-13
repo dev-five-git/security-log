@@ -1,8 +1,12 @@
+'use client'
 import { Center, Text, VStack } from '@devup-ui/react'
+
+import { useLang } from '@/hooks/useLang'
 
 import { Statistics } from './Statistics'
 
 export function AccidentCauseStatistics() {
+  const { t } = useLang()
   return (
     <Center
       bg="$containerBackground"
@@ -20,11 +24,10 @@ export function AccidentCauseStatistics() {
       >
         <VStack gap="$spacingSpacing12" maxW="1280px" w="100%">
           <Text color="$title" typography="h2" wordBreak="keep-all">
-            사고 원인 통계
+            {t.home.statisticsTitle}
           </Text>
           <Text color="$textSub" typography="title" wordBreak="keep-all">
-            유형별 사고 통계를 통해 대한민국 보안 위협의 주요 흐름과 원인을
-            파악할 수 있어요.
+            {t.home.statisticsDesc}
           </Text>
         </VStack>
         <Statistics />

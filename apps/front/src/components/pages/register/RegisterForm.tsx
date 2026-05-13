@@ -3,8 +3,9 @@ import { Box, Center, Flex, Grid, Text, VStack } from '@devup-ui/react'
 import { useReducer } from 'react'
 
 import { buildIssueUrl } from '@/lib/issue-template'
-import { CAUSE_OPTIONS, DAMAGE_UNIT_OPTIONS } from '@/static/accidents'
-import { COUNTRY_OPTIONS } from '@/static/countries'
+import { useLang } from '@/hooks/useLang'
+import { getCauseOptions, getDamageUnitOptions } from '@/static/accidents'
+import { getCountryOptions } from '@/static/countries'
 
 import { CauseAnalysisSection } from './CauseAnalysisSection'
 import { DateInput } from './DateInput'
@@ -19,6 +20,7 @@ import { StringListSection } from './StringListSection'
 import { TextInput } from './TextInput'
 
 export function RegisterForm() {
+  const { t, lang } = useLang()
   const [state, dispatch] = useReducer(
     registerFormReducer,
     INITIAL_REGISTER_FORM,
@@ -36,7 +38,6 @@ export function RegisterForm() {
       damageUnit: state.damageUnit,
       tagsRaw: state.tags,
       leakRaw: state.leak,
-      secondaryRaw: state.secondary,
       causeAnalyses: state.causeAnalyses,
       rootCauses: state.rootCauses,
       preventPersonal: state.preventPersonal,
@@ -72,10 +73,10 @@ export function RegisterForm() {
           textAlign="center"
         >
           <Text color="$title" typography="h2" wordBreak="keep-all">
-            사례 등록
+            {t.register.title}
           </Text>
           <Text color="$textSub" typography="title" wordBreak="keep-all">
-            보안록에 등록되지 않은 사례를 공유해 주세요.
+            {t.register.subtitle}
           </Text>
         </VStack>
 
@@ -109,20 +110,21 @@ export function RegisterForm() {
                 ]}
                 rowGap="$spacingSpacing24"
               >
-                <Field label="회사명">
+                <Field label={t.register.companyName}>
                   <TextInput
                     onChange={(value) =>
                       dispatch({ type: 'SET_TEXT', field: 'company', value })
                     }
-                    placeholder="회사명을 입력하세요."
+                    placeholder={t.register.companyPlaceholder}
                     value={state.company}
                   />
                 </Field>
-                <Field label="사고 날짜">
+                <Field label={t.register.date}>
                   <DateInput
                     onChange={(value) =>
                       dispatch({ type: 'SET_TEXT', field: 'date', value })
                     }
+                    placeholder={t.register.datePlaceholder}
                     value={state.date}
                   />
                 </Field>
@@ -139,17 +141,20 @@ export function RegisterForm() {
                 ]}
                 rowGap="$spacingSpacing24"
               >
-                <Field label="국가">
+                <Field label={t.register.country}>
                   <Select
+                    emptyLabel={t.register.noResults}
                     onChange={(value) =>
                       dispatch({ type: 'SET_TEXT', field: 'country', value })
                     }
-                    options={COUNTRY_OPTIONS}
+                    options={getCountryOptions(lang)}
+                    placeholder={t.register.select}
+                    searchPlaceholder={t.register.search}
                     searchable
                     value={state.country}
                   />
                 </Field>
-                <Field hint="(단위: 건)" label="피해 규모">
+                <Field hint={t.register.damageHint} label={t.register.damage}>
                   <Flex alignItems="center" gap="$spacingSpacing08" w="100%">
                     <Box flex="1" minW="0">
                       <NumberInput
@@ -160,7 +165,7 @@ export function RegisterForm() {
                             value,
                           })
                         }
-                        placeholder="예: 2500"
+                        placeholder={t.register.damagePlaceholder}
                         value={state.damageValue}
                       />
                     </Box>
@@ -169,7 +174,13 @@ export function RegisterForm() {
                         onChange={(value) =>
                           dispatch({ type: 'SET_DAMAGE_UNIT', value })
                         }
-                        options={DAMAGE_UNIT_OPTIONS}
+                        options={getDamageUnitOptions({
+                          억: t.register.unitHundredMillion,
+                          만: t.register.unitTenThousand,
+                          천: t.register.unitThousand,
+                          none: t.register.damageNone,
+                        })}
+                        placeholder={t.register.select}
                         value={state.damageUnit}
                       />
                     </Box>
@@ -177,9 +188,9 @@ export function RegisterForm() {
                 </Field>
               </Grid>
 
-              <Field label="사고 원인">
+              <Field label={t.register.cause}>
                 <Flex flexWrap="wrap" gap={['16px', null, null, null, '28px']}>
-                  {CAUSE_OPTIONS.map((option) => (
+                  {getCauseOptions(lang).map((option) => (
                     <RadioOption
                       key={option.value}
                       checked={state.cause === option.value}
@@ -192,38 +203,29 @@ export function RegisterForm() {
                 </Flex>
               </Field>
 
-              <Field hint="(쉼표로 구분)" label="태그">
+              <Field hint={t.register.tagsHint} label={t.register.tags}>
                 <TextInput
                   onChange={(value) =>
                     dispatch({ type: 'SET_TEXT', field: 'tags', value })
                   }
-                  placeholder="예: 보이스피싱, 관리자페이지무단접속"
+                  placeholder={t.register.tagsPlaceholder}
                   value={state.tags}
                 />
               </Field>
 
-              <Field label="유출 내역">
+              <Field label={t.register.leaks}>
                 <TextInput
                   onChange={(value) =>
                     dispatch({ type: 'SET_TEXT', field: 'leak', value })
                   }
-                  placeholder="이름, 아이디, 생년 월/일"
+                  placeholder={t.register.leaksPlaceholder}
                   value={state.leak}
                 />
               </Field>
 
-              <Field hint="(선택)" label="2차 피해 내역">
-                <TextInput
-                  onChange={(value) =>
-                    dispatch({ type: 'SET_TEXT', field: 'secondary', value })
-                  }
-                  placeholder="이름, 아이디, 생년 월/일"
-                  value={state.secondary}
-                />
-              </Field>
-
-              <Field hint="(선택)" label="원인 분석">
+              <Field hint={t.register.optional} label={t.register.causeAnalysis}>
                 <CauseAnalysisSection
+                  datePlaceholder={t.register.datePlaceholder}
                   items={state.causeAnalyses}
                   onAdd={() => dispatch({ type: 'ADD_CAUSE_ANALYSIS' })}
                   onRemove={(index) =>
@@ -236,10 +238,11 @@ export function RegisterForm() {
                       patch,
                     })
                   }
+                  placeholder={t.register.contentPlaceholder}
                 />
               </Field>
 
-              <Field hint="(선택)" label="근본 원인 분석">
+              <Field hint={t.register.optional} label={t.register.rootCauses}>
                 <StringListSection
                   onAdd={() =>
                     dispatch({ type: 'ADD_LIST_ITEM', field: 'rootCauses' })
@@ -259,11 +262,12 @@ export function RegisterForm() {
                       index,
                     })
                   }
+                  placeholder={t.register.contentPlaceholder}
                   values={state.rootCauses}
                 />
               </Field>
 
-              <Field hint="(선택)" label="예방 교훈">
+              <Field hint={t.register.optional} label={t.register.prevention}>
                 <VStack
                   borderBottom="solid 1px $borderDark"
                   borderTop="solid 1px $borderDark"
@@ -272,7 +276,7 @@ export function RegisterForm() {
                   w="100%"
                 >
                   <PreventionRow
-                    label="개인"
+                    label={t.register.personal}
                     onAdd={() =>
                       dispatch({
                         type: 'ADD_LIST_ITEM',
@@ -294,11 +298,12 @@ export function RegisterForm() {
                         index,
                       })
                     }
+                    placeholder={t.register.contentPlaceholder}
                     values={state.preventPersonal}
                   />
                   <Box bg="$border" h="1px" w="100%" />
                   <PreventionRow
-                    label="기업"
+                    label={t.register.corporate}
                     onAdd={() =>
                       dispatch({
                         type: 'ADD_LIST_ITEM',
@@ -320,6 +325,7 @@ export function RegisterForm() {
                         index,
                       })
                     }
+                    placeholder={t.register.contentPlaceholder}
                     values={state.preventCorporate}
                   />
                 </VStack>

@@ -11,6 +11,8 @@ interface CauseAnalysisSectionProps {
   onUpdate: (index: number, patch: Partial<CauseAnalysisItem>) => void
   onAdd: () => void
   onRemove: (index: number) => void
+  placeholder?: string
+  datePlaceholder?: string
 }
 
 export function CauseAnalysisSection({
@@ -18,6 +20,8 @@ export function CauseAnalysisSection({
   onUpdate,
   onAdd,
   onRemove,
+  placeholder,
+  datePlaceholder,
 }: CauseAnalysisSectionProps) {
   return (
     <VStack gap="$spacingSpacing16" w="100%">
@@ -35,7 +39,7 @@ export function CauseAnalysisSection({
               h="42px"
               multiline
               onChange={(value) => onUpdate(idx, { content: value })}
-              placeholder="내용을 입력하세요."
+              placeholder={placeholder}
               value={item.content}
             />
           </Box>
@@ -43,6 +47,7 @@ export function CauseAnalysisSection({
             h="42px"
             maxW={[null, null, null, null, '200px']}
             onChange={(value) => onUpdate(idx, { date: value })}
+            placeholder={datePlaceholder}
             value={item.date}
           />
           {idx === items.length - 1 ? (

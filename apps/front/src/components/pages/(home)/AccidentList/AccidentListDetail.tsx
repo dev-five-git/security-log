@@ -7,25 +7,20 @@ import { MoreButton } from '@/components/buttons/MoreButton'
 import { Segment } from '@/components/common/Segment'
 import { SortDropdown, type SortOption } from '@/components/common/SortDropdown'
 import { DesktopOnly } from '@/components/layout/responsive/DesktopOnly'
+import { useLang } from '@/hooks/useLang'
 import {
   type Accident,
   ACCIDENTS,
-  CAUSE_LABELS,
+  getCategoryLabel,
   getDamageWeight,
 } from '@/static/accidents'
-import { CATEGORY } from '@/static/category'
+import { CATEGORY_KEYS, type CategoryKey } from '@/static/category'
 
 import { AccidentCard } from './AccidentCard'
 
 const PAGE_SIZE = 9
 
 type SortKey = 'latest' | 'oldest' | 'damage'
-
-const SORT_OPTIONS: readonly SortOption<SortKey>[] = [
-  { value: 'latest', label: '최신순' },
-  { value: 'oldest', label: '오래된순' },
-  { value: 'damage', label: '피해규모순' },
-] as const
 
 function sortAccidents(accidents: Accident[], sort: SortKey): Accident[] {
   const copy = [...accidents]
@@ -53,13 +48,20 @@ interface AccidentListDetailProps {
 }
 
 export function AccidentListDetail({ mode = 'home' }: AccidentListDetailProps) {
-  const [selected, setSelected] = useState<string>(CATEGORY[0])
+  const [selected, setSelected] = useState<CategoryKey>(CATEGORY_KEYS[0])
   const [sort, setSort] = useState<SortKey>('latest')
   const [indicator, setIndicator] = useState<IndicatorRect | null>(null)
   const [isMounted, setIsMounted] = useState(false)
+  const { lang, t } = useLang()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const segmentRefs = useRef<Map<string, HTMLDivElement | null>>(new Map())
+
+  const sortOptions: SortOption<SortKey>[] = [
+    { value: 'latest', label: t.filter.latest },
+    { value: 'oldest', label: t.filter.oldest },
+    { value: 'damage', label: t.filter.damage },
+  ]
 
   useLayoutEffect(() => {
     const container = containerRef.current
@@ -82,11 +84,9 @@ export function AccidentListDetail({ mode = 'home' }: AccidentListDetailProps) {
 
   const filteredAccidents = useMemo(() => {
     const filtered =
-      selected === CATEGORY[0]
+      selected === 'all'
         ? ACCIDENTS
-        : ACCIDENTS.filter(
-            (accident) => CAUSE_LABELS[accident.cause] === selected,
-          )
+        : ACCIDENTS.filter((accident) => accident.cause === selected)
     return mode === 'list' ? sortAccidents(filtered, sort) : filtered
   }, [selected, sort, mode])
 
@@ -136,27 +136,27 @@ export function AccidentListDetail({ mode = 'home' }: AccidentListDetailProps) {
               zIndex={0}
             />
           )}
-          {CATEGORY.map((category) => (
+          {CATEGORY_KEYS.map((key) => (
             <Segment
-              key={category}
+              key={key}
               ref={(el) => {
-                segmentRefs.current.set(category, el)
+                segmentRefs.current.set(key, el)
               }}
-              isSelected={selected === category}
-              label={category}
-              onClick={() => setSelected(category)}
+              isSelected={selected === key}
+              label={getCategoryLabel(key, lang)}
+              onClick={() => setSelected(key)}
             />
           ))}
         </Flex>
         {mode === 'list' ? (
           <SortDropdown
             onChange={setSort}
-            options={SORT_OPTIONS}
+            options={sortOptions}
             value={sort}
           />
         ) : (
           <DesktopOnly>
-            <MoreButton buttonLabel="사례 더보기" href="/accidents" />
+            <MoreButton buttonLabel={t.home.moreButton} href="/accidents" />
           </DesktopOnly>
         )}
       </Flex>
@@ -191,7 +191,7 @@ export function AccidentListDetail({ mode = 'home' }: AccidentListDetailProps) {
                 scale: 1.05,
               }}
               alignSelf="center"
-              alt="DevFive 광고"
+              alt="DevFive"
               borderRadius="$borderRadiusRadius20"
               h="auto"
               justifySelf="start"

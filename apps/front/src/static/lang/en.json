@@ -1,0 +1,140 @@
+{
+  "nav": {
+    "register": "Submit Case"
+  },
+  "header": {
+    "siteName": "SecurityLog",
+    "toggleLang": "Change Language",
+    "toggleTheme": "Toggle Theme",
+    "search": "Search",
+    "openMenu": "Open Menu",
+    "closeSearch": "Close Search"
+  },
+  "accident": {
+    "backToList": "Back to List",
+    "similarCases": "Similar Cases",
+    "affectedCountry": "Affected Country",
+    "leaks": "Leaked Data",
+    "causeAnalysis": "Cause Analysis",
+    "rootCauseAnalysis": "Root Cause Analysis",
+    "prevention": "Prevention & Lessons",
+    "personal": "Personal",
+    "corporate": "Corporate",
+    "unknown": "Unknown"
+  },
+  "cause": {
+    "hacking": "Hacking",
+    "insider": "Insider",
+    "negligence": "Negligence",
+    "technical": "Technical",
+    "unknown": "Unknown"
+  },
+  "causeDescription": {
+    "hacking": "Breach caused by external attackers.\nex) SQL injection, ransomware, phishing, etc.",
+    "insider": "Intentional data theft by employees or contractors.\nex) USB exfiltration, privilege abuse, etc.",
+    "negligence": "Breach due to poor security management.\nex) Failure to revoke access, misconfigured settings, etc.",
+    "technical": "System or service technical vulnerabilities.\nex) Missing API auth, library exploits, etc.",
+    "unknown": "Cause unknown or investigation still ongoing."
+  },
+  "country": {
+    "KR": "South Korea",
+    "US": "United States",
+    "JP": "Japan",
+    "CN": "China",
+    "GB": "United Kingdom",
+    "DE": "Germany",
+    "FR": "France",
+    "GH": "Ghana"
+  },
+  "damage": {
+    "unknown": "Unknown",
+    "prefix": "~"
+  },
+  "search": {
+    "placeholder": "Search by company, tag, cause...",
+    "placeholderMobile": "Search company or service",
+    "placeholderDesktop": "Enter company name, service name, etc.",
+    "noResults": "No results found",
+    "results": "Search results for '{query}'",
+    "count": "results"
+  },
+  "filter": {
+    "all": "All",
+    "latest": "Latest",
+    "oldest": "Oldest",
+    "damage": "By Damage"
+  },
+  "footer": {
+    "contact": "Contact & Feedback"
+  },
+  "home": {
+    "bannerHeadline1": "Is your data really safe?",
+    "bannerHeadline2": "Uncovering why breaches keep happening—\nand what it takes to stay protected.",
+    "bannerDesc": "Real incidents. Real data. Learn what's behind\ntoday's biggest security threats and how to defend against them.",
+    "statIncidents": "Total Incidents",
+    "statIncidentsValue": "1,540+",
+    "statDamage": "Avg. Corporate Loss",
+    "statDamageValue": "₩4.53B",
+    "statAffected": "Cumulative Victims",
+    "statAffectedValue": "128M+",
+    "statPreventable": "Preventable Rate",
+    "statPreventableValue": "92%",
+    "listTitle": "Security Incident List",
+    "listDesc": "Browse real security incidents that occurred in South Korea and explore their scale and root causes.",
+    "moreButton": "More Cases",
+    "statisticsTitle": "Incident Cause Statistics",
+    "statisticsDesc": "Understand the major trends and root causes of security threats through type-specific incident statistics.",
+    "serviceTitle": "Useful services to protect your data",
+    "serviceDesc": "Check and respond through official channels."
+  },
+  "register": {
+    "title": "Submit a Case",
+    "subtitle": "Share a security incident not yet added to SecurityLog.",
+    "companyName": "Company Name",
+    "companyPlaceholder": "Enter company name",
+    "date": "Incident Date",
+    "country": "Country",
+    "damage": "Damage Scale",
+    "damageHint": "(unit: cases)",
+    "damagePlaceholder": "e.g. 2500",
+    "cause": "Incident Cause",
+    "tags": "Tags",
+    "tagsHint": "(comma-separated)",
+    "tagsPlaceholder": "e.g. voicephishing, unauthorized-admin-access",
+    "leaks": "Leaked Data",
+    "leaksPlaceholder": "Name, ID, date of birth",
+    "optional": "(optional)",
+    "causeAnalysis": "Cause Analysis",
+    "rootCauses": "Root Cause Analysis",
+    "prevention": "Prevention & Lessons",
+    "personal": "Personal",
+    "corporate": "Corporate",
+    "contentPlaceholder": "Enter content",
+    "back": "Back",
+    "submit": "Submit",
+    "add": "Add",
+    "delete": "Delete",
+    "select": "Select",
+    "search": "Search",
+    "noResults": "No results",
+    "damageNone": "None",
+    "unitHundredMillion": "100M",
+    "unitTenThousand": "10K",
+    "unitThousand": "1K",
+    "datePlaceholder": "yyyy-mm-dd"
+  },
+  "services": [
+    {
+      "title": "Find My Leaked Info",
+      "description": "A service to check whether your personal information has been leaked"
+    },
+    {
+      "title": "Privacy Violation Report Center",
+      "description": "A channel to report and consult on privacy violations such as leaks and misuse"
+    },
+    {
+      "title": "Personal Information Protection Commission",
+      "description": "A central government body overseeing privacy policy, law enforcement, and system improvements"
+    }
+  ]
+}

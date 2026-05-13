@@ -4,17 +4,11 @@ import { useEffect, useRef, useState } from 'react'
 
 import { Icon } from '@/components/icons/Icon'
 import { ICON_PATHS } from '@/components/icons/iconPaths'
+import { useLang } from '@/hooks/useLang'
+import { getCategoryLabel } from '@/static/accidents'
+import { CATEGORY_KEYS, type CategoryKey } from '@/static/category'
 
-export const CATEGORIES = [
-  '전체',
-  '해킹',
-  '내부자',
-  '관리부실',
-  '기술결함',
-  '미상',
-] as const
-
-export type Category = (typeof CATEGORIES)[number]
+export type Category = CategoryKey
 
 interface DropdownProps {
   value: Category
@@ -24,6 +18,7 @@ interface DropdownProps {
 export function Dropdown({ value, onChange }: DropdownProps) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const { lang } = useLang()
 
   useEffect(() => {
     if (!open) return
@@ -72,7 +67,7 @@ export function Dropdown({ value, onChange }: DropdownProps) {
             typography="buttonSm"
             wordBreak="keep-all"
           >
-            {value}
+            {getCategoryLabel(value, lang)}
           </Text>
           <Icon
             boxSize="20px"
@@ -104,16 +99,16 @@ export function Dropdown({ value, onChange }: DropdownProps) {
           w="110px"
           zIndex="10"
         >
-          {CATEGORIES.map((category) => (
+          {CATEGORY_KEYS.map((key) => (
             <Box
-              key={category}
+              key={key}
               _hover={{ bg: '$background' }}
-              aria-selected={category === value}
-              bg={category === value ? 'var(--background)' : 'transparent'}
+              aria-selected={key === value}
+              bg={key === value ? 'var(--background)' : 'transparent'}
               border="none"
               cursor="pointer"
               onClick={() => {
-                onChange(category)
+                onChange(key)
                 setOpen(false)
               }}
               px="$spacingSpacing20"
@@ -123,7 +118,7 @@ export function Dropdown({ value, onChange }: DropdownProps) {
               w="100%"
             >
               <Text color="$text" typography="buttonSm" wordBreak="keep-all">
-                {category}
+                {getCategoryLabel(key, lang)}
               </Text>
             </Box>
           ))}

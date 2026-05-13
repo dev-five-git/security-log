@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 
 import { buildPageMetadata } from '@/app/site-metadata'
 import { AccidentDetail } from '@/components/pages/accidents/AccidentDetail'
-import { ACCIDENTS, getAccidentById } from '@/static/accidents'
+import { ACCIDENTS, getAccidentById, getLocalized } from '@/static/accidents'
 
 interface AccidentDetailPageProps {
   params: Promise<{ id: string }>
@@ -28,8 +28,8 @@ export async function generateMetadata({
   }
 
   return buildPageMetadata({
-    pageTitle: `${accident.companyName} 보안 사고`,
-    description: `${accident.companyName} 보안 사고의 발생 시점, 유출 정보, 원인 분석과 예방 가이드를 보안록에서 확인하세요.`,
+    pageTitle: `${getLocalized(accident.companyName, 'ko')} 보안 사고`,
+    description: `${getLocalized(accident.companyName, 'ko')} 보안 사고의 발생 시점, 유출 정보, 원인 분석과 예방 가이드를 보안록에서 확인하세요.`,
     path: `/accidents/${id}`,
   })
 }

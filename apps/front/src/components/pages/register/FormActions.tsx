@@ -1,7 +1,11 @@
+'use client'
 import { Center, Flex, Text } from '@devup-ui/react'
 import Link from 'next/link'
 
+import { useLang } from '@/hooks/useLang'
+
 export function FormActions() {
+  const { t } = useLang()
   return (
     <Flex gap="$spacingSpacing06" justifyContent="center" w="100%">
       <Link href="/">
@@ -20,7 +24,7 @@ export function FormActions() {
         >
           <Flex alignItems="center" h="20px" pr="$spacingSpacing06">
             <Text color="$text" typography="buttonSm" wordBreak="keep-all">
-              이전으로
+              {t.register.back}
             </Text>
           </Flex>
         </Center>
@@ -40,7 +44,7 @@ export function FormActions() {
         type="submit"
       >
         <Text color="#FFF" typography="buttonSm" wordBreak="keep-all">
-          등록하기
+          {t.register.submit}
         </Text>
       </Center>
     </Flex>

@@ -16,7 +16,6 @@ export interface CaseFormPayload {
   damageUnit: AccidentDamageUnit
   tagsRaw: string
   leakRaw: string
-  secondaryRaw: string
   causeAnalyses: { content: string; date: string }[]
   rootCauses: string[]
   preventPersonal: string[]
@@ -42,8 +41,14 @@ const cleanList = (items: string[]): string[] =>
   items.map((s) => s.trim()).filter(Boolean)
 
 export function buildAccidentDraft(form: CaseFormPayload): AccidentDraft {
+  const companyName = form.companyName.trim()
+  const tags = splitCsv(form.tagsRaw)
+  const leaks = splitCsv(form.leakRaw)
+  const rootCauses = cleanList(form.rootCauses)
+  const preventPersonal = cleanList(form.preventPersonal)
+  const preventCorporate = cleanList(form.preventCorporate)
   return {
-    companyName: form.companyName.trim(),
+    companyName: { ko: companyName, en: companyName },
     date: form.date,
     country: form.country,
     cause: form.cause,
@@ -51,17 +56,19 @@ export function buildAccidentDraft(form: CaseFormPayload): AccidentDraft {
       value: Number.isFinite(form.damageValue) ? form.damageValue : 0,
       unit: form.damageUnit,
     },
-    leaks: splitCsv(form.leakRaw),
-    secondaryDamage: splitCsv(form.secondaryRaw),
+    leaks: { ko: leaks, en: leaks },
     causeAnalyses: form.causeAnalyses
-      .map((c) => ({ content: c.content.trim(), date: c.date }))
-      .filter((c) => c.content || c.date),
-    rootCauses: cleanList(form.rootCauses),
+      .map((c) => {
+        const content = c.content.trim()
+        return { content: { ko: content, en: content }, date: c.date }
+      })
+      .filter((c) => c.content.ko || c.date),
+    rootCauses: { ko: rootCauses, en: rootCauses },
     prevention: {
-      personal: cleanList(form.preventPersonal),
-      corporate: cleanList(form.preventCorporate),
+      personal: { ko: preventPersonal, en: preventPersonal },
+      corporate: { ko: preventCorporate, en: preventCorporate },
     },
-    tags: splitCsv(form.tagsRaw),
+    tags: { ko: tags, en: tags },
   }
 }
 
@@ -78,7 +85,7 @@ export function buildIssueBody(form: CaseFormPayload): string {
   const draft = buildAccidentDraft(form)
   const sections: string[] = []
 
-  sections.push(`## 회사명\n${draft.companyName || '_미입력_'}`)
+  sections.push(`## 회사명\n${draft.companyName.ko || '_미입력_'}`)
   sections.push(`## 사고 날짜\n${draft.date || '_미입력_'}`)
   sections.push(
     `## 국가\n${getCountryLabel(draft.country) || '_미입력_'} (${
@@ -89,26 +96,27 @@ export function buildIssueBody(form: CaseFormPayload): string {
   sections.push(`## 피해 규모\n${formatDamage(draft.damage)}`)
   sections.push(
     `## 태그\n${
-      draft.tags.length
-        ? draft.tags.map((t) => `\`${t}\``).join(', ')
+      draft.tags.ko.length
+        ? draft.tags.ko.map((t) => `\`${t}\``).join(', ')
         : '_없음_'
     }`,
   )
-  sections.push(`## 유출 내역\n${renderList(draft.leaks)}`)
-  sections.push(`## 2차 피해 내역\n${renderList(draft.secondaryDamage)}`)
+  sections.push(`## 유출 내역\n${renderList(draft.leaks.ko)}`)
   sections.push(
     `## 원인 분석\n${
       draft.causeAnalyses.length
         ? draft.causeAnalyses
-            .map((c) => `- (${c.date || '날짜미상'}) ${c.content}`)
+            .map((c) => `- (${c.date || '날짜미상'}) ${c.content.ko}`)
             .join('\n')
         : '_없음_'
     }`,
   )
-  sections.push(`## 근본 원인 분석\n${renderList(draft.rootCauses)}`)
-  sections.push(`## 예방 교훈 - 개인\n${renderList(draft.prevention.personal)}`)
+  sections.push(`## 근본 원인 분석\n${renderList(draft.rootCauses.ko)}`)
   sections.push(
-    `## 예방 교훈 - 기업\n${renderList(draft.prevention.corporate)}`,
+    `## 예방 교훈 - 개인\n${renderList(draft.prevention.personal.ko)}`,
+  )
+  sections.push(
+    `## 예방 교훈 - 기업\n${renderList(draft.prevention.corporate.ko)}`,
   )
 
   // Compact JSON keeps the GitHub URL within ~8KB limits.

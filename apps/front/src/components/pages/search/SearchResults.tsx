@@ -4,19 +4,37 @@ import { Center, Flex, Grid, Text, VStack } from '@devup-ui/react'
 import { useSearchParams } from 'next/navigation'
 
 import { AccidentCard } from '@/components/pages/(home)/AccidentList/AccidentCard'
-import { type Accident, ACCIDENTS, CAUSE_LABELS } from '@/static/accidents'
+import { useLang } from '@/hooks/useLang'
+import type { Lang } from '@/hooks/useLang'
+import {
+  type Accident,
+  ACCIDENTS,
+  getCauseLabel,
+  getLocalized,
+  getLocalizedArray,
+} from '@/static/accidents'
 
-function filterAccidents(query: string, category?: string): Accident[] {
+function filterAccidents(
+  query: string,
+  lang: Lang,
+  category?: string,
+): Accident[] {
   const q = query.trim().toLowerCase()
   return ACCIDENTS.filter((accident) => {
-    const causeLabel = CAUSE_LABELS[accident.cause]
-    if (category && category !== '전체' && causeLabel !== category) {
+    if (category && category !== 'all' && accident.cause !== category) {
       return false
     }
     if (!q) return true
-    if (accident.companyName.toLowerCase().includes(q)) return true
-    if (causeLabel.toLowerCase().includes(q)) return true
-    if (accident.tags.some((tag) => tag.toLowerCase().includes(q))) return true
+    if (getLocalized(accident.companyName, lang).toLowerCase().includes(q))
+      return true
+    if (getCauseLabel(accident.cause, lang).toLowerCase().includes(q))
+      return true
+    if (
+      getLocalizedArray(accident.tags, lang).some((tag) =>
+        tag.toLowerCase().includes(q),
+      )
+    )
+      return true
     return false
   })
 }
@@ -25,7 +43,11 @@ export function SearchResults() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') ?? ''
   const category = searchParams.get('category') ?? undefined
-  const results = filterAccidents(query, category)
+  const { lang, t } = useLang()
+  const results = filterAccidents(query, lang, category)
+
+  const resultsLabel = t.search.results.replace('{query}', query)
+
   return (
     <Center
       bg="$background"
@@ -49,7 +71,7 @@ export function SearchResults() {
           w="100%"
         >
           <Text color="$title" typography="h4" wordBreak="keep-all">
-            &apos;{query}&apos; 검색 결과 입니다.
+            {resultsLabel}
           </Text>
           <Text
             color="$caption"
@@ -57,7 +79,7 @@ export function SearchResults() {
             typography="title"
             wordBreak="keep-all"
           >
-            {results.length} 건
+            {results.length} {t.search.count}
           </Text>
         </Flex>
         {results.length === 0 ? (
@@ -69,7 +91,7 @@ export function SearchResults() {
               typography="h5"
               wordBreak="keep-all"
             >
-              검색 결과가 없습니다.
+              {t.search.noResults}
             </Text>
           </Center>
         ) : (

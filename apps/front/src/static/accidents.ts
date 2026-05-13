@@ -1,4 +1,11 @@
+import type { Lang } from '@/contexts/LanguageContext'
+
 import { ACCIDENT_DATA } from './accidents-data.generated'
+import type { CategoryKey } from './category'
+import enJson from './lang/en.json'
+import koJson from './lang/ko.json'
+
+export type { Lang }
 
 export type AccidentCause =
   | 'hacking'
@@ -14,31 +21,53 @@ export interface AccidentDamage {
   unit: AccidentDamageUnit
 }
 
+export interface LocalizedString {
+  ko: string
+  en: string
+}
+
+export interface LocalizedStringArray {
+  ko: string[]
+  en: string[]
+}
+
 export interface CauseAnalysisStep {
-  content: string
+  content: LocalizedString
   date: string
 }
 
 export interface AccidentPrevention {
-  personal: string[]
-  corporate: string[]
+  personal: LocalizedStringArray
+  corporate: LocalizedStringArray
 }
 
 export interface Accident {
   id: string
-  companyName: string
+  companyName: LocalizedString
   date: string
   country: string
   cause: AccidentCause
   damage: AccidentDamage
-  leaks: string[]
-  secondaryDamage: string[]
+  leaks: LocalizedStringArray
   causeAnalyses: CauseAnalysisStep[]
-  rootCauses: string[]
+  rootCauses: LocalizedStringArray
   prevention: AccidentPrevention
-  tags: string[]
+  tags: LocalizedStringArray
   createdAt: string
   issueUrl?: string
+}
+
+export function getLocalized(field: LocalizedString, lang: Lang): string {
+  return field[lang] || field.ko || field.en || ''
+}
+
+export function getLocalizedArray(
+  field: LocalizedStringArray,
+  lang: Lang,
+): string[] {
+  const arr = field[lang]
+  if (arr && arr.length > 0) return arr
+  return field.ko?.length ? field.ko : (field.en ?? [])
 }
 
 export const CAUSE_LABELS: Record<AccidentCause, string> = {
@@ -49,19 +78,37 @@ export const CAUSE_LABELS: Record<AccidentCause, string> = {
   unknown: '미상',
 }
 
-export const CAUSE_OPTIONS: { value: AccidentCause; label: string }[] = (
-  Object.keys(CAUSE_LABELS) as AccidentCause[]
-).map((value) => ({ value, label: CAUSE_LABELS[value] }))
+const LANG_FILES = { ko: koJson, en: enJson }
 
-export const DAMAGE_UNIT_OPTIONS: {
-  value: AccidentDamageUnit
-  label: string
-}[] = [
-  { value: '억', label: '억' },
-  { value: '만', label: '만' },
-  { value: '천', label: '천' },
-  { value: '', label: '없음' },
-]
+export function getCauseLabel(cause: AccidentCause, lang: Lang = 'ko'): string {
+  const causes = LANG_FILES[lang].cause as Record<string, string>
+  return causes[cause] ?? CAUSE_LABELS[cause]
+}
+
+export function getCategoryLabel(key: CategoryKey, lang: Lang = 'ko'): string {
+  if (key === 'all') return LANG_FILES[lang].filter.all
+  return getCauseLabel(key as AccidentCause, lang)
+}
+
+export function getCauseOptions(
+  lang: Lang,
+): { value: AccidentCause; label: string }[] {
+  return (Object.keys(CAUSE_LABELS) as AccidentCause[]).map((value) => ({
+    value,
+    label: getCauseLabel(value, lang),
+  }))
+}
+
+export function getDamageUnitOptions(
+  labels: { 억: string; 만: string; 천: string; none: string },
+): { value: AccidentDamageUnit; label: string }[] {
+  return [
+    { value: '억', label: labels['억'] },
+    { value: '만', label: labels['만'] },
+    { value: '천', label: labels['천'] },
+    { value: '', label: labels.none },
+  ]
+}
 
 const DAMAGE_UNIT_FACTOR: Record<AccidentDamageUnit, number> = {
   억: 100_000_000,
@@ -80,8 +127,9 @@ export const COUNTRY_LABELS: Record<string, string> = {
   FR: '프랑스',
 }
 
-export function getCountryLabel(code: string): string {
-  return COUNTRY_LABELS[code] ?? code
+export function getCountryLabel(code: string, lang: Lang = 'ko'): string {
+  const countries = LANG_FILES[lang].country as Record<string, string>
+  return countries[code] ?? COUNTRY_LABELS[code] ?? code
 }
 
 export function formatAccidentDate(iso: string): string {
@@ -89,12 +137,16 @@ export function formatAccidentDate(iso: string): string {
   return iso.replaceAll('-', '.')
 }
 
-export function formatDamage(damage: AccidentDamage): string {
+export function formatDamage(
+  damage: AccidentDamage,
+  lang: Lang = 'ko',
+): string {
   if (!damage || !Number.isFinite(damage.value) || damage.value <= 0) {
-    return '미상'
+    return lang === 'ko' ? '미상' : 'Unknown'
   }
-  const value = damage.value.toLocaleString('ko-KR')
-  return damage.unit ? `약 ${value}${damage.unit}` : `약 ${value}`
+  const value = damage.value.toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US')
+  const prefix = lang === 'ko' ? '약' : '~'
+  return damage.unit ? `${prefix} ${value}${damage.unit}` : `${prefix} ${value}`
 }
 
 export function getDamageWeight(damage: AccidentDamage): number {
