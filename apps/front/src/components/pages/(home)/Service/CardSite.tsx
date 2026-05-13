@@ -9,9 +9,10 @@ interface CardSiteProps {
   description: string
   icon: IconName
   href: string
+  visitLabel: string
 }
 
-export function CardSite({ title, description, icon, href }: CardSiteProps) {
+export function CardSite({ title, description, icon, href, visitLabel }: CardSiteProps) {
   return (
     <VStack
       backdropFilter="blur(10px)"
@@ -55,7 +56,7 @@ export function CardSite({ title, description, icon, href }: CardSiteProps) {
       </VStack>
       <Flex justifyContent="flex-end">
         <MoreButton
-          buttonLabel="바로가기"
+          buttonLabel={visitLabel}
           className={css({
             _active: {
               scale: 1,

@@ -48,7 +48,10 @@
   },
   "damage": {
     "unknown": "미상",
-    "prefix": "약"
+    "prefix": "약",
+    "unit억": "억",
+    "unit만": "만",
+    "unit천": "천"
   },
   "search": {
     "placeholder": "회사명, 태그, 원인 등으로 검색",
@@ -85,7 +88,8 @@
     "statisticsTitle": "사고 원인 통계",
     "statisticsDesc": "유형별 사고 통계를 통해 대한민국 보안 위협의 주요 흐름과 원인을 파악할 수 있어요.",
     "serviceTitle": "내 정보를 지키는 유용한 서비스",
-    "serviceDesc": "공식 채널을 통해 확인하고 대응할 수 있어요."
+    "serviceDesc": "공식 채널을 통해 확인하고 대응할 수 있어요.",
+    "serviceVisit": "바로가기"
   },
   "register": {
     "title": "사례 등록",

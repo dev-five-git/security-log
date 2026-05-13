@@ -137,16 +137,30 @@ export function formatAccidentDate(iso: string): string {
   return iso.replaceAll('-', '.')
 }
 
+function formatEnglishDamage(damage: AccidentDamage): string {
+  const total = damage.value * DAMAGE_UNIT_FACTOR[damage.unit]
+  if (total >= 1_000_000_000)
+    return `~ ${(total / 1_000_000_000).toFixed(1).replace(/\.0$/, '')}B`
+  if (total >= 1_000_000)
+    return `~ ${(total / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`
+  if (total >= 1_000)
+    return `~ ${(total / 1_000).toFixed(1).replace(/\.0$/, '')}K`
+  return `~ ${total.toLocaleString('en-US')}`
+}
+
 export function formatDamage(
   damage: AccidentDamage,
   lang: Lang = 'ko',
 ): string {
   if (!damage || !Number.isFinite(damage.value) || damage.value <= 0) {
-    return lang === 'ko' ? '미상' : 'Unknown'
+    return LANG_FILES[lang].damage.unknown
   }
-  const value = damage.value.toLocaleString(lang === 'ko' ? 'ko-KR' : 'en-US')
-  const prefix = lang === 'ko' ? '약' : '~'
-  return damage.unit ? `${prefix} ${value}${damage.unit}` : `${prefix} ${value}`
+  if (lang !== 'ko') return formatEnglishDamage(damage)
+  const value = damage.value.toLocaleString('ko-KR')
+  const prefix = LANG_FILES.ko.damage.prefix
+  return damage.unit
+    ? `${prefix} ${value}${damage.unit}`
+    : `${prefix} ${value}`
 }
 
 export function getDamageWeight(damage: AccidentDamage): number {

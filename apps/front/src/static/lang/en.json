@@ -48,7 +48,10 @@
   },
   "damage": {
     "unknown": "Unknown",
-    "prefix": "~"
+    "prefix": "~",
+    "unit억": "100M",
+    "unit만": "10K",
+    "unit천": "1K"
   },
   "search": {
     "placeholder": "Search by company, tag, cause...",
@@ -85,7 +88,8 @@
     "statisticsTitle": "Incident Cause Statistics",
     "statisticsDesc": "Understand the major trends and root causes of security threats through type-specific incident statistics.",
     "serviceTitle": "Useful services to protect your data",
-    "serviceDesc": "Check and respond through official channels."
+    "serviceDesc": "Check and respond through official channels.",
+    "serviceVisit": "Visit"
   },
   "register": {
     "title": "Submit a Case",

@@ -54,6 +54,7 @@ export function Service() {
               href={SERVICE_HREFS[i]}
               icon={SERVICE_ICONS[i]}
               title={service.title}
+              visitLabel={t.home.serviceVisit}
             />
           ))}
         </Grid>
