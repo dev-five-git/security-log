@@ -63,6 +63,10 @@ jobs:
         if: steps.check.outputs.exists == 'false'
         run: bunx tsc --noEmit -p apps/front/tsconfig.json
 
+      - name: Lint fix
+        if: steps.check.outputs.exists == 'false'
+        run: bun lint --fix
+
       - name: Commit and push
         if: steps.check.outputs.exists == 'false'
         id: commit
