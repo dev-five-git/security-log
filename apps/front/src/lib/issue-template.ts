@@ -120,7 +120,24 @@ export function buildIssueBody(form: CaseFormPayload): string {
   )
 
   // Compact JSON keeps the GitHub URL within ~8KB limits.
-  const json = JSON.stringify(draft)
+  const json = JSON.stringify({
+    companyName: draft.companyName.ko,
+    date: draft.date,
+    country: draft.country,
+    cause: draft.cause,
+    damage: draft.damage,
+    tags: draft.tags.ko,
+    leaks: draft.leaks.ko,
+    causeAnalyses: draft.causeAnalyses.map((c) => ({
+      content: c.content.ko,
+      date: c.date,
+    })),
+    rootCauses: draft.rootCauses.ko,
+    prevention: {
+      personal: draft.prevention.personal.ko,
+      corporate: draft.prevention.corporate.ko,
+    },
+  })
   sections.push(
     [
       '---',

@@ -6,10 +6,13 @@ import {
   formatAccidentDate,
   formatDamage,
   getAccidentById,
+  getCategoryLabel,
   getCauseOptions,
   getCountryLabel,
   getDamageUnitOptions,
   getDamageWeight,
+  getLocalized,
+  getLocalizedArray,
 } from './accidents'
 
 describe('formatAccidentDate', () => {
@@ -76,6 +79,66 @@ describe('getAccidentById', () => {
   })
 })
 
+describe('getLocalized', () => {
+  it('returns the value for the given lang', () => {
+    expect(getLocalized({ ko: '한국어', en: 'English' }, 'en')).toBe('English')
+  })
+
+  it('falls back to ko when lang value is empty', () => {
+    expect(getLocalized({ ko: '한국어', en: '' }, 'en')).toBe('한국어')
+  })
+
+  it('returns empty string when all values are empty', () => {
+    expect(getLocalized({ ko: '', en: '' }, 'en')).toBe('')
+  })
+})
+
+describe('getLocalizedArray', () => {
+  it('returns array for the given lang', () => {
+    expect(getLocalizedArray({ ko: ['가'], en: ['a'] }, 'en')).toEqual(['a'])
+  })
+
+  it('falls back to ko when lang array is empty', () => {
+    expect(getLocalizedArray({ ko: ['가'], en: [] }, 'en')).toEqual(['가'])
+  })
+
+  it('falls back to en when ko is also empty', () => {
+    expect(getLocalizedArray({ ko: [], en: ['a'] }, 'ko')).toEqual(['a'])
+  })
+})
+
+describe('getCategoryLabel', () => {
+  it('returns filter.all label when key is "all"', () => {
+    expect(getCategoryLabel('all', 'ko')).toBeTruthy()
+  })
+
+  it('delegates to getCauseLabel for cause keys', () => {
+    expect(getCategoryLabel('hacking', 'ko')).toBe('해킹')
+  })
+})
+
+describe('formatDamage (English)', () => {
+  it('formats billions', () => {
+    expect(formatDamage({ value: 10, unit: '억' }, 'en')).toBe('~ 1B')
+  })
+
+  it('formats millions', () => {
+    expect(formatDamage({ value: 1, unit: '억' }, 'en')).toBe('~ 100M')
+  })
+
+  it('formats thousands', () => {
+    expect(formatDamage({ value: 1, unit: '만' }, 'en')).toBe('~ 10K')
+  })
+
+  it('formats small values without suffix', () => {
+    expect(formatDamage({ value: 5, unit: '' }, 'en')).toBe('~ 5')
+  })
+
+  it('returns unknown for invalid value', () => {
+    expect(formatDamage({ value: 0, unit: '억' }, 'en')).toBeTruthy()
+  })
+})
+
 describe('static option lists', () => {
   it('getCauseOptions mirrors CAUSE_LABELS for ko', () => {
     const options = getCauseOptions('ko')
@@ -90,11 +153,6 @@ describe('static option lists', () => {
       getDamageUnitOptions({ 억: '억', 만: '만', 천: '천', none: '없음' }).map(
         (o) => o.value,
       ),
-    ).toEqual([
-      '억',
-      '만',
-      '천',
-      '',
-    ])
+    ).toEqual(['억', '만', '천', ''])
   })
 })

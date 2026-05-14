@@ -99,9 +99,12 @@ export function getCauseOptions(
   }))
 }
 
-export function getDamageUnitOptions(
-  labels: { 억: string; 만: string; 천: string; none: string },
-): { value: AccidentDamageUnit; label: string }[] {
+export function getDamageUnitOptions(labels: {
+  억: string
+  만: string
+  천: string
+  none: string
+}): { value: AccidentDamageUnit; label: string }[] {
   return [
     { value: '억', label: labels['억'] },
     { value: '만', label: labels['만'] },
@@ -158,9 +161,7 @@ export function formatDamage(
   if (lang !== 'ko') return formatEnglishDamage(damage)
   const value = damage.value.toLocaleString('ko-KR')
   const prefix = LANG_FILES.ko.damage.prefix
-  return damage.unit
-    ? `${prefix} ${value}${damage.unit}`
-    : `${prefix} ${value}`
+  return damage.unit ? `${prefix} ${value}${damage.unit}` : `${prefix} ${value}`
 }
 
 export function getDamageWeight(damage: AccidentDamage): number {

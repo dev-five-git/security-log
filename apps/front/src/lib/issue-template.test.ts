@@ -4,6 +4,7 @@ import {
   buildAccidentDraft,
   buildIssueBody,
   buildIssueTitle,
+  buildIssueTitleOnlyUrl,
   buildIssueUrl,
   CASE_DATA_BEGIN_MARKER,
   CASE_DATA_END_MARKER,
@@ -33,12 +34,21 @@ describe('buildAccidentDraft', () => {
   it('trims, splits CSV inputs and drops empty list entries', () => {
     const draft = buildAccidentDraft(basePayload)
     expect(draft.companyName).toEqual({ ko: 'SK텔레콤', en: 'SK텔레콤' })
-    expect(draft.tags).toEqual({ ko: ['통신사', 'USIM'], en: ['통신사', 'USIM'] })
-    expect(draft.leaks).toEqual({ ko: ['이름', '전화번호'], en: ['이름', '전화번호'] })
+    expect(draft.tags).toEqual({
+      ko: ['통신사', 'USIM'],
+      en: ['통신사', 'USIM'],
+    })
+    expect(draft.leaks).toEqual({
+      ko: ['이름', '전화번호'],
+      en: ['이름', '전화번호'],
+    })
     expect(draft.causeAnalyses).toEqual([
       { content: { ko: 'HSS 침투', en: 'HSS 침투' }, date: '2024-06-15' },
     ])
-    expect(draft.rootCauses).toEqual({ ko: ['접근통제 부족'], en: ['접근통제 부족'] })
+    expect(draft.rootCauses).toEqual({
+      ko: ['접근통제 부족'],
+      en: ['접근통제 부족'],
+    })
     expect(draft.prevention.personal).toEqual({
       ko: ['USIM 보호서비스 가입'],
       en: ['USIM 보호서비스 가입'],
@@ -100,5 +110,20 @@ describe('buildIssueUrl', () => {
     expect(params.get('title')).toBe('[사례] SK텔레콤 (2025)')
     expect(params.get('labels')).toBe(CASE_SUBMISSION_LABEL)
     expect(params.get('body')).toContain(CASE_DATA_BEGIN_MARKER)
+  })
+})
+
+describe('buildIssueTitleOnlyUrl', () => {
+  it('includes title and labels but no body param', () => {
+    const url = buildIssueTitleOnlyUrl(basePayload)
+    expect(
+      url.startsWith(
+        'https://github.com/dev-five-git/security-log/issues/new?',
+      ),
+    ).toBe(true)
+    const params = new URL(url).searchParams
+    expect(params.get('title')).toBe('[사례] SK텔레콤 (2025)')
+    expect(params.get('labels')).toBe(CASE_SUBMISSION_LABEL)
+    expect(params.get('body')).toBeNull()
   })
 })
