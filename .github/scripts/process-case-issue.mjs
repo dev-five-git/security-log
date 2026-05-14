@@ -45,6 +45,52 @@ try {
   process.exit(1)
 }
 
+/**
+ * Wraps a plain string value into LocalizedString.
+ * If the value is already localized ({ ko, en }), returns it as-is.
+ */
+function toLocalizedString(value) {
+  if (value && typeof value === 'object' && ('ko' in value || 'en' in value)) {
+    return value
+  }
+  return { ko: String(value ?? ''), en: '' }
+}
+
+/**
+ * Wraps a plain string array into LocalizedStringArray.
+ * If the value is already localized ({ ko, en }), returns it as-is.
+ */
+function toLocalizedStringArray(value) {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value
+  }
+  return { ko: Array.isArray(value) ? value : [], en: [] }
+}
+
+/**
+ * Normalizes a raw issue JSON draft into the Accident type shape,
+ * wrapping Korean-only fields into LocalizedString / LocalizedStringArray.
+ */
+function normalizeAccident(raw) {
+  return {
+    ...raw,
+    companyName: toLocalizedString(raw.companyName),
+    leaks: toLocalizedStringArray(raw.leaks),
+    tags: toLocalizedStringArray(raw.tags),
+    rootCauses: toLocalizedStringArray(raw.rootCauses),
+    causeAnalyses: Array.isArray(raw.causeAnalyses)
+      ? raw.causeAnalyses.map((step) => ({
+          ...step,
+          content: toLocalizedString(step.content),
+        }))
+      : [],
+    prevention: {
+      personal: toLocalizedStringArray(raw.prevention?.personal),
+      corporate: toLocalizedStringArray(raw.prevention?.corporate),
+    },
+  }
+}
+
 mkdirSync(DATA_DIR, { recursive: true })
 
 const accidentId = randomUUID()
@@ -52,7 +98,7 @@ const filename = `${accidentId}.json`
 
 const accident = {
   id: accidentId,
-  ...draft,
+  ...normalizeAccident(draft),
   createdAt: new Date().toISOString(),
   issueUrl,
 }

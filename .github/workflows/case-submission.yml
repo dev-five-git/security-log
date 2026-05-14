@@ -37,12 +37,6 @@ jobs:
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Setup Node
-        if: steps.check.outputs.exists == 'false'
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-
       - name: Create branch
         if: steps.check.outputs.exists == 'false'
         run: |
@@ -56,6 +50,18 @@ jobs:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_URL: ${{ github.event.issue.html_url }}
         run: node .github/scripts/process-case-issue.mjs
+
+      - name: Setup Bun
+        if: steps.check.outputs.exists == 'false'
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        if: steps.check.outputs.exists == 'false'
+        run: bun install --frozen-lockfile
+
+      - name: Type check
+        if: steps.check.outputs.exists == 'false'
+        run: bunx tsc --noEmit -p apps/front/tsconfig.json
 
       - name: Commit and push
         if: steps.check.outputs.exists == 'false'
