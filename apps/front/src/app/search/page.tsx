@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 
 import { buildPageMetadata } from '@/app/site-metadata'
 import { SearchResults } from '@/components/pages/search/SearchResults'
@@ -12,9 +11,5 @@ export const metadata: Metadata = buildPageMetadata({
 })
 
 export default function SearchPage() {
-  return (
-    <Suspense>
-      <SearchResults />
-    </Suspense>
-  )
+  return <SearchResults />
 }
