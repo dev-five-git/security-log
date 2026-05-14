@@ -11,6 +11,7 @@ interface PreventionRowProps {
   onAdd: () => void
   onDelete: (idx: number) => void
   placeholder?: string
+  disabled?: boolean
 }
 
 export function PreventionRow({
@@ -20,6 +21,7 @@ export function PreventionRow({
   onAdd,
   onDelete,
   placeholder,
+  disabled = false,
 }: PreventionRowProps) {
   return (
     <Flex flexDir="row" w="100%">
@@ -42,7 +44,7 @@ export function PreventionRow({
         p="$spacingSpacing12"
       >
         {values.map((value, idx) => (
-          <Flex key={idx} alignItems="center" gap="$spacingSpacing08" w="100%">
+          <Flex key={idx} alignItems="flex-start" gap="$spacingSpacing08" w="100%">
             <TextInput
               h="42px"
               multiline
@@ -51,7 +53,7 @@ export function PreventionRow({
               value={value}
             />
             {idx === values.length - 1 ? (
-              <AddButton onClick={onAdd} />
+              <AddButton disabled={disabled} onClick={onAdd} />
             ) : (
               <DeleteButton onClick={() => onDelete(idx)} />
             )}

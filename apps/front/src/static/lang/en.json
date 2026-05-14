@@ -108,9 +108,13 @@
     "leaks": "Leaked Data",
     "leaksPlaceholder": "Name, ID, date of birth",
     "optional": "(optional)",
-    "causeAnalysis": "Cause Analysis",
-    "rootCauses": "Root Cause Analysis",
+    "causeDesc": "Select the initial cause and key entry point of the incident.",
+    "causeAnalysis": "Timeline",
+    "causeAnalysisDesc": "Record the sequence of events from incident detection to resolution.",
+    "rootCauses": "Cause Analysis",
+    "rootCausesDesc": "Describe the root causes and vulnerabilities that led to the incident.",
     "prevention": "Prevention & Lessons",
+    "preventionDesc": "Describe preventive measures and lessons learned to avoid recurrence.",
     "personal": "Personal",
     "corporate": "Corporate",
     "contentPlaceholder": "Enter content",
@@ -125,7 +129,14 @@
     "unitHundredMillion": "100M",
     "unitTenThousand": "10K",
     "unitThousand": "1K",
-    "datePlaceholder": "yyyy-mm-dd"
+    "datePlaceholder": "yyyy-mm-dd",
+    "urlLimitWarning": "Getting close to the input limit. Please shorten the content.",
+    "urlLimitExceeded": "Input is too long. Please shorten the content to submit.",
+    "copyModalTitle": "Copy Content",
+    "copyModalDesc": "Copy the content below and paste it into the GitHub issue body.",
+    "copyButton": "Copy",
+    "copiedButton": "Copied",
+    "githubButton": "Open GitHub Issue"
   },
   "services": [
     {

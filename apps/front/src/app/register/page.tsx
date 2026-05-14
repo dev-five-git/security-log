@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { buildPageMetadata } from '@/app/site-metadata'
+import { ModalProvider } from '@/components/pages/register/ModalContext'
 import { RegisterForm } from '@/components/pages/register/RegisterForm'
 
 export const metadata: Metadata = buildPageMetadata({
@@ -11,5 +12,9 @@ export const metadata: Metadata = buildPageMetadata({
 })
 
 export default function RegisterPage() {
-  return <RegisterForm />
+  return (
+    <ModalProvider>
+      <RegisterForm />
+    </ModalProvider>
+  )
 }

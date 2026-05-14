@@ -13,6 +13,7 @@ interface CauseAnalysisSectionProps {
   onRemove: (index: number) => void
   placeholder?: string
   datePlaceholder?: string
+  disabled?: boolean
 }
 
 export function CauseAnalysisSection({
@@ -22,6 +23,7 @@ export function CauseAnalysisSection({
   onRemove,
   placeholder,
   datePlaceholder,
+  disabled = false,
 }: CauseAnalysisSectionProps) {
   return (
     <VStack gap="$spacingSpacing16" w="100%">
@@ -51,7 +53,7 @@ export function CauseAnalysisSection({
             value={item.date}
           />
           {idx === items.length - 1 ? (
-            <AddButton onClick={onAdd} />
+            <AddButton disabled={disabled} onClick={onAdd} />
           ) : (
             <DeleteButton onClick={() => onRemove(idx)} />
           )}

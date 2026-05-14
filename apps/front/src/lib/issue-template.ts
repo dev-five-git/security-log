@@ -145,3 +145,11 @@ export function buildIssueUrl(form: CaseFormPayload): string {
   })
   return `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues/new?${params.toString()}`
 }
+
+export function buildIssueTitleOnlyUrl(form: CaseFormPayload): string {
+  const params = new URLSearchParams({
+    title: buildIssueTitle(form),
+    labels: CASE_SUBMISSION_LABEL,
+  })
+  return `https://github.com/${REPO_OWNER}/${REPO_NAME}/issues/new?${params.toString()}`
+}

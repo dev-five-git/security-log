@@ -10,6 +10,7 @@ interface StringListSectionProps {
   onAdd: () => void
   onRemove: (index: number) => void
   placeholder?: string
+  disabled?: boolean
 }
 
 export function StringListSection({
@@ -18,11 +19,12 @@ export function StringListSection({
   onAdd,
   onRemove,
   placeholder = '내용을 입력하세요.',
+  disabled = false,
 }: StringListSectionProps) {
   return (
     <VStack gap="$spacingSpacing08" w="100%">
       {values.map((value, idx) => (
-        <Flex key={idx} alignItems="center" gap="$spacingSpacing08" w="100%">
+        <Flex key={idx} alignItems="flex-start" gap="$spacingSpacing08" w="100%">
           <TextInput
             h="42px"
             multiline
@@ -31,7 +33,7 @@ export function StringListSection({
             value={value}
           />
           {idx === values.length - 1 ? (
-            <AddButton onClick={onAdd} />
+            <AddButton disabled={disabled} onClick={onAdd} />
           ) : (
             <DeleteButton onClick={() => onRemove(idx)} />
           )}

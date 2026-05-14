@@ -7,23 +7,25 @@ import { useLang } from '@/hooks/useLang'
 
 interface AddButtonProps {
   onClick: () => void
+  disabled?: boolean
 }
 
-export function AddButton({ onClick }: AddButtonProps) {
+export function AddButton({ onClick, disabled = false }: AddButtonProps) {
   const { t } = useLang()
   return (
     <Center
-      _active={{ bg: '$violetBgPressed' }}
-      _hover={{ bg: '$violetBg' }}
+      _active={disabled ? undefined : { bg: '$violetBgPressed' }}
+      _hover={disabled ? undefined : { bg: '$violetBg' }}
       as="button"
       bg="$containerBackground"
       border="solid 1px $border"
       borderRadius="$spacingSpacing12"
-      cursor="pointer"
+      cursor={disabled ? 'not-allowed' : 'pointer'}
       flexShrink="0"
       gap="$spacingSpacing06"
       h="42px"
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      opacity={disabled ? '0.4' : undefined}
       overflow="hidden"
       pl="$spacingSpacing16"
       pr="$spacingSpacing12"
