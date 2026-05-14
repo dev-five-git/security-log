@@ -9,7 +9,8 @@ import accident4 from '../../data/701994cf-6327-4a39-9bba-2777a479fe8e.json'
 import accident2 from '../../data/67050736-cc5b-4955-a5d6-28157e1eaf4f.json'
 import accident6 from '../../data/a01de281-92f3-4868-8415-9c12a1acfb0e.json'
 import accident7 from '../../data/c7fac9c5-898e-4219-8420-d4d29dcefa02.json'
-import accident8 from '../../data/e0e87a0d-39ce-46c7-bb79-ba2e023c0431.json'
+import accident8 from '../../data/d293a611-5727-4572-a006-48ee0a2af0a0.json'
+import accident9 from '../../data/e0e87a0d-39ce-46c7-bb79-ba2e023c0431.json'
 import type { Accident } from './accidents'
 
 export const ACCIDENT_DATA: Accident[] = [
@@ -22,4 +23,5 @@ export const ACCIDENT_DATA: Accident[] = [
   accident6 as Accident,
   accident7 as Accident,
   accident8 as Accident,
+  accident9 as Accident,
 ]
