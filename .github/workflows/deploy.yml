@@ -53,6 +53,9 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Regenerate accidents index
+        run: node .github/scripts/generate-index.mjs
+
       - name: Build front
         run: bun run --filter front build
 
