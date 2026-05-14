@@ -1,8 +1,9 @@
-import { Center, Text, VStack } from '@devup-ui/react'
+import { Center, VStack } from '@devup-ui/react'
 import type { Metadata } from 'next'
 
 import { buildPageMetadata } from '@/app/site-metadata'
 import { AccidentListDetail } from '@/components/pages/(home)/AccidentList/AccidentListDetail'
+import { AccidentsPageHeader } from '@/components/pages/accidents/AccidentsPageHeader'
 
 export const metadata: Metadata = buildPageMetadata({
   pageTitle: '보안 사고 목록',
@@ -28,22 +29,7 @@ export default function AccidentsPage() {
         maxW="1280px"
         w="100%"
       >
-        <VStack
-          alignItems="center"
-          gap="$spacingSpacing12"
-          maxW="1280px"
-          px="$spacingSpacing20"
-          textAlign="center"
-          w="100%"
-        >
-          <Text color="$title" typography="h2" wordBreak="keep-all">
-            보안 사고 목록
-          </Text>
-          <Text color="$textSub" typography="title" wordBreak="keep-all">
-            대한민국에서 실제로 발생한 보안 사고를 모아 규모의 크기와 원인을
-            확인해 볼 수 있어요.
-          </Text>
-        </VStack>
+        <AccidentsPageHeader />
         <AccidentListDetail mode="list" />
       </VStack>
     </Center>

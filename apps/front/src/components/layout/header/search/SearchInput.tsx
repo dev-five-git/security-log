@@ -1,8 +1,8 @@
 'use client'
 
 import { css, Flex, Input } from '@devup-ui/react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Suspense, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useEffect, useState } from 'react'
 
 import { IconButton } from '@/components/buttons/IconButton'
 import { useLang } from '@/hooks/useLang'
@@ -36,8 +36,15 @@ function SearchInputView({
   initial: string
 }) {
   const router = useRouter()
+  const pathname = usePathname()
   const [value, setValue] = useState(initial)
   const { t } = useLang()
+
+  useEffect(() => {
+    if (pathname !== '/search') {
+      setValue('')
+    }
+  }, [pathname])
 
   const submit = () => {
     const trimmed = value.trim()

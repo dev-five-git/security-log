@@ -11,10 +11,24 @@ import {
   getLocalizedArray,
 } from '@/static/accidents'
 
-export function AccidentCard({ accident }: { accident: Accident }) {
+interface SearchContext {
+  q: string
+  category: string
+}
+
+export function AccidentCard({
+  accident,
+  searchContext,
+}: {
+  accident: Accident
+  searchContext?: SearchContext
+}) {
   const { lang } = useLang()
+  const params = searchContext
+    ? `?q=${encodeURIComponent(searchContext.q)}&category=${encodeURIComponent(searchContext.category)}`
+    : ''
   return (
-    <Link href={`/accidents/${accident.id}`}>
+    <Link href={`/accidents/${accident.id}${params}`}>
       <VStack
         _active={{
           scale: 1,

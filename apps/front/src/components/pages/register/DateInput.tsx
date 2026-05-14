@@ -1,6 +1,6 @@
 'use client'
 import { Flex, Input } from '@devup-ui/react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Icon } from '@/components/icons/Icon'
 import { ICON_PATHS } from '@/components/icons/iconPaths'
@@ -22,21 +22,36 @@ export function DateInput({
 }: DateInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [focused, setFocused] = useState(false)
+  const pendingPicker = useRef(false)
 
   const showAsDate = focused || !!value
+
+  useEffect(() => {
+    if (pendingPicker.current && showAsDate) {
+      pendingPicker.current = false
+      const el = inputRef.current
+      if (!el) return
+      try {
+        el.showPicker?.()
+      } catch {
+        el.focus()
+      }
+    }
+  }, [showAsDate])
 
   const openPicker = () => {
     const el = inputRef.current
     if (!el) return
-    if (typeof el.showPicker === 'function') {
+    if (showAsDate) {
       try {
-        el.showPicker()
-        return
+        el.showPicker?.()
       } catch {
-        // showPicker can throw without user activation; fall back to focus.
+        el.focus()
       }
+    } else {
+      pendingPicker.current = true
+      setFocused(true)
     }
-    el.focus()
   }
 
   return (

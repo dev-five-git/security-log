@@ -1,6 +1,8 @@
 'use client'
 import { Box, Center, Flex, Grid, Text, VStack } from '@devup-ui/react'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
 import { Badge } from '@/components/common/Badge'
 import { Icon } from '@/components/icons/Icon'
@@ -10,6 +12,7 @@ import { ShareButton } from '@/components/pages/accidents/ShareButton'
 import { useLang } from '@/hooks/useLang'
 import {
   type Accident,
+  filterAccidents,
   formatAccidentDate,
   getCountryLabel,
   getLocalized,
@@ -72,33 +75,39 @@ export function AccidentDetail({ accident, others }: AccidentDetailProps) {
             </Center>
           </Link>
         </VStack>
-        <OtherResults others={others} t={t} />
+        <Suspense fallback={<OtherResults others={others} t={t} />}>
+          <OtherResultsWithSearch
+            accident={accident}
+            serverOthers={others}
+            t={t}
+          />
+        </Suspense>
       </Flex>
     </Center>
   )
 }
 
 function BackButton() {
+  const router = useRouter()
   return (
-    <Link href="/accidents">
-      <Center
-        _active={{ bg: '$violetBgPressed' }}
-        _hover={{ bg: '$violetBg' }}
-        bg="$containerBackground"
-        border="solid 1px $borderLight"
-        borderRadius="$spacingSpacing16"
-        boxShadow="$shadowShadowXs"
-        boxSize="40px"
-        cursor="pointer"
-        transition="background-color .2s ease"
-      >
-        <Icon
-          boxSize="20px"
-          color="var(--text)"
-          iconPath={ICON_PATHS.caretLeft}
-        />
-      </Center>
-    </Link>
+    <Center
+      _active={{ bg: '$violetBgPressed' }}
+      _hover={{ bg: '$violetBg' }}
+      bg="$containerBackground"
+      border="solid 1px $borderLight"
+      borderRadius="$spacingSpacing16"
+      boxShadow="$shadowShadowXs"
+      boxSize="40px"
+      cursor="pointer"
+      onClick={() => router.back()}
+      transition="background-color .2s ease"
+    >
+      <Icon
+        boxSize="20px"
+        color="var(--text)"
+        iconPath={ICON_PATHS.caretLeft}
+      />
+    </Center>
   )
 }
 
@@ -381,6 +390,30 @@ function PreventionCard({
       </Box>
     </VStack>
   )
+}
+
+function OtherResultsWithSearch({
+  accident,
+  serverOthers,
+  t,
+}: {
+  accident: Accident
+  serverOthers: Accident[]
+  t: T
+}) {
+  const searchParams = useSearchParams()
+  const { lang } = useLang()
+  const q = searchParams.get('q')
+  const category = searchParams.get('category') ?? undefined
+
+  const others =
+    q !== null
+      ? filterAccidents(q, lang, category)
+          .filter((a) => a.id !== accident.id)
+          .slice(0, 4)
+      : serverOthers
+
+  return <OtherResults others={others} t={t} />
 }
 
 function OtherResults({ others, t }: { others: Accident[]; t: T }) {

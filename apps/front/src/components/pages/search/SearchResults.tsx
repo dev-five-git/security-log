@@ -4,40 +4,8 @@ import { Center, Flex, Grid, Text, VStack } from '@devup-ui/react'
 import { useSearchParams } from 'next/navigation'
 
 import { AccidentCard } from '@/components/pages/(home)/AccidentList/AccidentCard'
-import type { Lang } from '@/hooks/useLang'
 import { useLang } from '@/hooks/useLang'
-import {
-  type Accident,
-  ACCIDENTS,
-  getCauseLabel,
-  getLocalized,
-  getLocalizedArray,
-} from '@/static/accidents'
-
-function filterAccidents(
-  query: string,
-  lang: Lang,
-  category?: string,
-): Accident[] {
-  const q = query.trim().toLowerCase()
-  return ACCIDENTS.filter((accident) => {
-    if (category && category !== 'all' && accident.cause !== category) {
-      return false
-    }
-    if (!q) return true
-    if (getLocalized(accident.companyName, lang).toLowerCase().includes(q))
-      return true
-    if (getCauseLabel(accident.cause, lang).toLowerCase().includes(q))
-      return true
-    if (
-      getLocalizedArray(accident.tags, lang).some((tag) =>
-        tag.toLowerCase().includes(q),
-      )
-    )
-      return true
-    return false
-  })
-}
+import { filterAccidents } from '@/static/accidents'
 
 export function SearchResults() {
   const searchParams = useSearchParams()
@@ -108,7 +76,11 @@ export function SearchResults() {
             w="100%"
           >
             {results.map((accident) => (
-              <AccidentCard key={accident.id} accident={accident} />
+              <AccidentCard
+                key={accident.id}
+                accident={accident}
+                searchContext={{ q: query, category: category ?? 'all' }}
+              />
             ))}
           </Grid>
         )}

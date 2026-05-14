@@ -175,3 +175,28 @@ export const ACCIDENTS: Accident[] = ACCIDENT_DATA
 export function getAccidentById(id: string): Accident | undefined {
   return ACCIDENTS.find((a) => a.id === id)
 }
+
+export function filterAccidents(
+  query: string,
+  lang: Lang,
+  category?: string,
+): Accident[] {
+  const q = query.trim().toLowerCase()
+  return ACCIDENTS.filter((accident) => {
+    if (category && category !== 'all' && accident.cause !== category) {
+      return false
+    }
+    if (!q) return true
+    if (getLocalized(accident.companyName, lang).toLowerCase().includes(q))
+      return true
+    if (getCauseLabel(accident.cause, lang).toLowerCase().includes(q))
+      return true
+    if (
+      getLocalizedArray(accident.tags, lang).some((tag) =>
+        tag.toLowerCase().includes(q),
+      )
+    )
+      return true
+    return false
+  })
+}

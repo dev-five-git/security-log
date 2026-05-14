@@ -40,6 +40,8 @@ export default async function AccidentDetailPage({
   const { id } = await params
   const accident = getAccidentById(id)
   if (!accident) notFound()
-  const others = ACCIDENTS.filter((a) => a.id !== id).slice(0, 5)
+  const others = ACCIDENTS.filter(
+    (a) => a.id !== id && a.cause === accident.cause,
+  ).slice(0, 4)
   return <AccidentDetail accident={accident} others={others} />
 }
