@@ -149,11 +149,7 @@ export function AccidentListDetail({ mode = 'home' }: AccidentListDetailProps) {
           ))}
         </Flex>
         {mode === 'list' ? (
-          <SortDropdown
-            onChange={setSort}
-            options={sortOptions}
-            value={sort}
-          />
+          <SortDropdown onChange={setSort} options={sortOptions} value={sort} />
         ) : (
           <DesktopOnly>
             <MoreButton buttonLabel={t.home.moreButton} href="/accidents" />

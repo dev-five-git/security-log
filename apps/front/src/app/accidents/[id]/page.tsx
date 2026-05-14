@@ -43,4 +43,3 @@ export default async function AccidentDetailPage({
   const others = ACCIDENTS.filter((a) => a.id !== id).slice(0, 5)
   return <AccidentDetail accident={accident} others={others} />
 }
-

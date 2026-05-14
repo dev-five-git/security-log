@@ -15,18 +15,18 @@ import { CauseAnalysisSection } from './CauseAnalysisSection'
 import { DateInput } from './DateInput'
 import { Field } from './Field'
 import { FormActions } from './FormActions'
+import { useModalContext } from './ModalContext'
 import { NumberInput } from './NumberInput'
 import { PreventionRow } from './PreventionRow'
 import { RadioOption } from './RadioOption'
 import { Select } from './Select'
-import { useModal } from './ModalContext'
 import { INITIAL_REGISTER_FORM, registerFormReducer } from './state'
 import { StringListSection } from './StringListSection'
 import { TextInput } from './TextInput'
 
 export function RegisterForm() {
   const { t, lang } = useLang()
-  const { openCopyModal } = useModal()
+  const { openCopyModal } = useModalContext()
   const [state, dispatch] = useReducer(
     registerFormReducer,
     INITIAL_REGISTER_FORM,

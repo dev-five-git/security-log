@@ -44,7 +44,12 @@ export function PreventionRow({
         p="$spacingSpacing12"
       >
         {values.map((value, idx) => (
-          <Flex key={idx} alignItems="flex-start" gap="$spacingSpacing08" w="100%">
+          <Flex
+            key={idx}
+            alignItems="flex-start"
+            gap="$spacingSpacing08"
+            w="100%"
+          >
             <TextInput
               h="42px"
               multiline

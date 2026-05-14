@@ -12,7 +12,13 @@ interface CardSiteProps {
   visitLabel: string
 }
 
-export function CardSite({ title, description, icon, href, visitLabel }: CardSiteProps) {
+export function CardSite({
+  title,
+  description,
+  icon,
+  href,
+  visitLabel,
+}: CardSiteProps) {
   return (
     <VStack
       backdropFilter="blur(10px)"

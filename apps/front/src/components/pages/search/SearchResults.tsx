@@ -4,8 +4,8 @@ import { Center, Flex, Grid, Text, VStack } from '@devup-ui/react'
 import { useSearchParams } from 'next/navigation'
 
 import { AccidentCard } from '@/components/pages/(home)/AccidentList/AccidentCard'
-import { useLang } from '@/hooks/useLang'
 import type { Lang } from '@/hooks/useLang'
+import { useLang } from '@/hooks/useLang'
 import {
   type Accident,
   ACCIDENTS,

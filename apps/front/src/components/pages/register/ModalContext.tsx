@@ -12,14 +12,16 @@ interface ModalContextValue {
   openCopyModal: (content: string, issueUrl: string) => void
 }
 
-const ModalContext = createContext<ModalContextValue | null>(null)
+const ModalCtx = createContext<ModalContextValue | null>(null)
 
-export function ModalProvider({ children }: { children: React.ReactNode }) {
+export function ModalContext({ children }: { children: React.ReactNode }) {
   const [modal, setModal] = useState<ModalState | null>(null)
 
   return (
-    <ModalContext.Provider
-      value={{ openCopyModal: (content, issueUrl) => setModal({ content, issueUrl }) }}
+    <ModalCtx.Provider
+      value={{
+        openCopyModal: (content, issueUrl) => setModal({ content, issueUrl }),
+      }}
     >
       {children}
       {modal !== null && (
@@ -29,12 +31,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           onClose={() => setModal(null)}
         />
       )}
-    </ModalContext.Provider>
+    </ModalCtx.Provider>
   )
 }
 
-export function useModal() {
-  const ctx = useContext(ModalContext)
-  if (!ctx) throw new Error('useModal must be used within ModalProvider')
+export function useModalContext() {
+  const ctx = useContext(ModalCtx)
+  if (!ctx) throw new Error('useModalContext must be used within ModalContext')
   return ctx
 }
