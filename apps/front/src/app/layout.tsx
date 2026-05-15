@@ -172,7 +172,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <Script id="naver-analytics" strategy="afterInteractive">
           {`
             if(!wcs_add) var wcs_add = {};
-            wcs_add["wa"] = "2dcfd8f9d475dc";
+            wcs_add["wa"] = "590594553e391c";
             if(window.wcs) {
               wcs_do();
             }
