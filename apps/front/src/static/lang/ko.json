@@ -136,7 +136,7 @@
     "copyModalDesc": "아래 내용을 복사해서 GitHub 이슈 본문에 붙여넣기 해주세요.",
     "copyButton": "복사하기",
     "copiedButton": "복사됨",
-    "githubButton": "GitHub 이슈 열기"
+    "githubButton": "GitHub 열기"
   },
   "services": [
     {

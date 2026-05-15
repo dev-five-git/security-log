@@ -3,6 +3,8 @@ import { Box, Center, css, Flex, Text, VStack } from '@devup-ui/react'
 import { useState } from 'react'
 
 import { IconButton } from '@/components/buttons/IconButton'
+import { Icon } from '@/components/icons/Icon'
+import { ICON_PATHS } from '@/components/icons/iconPaths'
 import { useLang } from '@/hooks/useLang'
 
 interface CopyModalProps {
@@ -105,24 +107,28 @@ export function CopyModal({ content, issueUrl, onClose }: CopyModalProps) {
               </Text>
             </Center>
 
-            <Center
+            <Flex
               _active={{ opacity: '0.8' }}
               _hover={{ opacity: 1.1 }}
+              alignItems="center"
               as="a"
               bg="$primary"
               borderRadius="$spacingSpacing12"
               cursor="pointer"
               flex="1"
+              gap="$spacingSpacing08"
               h="44px"
               href={issueUrl}
+              justifyContent="center"
               rel="noopener noreferrer"
               target="_blank"
               transition="opacity 0.2s ease"
             >
+              <Icon boxSize="20px" color="#FFF" iconPath={ICON_PATHS.github} />
               <Text color="#FFF" typography="buttonSm">
                 {t.register.githubButton}
               </Text>
-            </Center>
+            </Flex>
           </Flex>
         </VStack>
       </Center>

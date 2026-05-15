@@ -140,6 +140,30 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
+        <link
+          crossOrigin="anonymous"
+          href="https://cdn.jsdelivr.net"
+          rel="preconnect"
+        />
+        <link
+          crossOrigin="anonymous"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css"
+          rel="stylesheet"
+        />
+        <style>{`
+          @keyframes bannerFloat1 {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-14px); }
+          }
+          @keyframes bannerFloat2 {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+          }
+          @keyframes bannerFloat3 {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-18px); }
+          }
+        `}</style>
         <Script id="gtm" strategy="beforeInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

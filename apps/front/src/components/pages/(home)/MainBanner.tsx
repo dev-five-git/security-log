@@ -52,7 +52,34 @@ export function MainBanner() {
           </Text>
         </VStack>
         <MobileOnly>
-          <Image src="/images/home/main-banner-img.webp" w="320px" />
+          <Flex h="350px" pos="relative" w="100%">
+            <Image
+              left="50px"
+              pos="absolute"
+              src="/images/home/img1.webp"
+              style={{ animation: 'bannerFloat1 4s ease-in-out infinite' }}
+              top="100px"
+              w="250px"
+            />
+            <Image
+              left="-10px"
+              pos="absolute"
+              src="/images/home/img2.webp"
+              style={{
+                animation: 'bannerFloat2 3.5s ease-in-out infinite 0.6s',
+              }}
+              top="50px"
+              w="120px"
+            />
+            <Image
+              left="100px"
+              pos="absolute"
+              src="/images/home/img3.webp"
+              style={{ animation: 'bannerFloat3 3s ease-in-out infinite 1.2s' }}
+              top="-15px"
+              w="100px"
+            />
+          </Flex>
         </MobileOnly>
         <Grid
           columnGap={['30px', null, null, null, '$spacingSpacing48']}
@@ -105,13 +132,39 @@ export function MainBanner() {
           </VStack>
         </Grid>
         <DesktopOnly>
-          <Image
+          <Flex
+            h="340px"
             pos="absolute"
-            right={[null, null, null, null, '-50px', '-200px']}
-            scale={[null, null, null, null, 1]}
-            src="/images/home/main-banner-img.webp"
+            right={[null, null, null, null, '0px', '-200px']}
             top="-50px"
-          />
+            w="400px"
+          >
+            <Image
+              pos="absolute"
+              src="/images/home/img1.webp"
+              style={{ animation: 'bannerFloat1 4s ease-in-out infinite' }}
+              top="200px"
+              w="400px"
+            />
+            <Image
+              left="-150px"
+              pos="absolute"
+              src="/images/home/img2.webp"
+              style={{
+                animation: 'bannerFloat2 3.5s ease-in-out infinite 0.6s',
+              }}
+              top="200px"
+              w="200px"
+            />
+            <Image
+              left="50px"
+              pos="absolute"
+              src="/images/home/img3.webp"
+              style={{ animation: 'bannerFloat3 3s ease-in-out infinite 1.2s' }}
+              top="50px"
+              w="150px"
+            />
+          </Flex>
         </DesktopOnly>
       </VStack>
     </VStack>

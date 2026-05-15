@@ -20,6 +20,7 @@ export const ICON_PATHS = {
   company: '/icons/icon_company.svg',
   link: '/icons/icon_link.svg',
   calendar: '/icons/icon_calendar.svg',
+  github: '/icons/icon_github.svg',
 } as const
 
 export type IconName = keyof typeof ICON_PATHS
