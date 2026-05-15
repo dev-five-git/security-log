@@ -1,6 +1,7 @@
 import { globalCss, ThemeScript } from '@devup-ui/react'
 import { resetCss } from '@devup-ui/reset-css'
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 
 import { Footer } from '@/components/layout/footer/Footer'
 import { Header } from '@/components/layout/header/Header'
@@ -14,6 +15,27 @@ import {
   SITE_NAME,
   SITE_URL,
 } from './site-metadata'
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: SITE_NAME,
+      description: DEFAULT_DESCRIPTION,
+      inLanguage: 'ko-KR',
+      publisher: { '@id': `${SITE_URL}/#organization` },
+    },
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
+      name: 'DEVFIVE',
+      url: SITE_URL,
+    },
+  ],
+}
 
 resetCss()
 
@@ -48,6 +70,16 @@ export const metadata: Metadata = {
   alternates: {
     canonical: SITE_URL,
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     title: DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
@@ -58,7 +90,9 @@ export const metadata: Metadata = {
     images: [
       {
         url: DEFAULT_OG_IMAGE_URL,
-        alt: '보안록 Open Graph 이미지',
+        width: 1200,
+        height: 630,
+        alt: '보안록 — 국내 보안 사고 아카이브',
       },
     ],
   },
@@ -66,11 +100,28 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
-    images: [DEFAULT_OG_IMAGE_URL],
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE_URL,
+        width: 1200,
+        height: 630,
+        alt: '보안록 — 국내 보안 사고 아카이브',
+      },
+    ],
   },
   icons: {
     icon: [{ url: '/favicon.ico', type: 'image/x-icon' }],
     shortcut: '/favicon.ico',
+  },
+  appleWebApp: {
+    capable: true,
+    title: SITE_NAME,
+    statusBarStyle: 'default',
+  },
+  formatDetection: {
+    telephone: false,
+    email: false,
+    address: false,
   },
   manifest: '/manifest.webmanifest',
   category: 'technology',
@@ -89,14 +140,44 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
+        <Script id="gtm" strategy="beforeInteractive">
+          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-K9Q6C7P7');`}
+        </Script>
         <ThemeScript />
+        <script
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          type="application/ld+json"
+        />
       </head>
       <body>
+        <noscript>
+          <iframe
+            height="0"
+            src="https://www.googletagmanager.com/ns.html?id=GTM-K9Q6C7P7"
+            style={{ display: 'none', visibility: 'hidden' }}
+            title="Google Tag Manager"
+            width="0"
+          />
+        </noscript>
         <LanguageProvider>
           <Header />
           {children}
           <Footer />
         </LanguageProvider>
+        <Script src="//wcs.pstatic.net/wcslog.js" strategy="afterInteractive" />
+        <Script id="naver-analytics" strategy="afterInteractive">
+          {`
+            if(!wcs_add) var wcs_add = {};
+            wcs_add["wa"] = "2dcfd8f9d475dc";
+            if(window.wcs) {
+              wcs_do();
+            }
+          `}
+        </Script>
       </body>
     </html>
   )

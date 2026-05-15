@@ -34,6 +34,11 @@ export function Select<T extends string>({
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const ref = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (open) inputRef.current?.focus()
+  }, [open])
 
   useEffect(() => {
     if (!open) return
@@ -118,7 +123,7 @@ export function Select<T extends string>({
               py="$spacingSpacing08"
             >
               <Input
-                autoFocus
+                ref={inputRef}
                 className={css({
                   bg: 'transparent',
                   border: 'none',

@@ -7,13 +7,26 @@ export const DEFAULT_TITLE = `${SITE_NAME} | 국내 보안 사고 아카이브`
 export const DEFAULT_DESCRIPTION =
   '대한민국에서 발생한 실제 보안 사고 사례와 원인, 피해 규모, 예방법을 한곳에서 확인하세요.'
 export const DEFAULT_KEYWORDS = [
+  '보안록',
   '보안 사고',
+  '사이버 보안',
+  '정보보호',
   '개인정보 유출',
   '침해사고',
-  '사이버 보안',
+  '해킹',
+  '랜섬웨어',
+  '피싱',
+  'DDoS 공격',
+  '악성코드',
+  '보안 취약점',
+  '데이터 유출',
+  '사이버공격',
   '보안 사례',
-  '정보보호',
-  '보안록',
+  '국내 보안 사고',
+  '보안 아카이브',
+  '개인정보보호',
+  '사이버침해',
+  '보안 뉴스',
 ]
 
 interface BuildPageMetadataOptions {
