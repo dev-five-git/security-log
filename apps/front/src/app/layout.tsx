@@ -67,8 +67,16 @@ export const metadata: Metadata = {
   authors: [{ name: 'DEVFIVE', url: SITE_URL }],
   creator: 'DEVFIVE',
   publisher: 'DEVFIVE',
+  verification: {
+    other: {
+      'naver-site-verification': '14fdd1d0e8df6b98b623dae273032165eab9e5ec',
+    },
+  },
   alternates: {
     canonical: SITE_URL,
+    types: {
+      'application/rss+xml': `${SITE_URL}/rss.xml`,
+    },
   },
   robots: {
     index: true,
